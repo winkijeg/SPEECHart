@@ -4,7 +4,7 @@
 % written 09/2013 (Ralf)
 
 
-% addpath(genpath('e:/projects/projekt_refactoring2/lasse'))
+addpath(genpath('./model_adapt_jaw'))
 
 clear *
 
