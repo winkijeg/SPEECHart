@@ -32,5 +32,4 @@ plotLandmarksDerived(mySpk, 'c')
 plotMeasuresMorphology(mySpk, 'y')
 plotSemipolarGrid(mySpk, 'k')
 plotContours(mySpk, 'b')
-
-% plot contours from segmentation
+plotSemipolarGrid(mySpk, 'r', 10:15)
