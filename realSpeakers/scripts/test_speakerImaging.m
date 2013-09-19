@@ -30,6 +30,6 @@ hold on
 plotLandmarks(mySpk, 'm')
 plotLandmarksDerived(mySpk, 'c')
 plotMeasuresMorphology(mySpk, 'y')
-plotSemipolarGrid(mySpk, 'k')
+%plotSemipolarGrid(mySpk, 'k')
 plotContours(mySpk, 'b')
 plotSemipolarGrid(mySpk, 'r', 10:15)
