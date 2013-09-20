@@ -16,6 +16,7 @@ classdef SpeakerImaging
         measuresMorphology = [];
         
         semipolarGrid = [];
+        gridZoning = [];
         contours = [];
         
         sliceInfo = '';
@@ -41,6 +42,7 @@ classdef SpeakerImaging
             obj.measuresMorphology = determineMeasuresMorphology(obj);
             
             obj.semipolarGrid = determineSemipolarGrid(obj);
+            obj.gridZoning = zoneGridIntoAnatomicalRegions(obj);
             
             obj.sliceInfo = mat.sliceInfo;
             obj.xdataSlice = [0 obj.sliceInfo.PixelDimensions(2)*obj.sliceInfo.Dimensions(2)];
@@ -71,6 +73,7 @@ classdef SpeakerImaging
         ptPhysioDerived = deriveLandmarksGrid(obj);
         measuresMorphology = determineMeasuresMorphology(obj);
         grid = determineSemipolarGrid(obj);
+        gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);
 
     end
