@@ -17,7 +17,9 @@ classdef SpeakerImaging
         
         semipolarGrid = [];
         gridZoning = [];
+        
         contours = [];
+        filteredContours = [];
         
         sliceInfo = '';
         xdataSlice = [];
@@ -51,6 +53,7 @@ classdef SpeakerImaging
             obj.sliceSegmentationData = mat.sliceSegmentationData;
             
             obj.contours = determineOutlineFromSegmentation(obj);
+            obj.filteredContours = determineFilteredContour(obj);
             
             
         end
@@ -60,7 +63,7 @@ classdef SpeakerImaging
         [] = plotLandmarksDerived(obj, col)
         [] = plotMeasuresMorphology(obj, col)
         [] = plotSemipolarGrid(obj, col, nbsOfGrdLines)
-        [] = plotContours(obj, col)
+        [] = plotContours(obj, flagBspline, col)
         
         obj = resampleMidSagittSlice(obj, targetPixelWidth, targetPixelHeight)
         obj = normalizeMidSagittSlice(obj)
@@ -75,6 +78,7 @@ classdef SpeakerImaging
         grid = determineSemipolarGrid(obj);
         gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);
+        filteredContours = determineFilteredContour(obj);
 
     end
 

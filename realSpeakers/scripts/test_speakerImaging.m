@@ -8,6 +8,8 @@ speakerName = 'FF1';
 phonLab = 'a';
 scanOrient = 'm';
 
+flagBspline = true;
+
 if ~exist('path_root', 'var')
     [path_root, path_model, path_fList, path_seg] = ...
         initPaths(princInvestigator, speakerName);
@@ -31,6 +33,8 @@ plotLandmarks(mySpk, 'm')
 plotLandmarksDerived(mySpk, 'c')
 plotMeasuresMorphology(mySpk, 'y')
 %plotSemipolarGrid(mySpk, 'k')
-plotContours(mySpk, 'b')
-plotSemipolarGrid(mySpk, 'r', 10:15)
+plotContours(mySpk, ~flagBspline, 'r')
+plotContours(mySpk, flagBspline, 'b')
+
+plotSemipolarGrid(mySpk, 'r', 5:20)
 
