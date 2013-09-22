@@ -14,6 +14,7 @@ classdef SpeakerImaging
         landmarksDerivedGrid = [];
         
         measuresMorphology = [];
+        measuresTongueShape = [];
         
         semipolarGrid = [];
         gridZoning = [];
@@ -55,6 +56,9 @@ classdef SpeakerImaging
             obj.contours = determineOutlineFromSegmentation(obj);
             obj.filteredContours = determineFilteredContour(obj);
             
+            obj.measuresTongueShape = determineMeasuresTongueShape(obj);
+
+            
             
         end
         
@@ -75,6 +79,7 @@ classdef SpeakerImaging
         ptPhysioDerived = deriveLandmarksMorpho(obj);
         ptPhysioDerived = deriveLandmarksGrid(obj);
         measuresMorphology = determineMeasuresMorphology(obj);
+        measuresTongueShape = determineMeasuresTongueShape(obj);
         grid = determineSemipolarGrid(obj);
         gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);
