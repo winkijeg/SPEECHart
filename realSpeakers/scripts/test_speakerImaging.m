@@ -31,7 +31,9 @@ hold on
 
 plotLandmarks(mySpk, 'm')
 plotLandmarksDerived(mySpk, 'c')
-plotMeasuresMorphology(mySpk, 'y')
+plotMeasureMorphology(mySpk, 'ratioVH', 'r')
+plotMeasureMorphology(mySpk, 'palateAngle', 'r')
+
 %plotSemipolarGrid(mySpk, 'k')
 plotContours(mySpk, ~flagBspline, 'r')
 plotContours(mySpk, flagBspline, 'b')
