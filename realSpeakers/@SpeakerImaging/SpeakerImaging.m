@@ -15,6 +15,7 @@ classdef SpeakerImaging
         
         measuresMorphology = [];
         measuresTongueShape = [];
+        derivedPointsTongueShape = [];
         
         semipolarGrid = [];
         gridZoning = [];
@@ -56,9 +57,10 @@ classdef SpeakerImaging
             obj.contours = determineOutlineFromSegmentation(obj);
             obj.filteredContours = determineFilteredContour(obj);
             
-            obj.measuresTongueShape = determineMeasuresTongueShape(obj);
+            [mTS, dTS] = determineMeasuresTongueShape(obj);
+            obj.measuresTongueShape = mTS;
+            obj.derivedPointsTongueShape = dTS;
 
-            
             
         end
         
@@ -66,6 +68,7 @@ classdef SpeakerImaging
         [] = plotLandmarks(obj, col)
         [] = plotLandmarksDerived(obj, col)
         [] = plotMeasuresMorphology(obj, col)
+        [] = plotMeasureTongueShape(obj, featureName, col)
         [] = plotSemipolarGrid(obj, col, nbsOfGrdLines)
         [] = plotContours(obj, flagBspline, col)
         
@@ -79,7 +82,7 @@ classdef SpeakerImaging
         ptPhysioDerived = deriveLandmarksMorpho(obj);
         ptPhysioDerived = deriveLandmarksGrid(obj);
         measuresMorphology = determineMeasuresMorphology(obj);
-        measuresTongueShape = determineMeasuresTongueShape(obj);
+        [mTS, dTS] = determineMeasuresTongueShape(obj);
         grid = determineSemipolarGrid(obj);
         gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);
