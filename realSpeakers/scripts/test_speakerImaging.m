@@ -38,3 +38,5 @@ plotContours(mySpk, flagBspline, 'b')
 
 plotSemipolarGrid(mySpk, 'r', 5:20)
 
+% plot tongue shape measures
+plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'g')

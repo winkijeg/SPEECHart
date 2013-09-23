@@ -1,4 +1,5 @@
-function measuresTongueShape = determineMeasuresTongueShape(obj)
+function [measuresTongueShape, derivedPointsTongueShape] = ...
+    determineMeasuresTongueShape(obj)
 
     innerPt = obj.filteredContours.innerPt;
     ptPhysioDerivedMorpho = obj.landmarksDerivedMorpho;
@@ -49,25 +50,9 @@ function measuresTongueShape = determineMeasuresTongueShape(obj)
     % assign values
     % ---------------------------------------------------------
     measuresTongueShape.curvatureInversRadius = curvatureInversRadius;
-
+    derivedPointsTongueShape.ptStart = ptContStart;
+    derivedPointsTongueShape.ptMid = ptMid;
+    derivedPointsTongueShape.ptEnd = ptEnd;
     
-%     [r, pc] = circle_exp2imp_2d(ptLower, ptOrigin, ptUpper);
-%     ptCircle = circle_imp_points_2d(r, pc, 100);
-% 
-%     ptCenterHorizon = [pc(1)+100 pc(2)];
-
-%     theta1 = -lines_exp_angle_nd(2, pc, ptCenterHorizon, pc, ptLower);
-%     theta2 = lines_exp_angle_nd(2, pc, ptCenterHorizon, pc, ptUpper);
-
-    % circSeg = circle_imp_points_arc_2d( r, pc, theta1, theta2, 25);
-
-    % plot(ptLower(1), ptLower(2),'g*')
-    % plot(ptOrigin(1), ptOrigin(2),'g*')
-    % plot(ptUpper(1), ptUpper(2),'g*')
-
-    % plot(ptCircle(1,:), ptCircle(2,:), 'g--', 'LineWidth', 1)
-    % plot(circSeg(1,:), circSeg(2,:), 'g-', 'LineWidth', 2)
-
-  
     
 end
