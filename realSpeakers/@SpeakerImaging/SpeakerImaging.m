@@ -67,7 +67,7 @@ classdef SpeakerImaging
         [] = plotMidSagittSlice(obj)
         [] = plotLandmarks(obj, col)
         [] = plotLandmarksDerived(obj, col)
-        [] = plotMeasuresMorphology(obj, col)
+        [] = plotMeasureMorphology(obj, featureName, col)
         [] = plotMeasureTongueShape(obj, featureName, col)
         [] = plotSemipolarGrid(obj, col, nbsOfGrdLines)
         [] = plotContours(obj, flagBspline, col)
