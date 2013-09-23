@@ -6,12 +6,7 @@ function [] = plotMeasureMorphology(obj, featureName, col)
     pt_ANS = obj.landmarks.ANS;
     pt_PNS = obj.landmarks.PNS;
     pt_AlvRidge = obj.landmarks.AlvRidge;
-    
-    
-    % specification for palate angle
-    radiusCircle = 10;
-    nSamplePointsArc = 150;  
-    
+        
     switch featureName
         
         case 'ratioVH'
@@ -36,6 +31,9 @@ function [] = plotMeasureMorphology(obj, featureName, col)
             
         case 'palateAngle'
             
+            radiusCircle = 10;
+            nSamplePointsArc = 150;  
+
             pt_Palate = obj.landmarks.Palate;
             
             pt_help1 = line_exp_point_near_3d(pt_ANS, pt_PNS, pt_AlvRidge);
