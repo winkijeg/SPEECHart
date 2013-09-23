@@ -1,4 +1,4 @@
-function [] = plotMeasuresMorphology(obj, col)
+function [] = plotMeasureMorphology(obj, featureName, col)
 
     % specification for ratio
     lengthHead = 5;
