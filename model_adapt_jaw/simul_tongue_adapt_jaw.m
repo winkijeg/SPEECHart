@@ -30,7 +30,8 @@ function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, delta_lambda_
 %
 % Exemple : simul_tongue_adapt_jaw('av', 'ria', 'ria_trial', [-10 +10], [0 -10], [+10 -10], [-10 +10], [0 -3], [200 200], [-1 -3], [0.05 0.05], [0.150 0.150], [-3 +4], [-2 -2], [0 0], [0 0],0)
 
-%
+% next two lines: loaded from 'path_model/contour' file, except *_mri
+% (variables in file do not have this suffix)
 global dents_inf ecart_meanx ecart_meany lar_ar_mri tongue_lar_mri lowlip palate pharynx_mri
 global tongue_lar upperlip velum
 % Variables qui est transmises comme variables globales
@@ -69,23 +70,26 @@ global Y0;
 global H;
 global G;
 % Points d'attaches des muscles externes
-global XS;
-global YS;
-global X1;
-global Y1;
-global X2;
-global Y2;
-global X3;
-global Y3;
+% Attachment points of the external muscles
+global XS; % loaded from 'path_model/contour' file
+global YS; % loaded from 'path_model/contour' file
+global X1; % loaded from 'path_model/contour' file
+global Y1; % loaded from 'path_model/contour' file
+global X2; % loaded from 'path_model/contour' file
+global Y2; % loaded from 'path_model/contour' file
+global X3; % loaded from 'path_model/contour' file
+global Y3; % loaded from 'path_model/contour' file
 % Longueurs au repos des muscles
-global longrepos_GGP;
-global longrepos_GGA;
-global longrepos_Hyo;
-global longrepos_Stylo;
-global longrepos_SL;
-global longrepos_IL;
-global longrepos_Vert;
+% Length of muscles at rest
+global longrepos_GGP; % loaded from 'path_model/repos' file
+global longrepos_GGA; % loaded from 'path_model/repos' file
+global longrepos_Hyo; % loaded from 'path_model/repos' file
+global longrepos_Stylo; % loaded from 'path_model/repos' file
+global longrepos_SL; % loaded from 'path_model/repos' file
+global longrepos_IL; % loaded from 'path_model/repos' file
+global longrepos_Vert; % loaded from 'path_model/repos' file
 % Amplitude des variations min max prévues pour les lambdas % PP - 9 May 2011
+% Amplitude of the anticipated min max variations for the lambdas
 global delta_lambda_tot_GGP;
 global delta_lambda_tot_GGA;
 global delta_lambda_tot_Hyo;
@@ -96,26 +100,29 @@ global delta_lambda_tot_Vert;
 
 % Facteur de proportionnalite entre les lambda des fibres d'un meme
 % muscle
-global fac_GGP;
-global fac_GGA;
-global fac_Hyo;
-global fac_Stylo;
-global fac_SL;
-global fac_IL;
-global fac_Vert;
+% Proportionality factor between the lambdas of the fibres of the same
+% muscle
+global fac_GGP; % loaded from 'path_model/repos' file
+global fac_GGA; % loaded from 'path_model/repos' file
+global fac_Hyo; % loaded from 'path_model/repos' file
+global fac_Stylo; % loaded from 'path_model/repos' file
+global fac_SL; % loaded from 'path_model/repos' file
+global fac_IL; % loaded from 'path_model/repos' file
+global fac_Vert; % loaded from 'path_model/repos' file
 global Ufin;
 global tfin;
 global LOOP;
 global U;
 global t;
-global TEMPS_ACTIVATION;
-global TEMPS_HOLD;
+global TEMPS_ACTIVATION; % later assigned from input arg t_trans
+global TEMPS_HOLD; % later assigned from input arg t_hold
 global TEMPS_FINAL;
 global TEMPS_FINAL_CUM;
 global tf;
 format long e;
 %
 % Variables de sections des muscles
+% Variables of muscle sections
 global rho_GG;
 global rho_Hyo;
 global rho_Stylo;
@@ -125,11 +132,14 @@ global rho_Vert;
 
 global kkk;
 % Variables de mouvement
+% Movement variables
 global U_dents_inf U_lowlip U_upperlip U_pharynx_mri U_lar_ar_mri U_tongue_lar_mri
 % global U_mandibule
+% ???
 global X0_seq Y0_seq length_ttout ttout
 
 % Variables concernant le contact
+% Variables concerning contact
 global Point_dent;
 global pente_D;
 global org_D;
@@ -143,9 +153,11 @@ global Mass;
 global invMass;
 %
 % Variable global pour affiches les resultats
+% Global variables for plotting the results (???)
 global couleurs;
 couleurs = 'rkbygcmr';
 % Variables globales temporaires
+% global temporary variables
 global aff_fin;
 aff_fin=0;
 global t_affiche;
@@ -164,6 +176,8 @@ global VOY_DEF;
 
 %
 % SEQUENCE
+% A matrix with as many rowas as there are phonemes (including rest) and
+% ten columns of not entirely clear meaning
 global SEQUENCE
 SEQUENCE='';
 
@@ -195,18 +209,19 @@ for i=1:dim(2)
 end
 SEQUENCE
 % Calcul de la matrice d'elasticite a chaque fois ou une seule fois
+% Calculate elasticity matrix every time or just once?
 global CALC_ELA;
 CALC_ELA = 1;                 % Calcul a chaque fois
 %
 
-Pref = 0; %No account for pressure PP Sept08
+Pref = 0; % Do not account for pressure PP Sept08
 
 %
 tic
 sujet = spkStr;
 rest_file = ['XY_repos_' spkStr]; %PP Nov 06
 contour_file = ['data_palais_repos_' spkStr]; %PP Nov 06
-result_stocke_file = ['result_stocke_' spkStr];
+result_stocke_file = ['result_stocke_' spkStr]; % stocke means something like storage
 fact = 2;
 
 %
@@ -215,9 +230,9 @@ load([path_model rest_file]);
 load([path_model contour_file]);
 load([path_model result_stocke_file]);
 %
-palate_mri = palate; % PP Juli 2011
-lar_ar_mri = lar_ar; % PP Juli 2011
-pharynx_mri = pharynx; % PP Juli 2011
+palate_mri = palate; % PP Juli 2011 % variable in contour file has no _mri suffix
+lar_ar_mri = lar_ar; % PP Juli 2011 % variable in contour file has no _mri suffix
+pharynx_mri = pharynx; % PP Juli 2011 % variable in contour file has no _mri suffix
 lower_lip = lowlip; % PP Juli 2011
 upper_lip = upperlip; % PP Juli 2011
 upperlip_mri = upperlip; % PP Juli 2011
@@ -235,9 +250,14 @@ ll_rotation = ll_rot;
 lip_protrusion = lip_prot;
 hyoid_movment = hyoid_mov;
 TEMPS_FINAL = TEMPS_ACTIVATION + TEMPS_HOLD; % combiner le t-rise et le t-hold pour t-final
+                                             % combine t_trans (!) and
+                                             % t_hold to t_final
 TEMPS_FINAL_CUM = cumsum(TEMPS_FINAL);     % Vector avec le temps final de chaque transition
+                                           % Vector with every transitions'
+                                           % final times
 
 %A modifier ICI
+%to modify HERE
 n_phon = length(TEMPS_HOLD);
 delta_lambda=[delta_lambda_ggp' delta_lambda_gga' delta_lambda_hyo' delta_lambda_sty' delta_lambda_ver' delta_lambda_sl' delta_lambda_il']';
 MATRICE_LAMBDA(:,1) = CONFIGS(1,1:2:14)';
@@ -246,25 +266,37 @@ for np=1:n_phon
     MATRICE_LAMBDA(:,1+np) = delta_lambda(:,np) + CONFIGS(1,1:2:14)';
 end
 
-kkk=0;
+kkk=0; % ??
 % --------------------------------------------------------
-NN=7;	   % NN : nombre de noeuds par ligne
-MM=9;	   % MM : nombre de noeuds par colonne
+NN=7;	   % NN : nombre de noeuds par ligne; number columns
+MM=9;	   % MM : nombre de noeuds par colonne; number of rows
 % Pour fact=1, on obtient 48 elements et 63 noeuds
+% With fact=1, 48 elements and 63 nodes are obtained
 % Pour fact=2, on obtient 192 elements et 221 noeuds
+% With fact=2, 192 elements and 221 nodes are obtained
+% whats an element
 
 % ---------------------------------------------------------------------
 % Calcul pour chaque muscle de rho
 % tel que la force musculaire active M soit :
+% Calculate rho for every muscle
+% such that the active mucle force M be:
 %     M = rho(exp(c.A)-1)
 % ou A est l'activation musculaire :
+% where A is the muscle activation :
 %     A = [l-lambda+MU.l']+
 
 % Chaque muscle est divise en plusieurs fibres.
 % On suppose que chacune de ces branches fournit la meme force.
 % Les CSA (cross section area) sont les sections de ces fibres.
 % La valeur de rho est proportionnelle aux CSA.
-K_m = 0.22;    % en N/mm2, valeur obtenue chez Van Lunteren & al. 1990
+% Every muscle is divided into several fibers.
+% It is assumed that each of these branches provides the same force.
+% The CSAs (cross section area) are the sections of these fibers.
+% The value of rho is proportional to the CSAs.
+% Rho is the Force!
+K_m = 0.22;    % en N/mm2, valeur obtenue chez Van Lunteren & al. 1990 
+               % in N/mm2, value obtained from Van Lunteren & al. 1990
 CSA_GG = 308/(6*fact+1);
 rho_GG = CSA_GG * K_m;
 
@@ -293,11 +325,13 @@ rho_Vert=CSA_Vert*K_m;
 % com (dim 1x47)       : texte
 
 disp('Calcul de la position de repos');
-X0 = 0;
-Y0 = 0;
+% preallocate for (a marginal gain of) speed
+X0 = zeros(fact*(MM-1)+1,fact*(NN-1)+1);
+Y0 = zeros(fact*(MM-1)+1,fact*(NN-1)+1);
 
 % Calcul par interpolation la position de repos en fonction du
 % nombre de noeuds
+% Intrepolate the rest positions as a function of the number of nodes
 % !!!!!!       MATLAB 4 <=> MATLAB 5         !!!!!!!
 % !!!!!! changer les transposees des interp1 !!!!!!!
 for j = 1:MM
@@ -308,23 +342,22 @@ for j=1:NN
     Y0(1:fact*(MM-1)+1,fact*(j-1)+1)=interp1(1:MM,Y_repos(1:MM,j),1:1/fact:MM,'spline')';
 end
 
-for j=1:fact*(NN-1)+1
+for j=1:fact*(NN-1)+1 % = 1:size(X0,2)
     X0(:,j)=interp1(find(X0(:,j)),nonzeros(X0(:,j)),1:fact*(MM-1)+1,'spline')';
 end
 
-for j=1:fact*(MM-1)+1
+for j=1:fact*(MM-1)+1% = 1:size(X0,1)
     Y0(j,:)=interp1(find(Y0(j,:)),nonzeros(Y0(j,:)),1:fact*(NN-1)+1,'spline');
 end
 
-NN = fact*(NN-1)+1;
-MM = fact*(MM-1)+1;
+NN = fact*(NN-1)+1; % = size(X0,2)
+MM = fact*(MM-1)+1; % = size(X0,1)
 
 % PP juli 2011 - Detection tongue root node on the tongue_lar contour
-tongue_lar_beg = 0;
 for itongue_lar = length(tongue_lar)-1:-1:1
-    if tongue_lar(2,itongue_lar) >= Y0(1,NN)-1 && tongue_lar_beg == 0
+    if tongue_lar(2,itongue_lar) >= Y0(1,NN)-1 
         ideptongue_lar = itongue_lar + 1;
-        tongue_lar_beg = 1;
+        break;
     end
 end
 tongue_lar_mri = tongue_lar(:, ideptongue_lar:end); % PP Juli 2011
@@ -335,8 +368,14 @@ tongue_lar_mri = tongue_lar(:, ideptongue_lar:end); % PP Juli 2011
 % par ligne :
 % XY(i)  i pair   : coordonnee X
 % XY(i)  i impair : coordonnee Y
+% Calculate the rest position of the nodes in the form of XY.
+% The coordinates of the nodes are arranged succesively, row
+% by row:
+% XY(i) i even  : x coordinate
+% XY(i) i odd: y coordinate
+%%% LB: I think it's X on odd and y on even indeces...
 
-XY=0;
+XY=zeros((i-1)*2*NN+2*j,1);
 for i=1:MM
     for j=1:NN
         XY((i-1)*2*NN+2*j-1,1)=X0(i,j);
@@ -357,26 +396,45 @@ end
 % Les autres muscles ne sont pas attaches : leur position depend
 % seulement de la position des noeuds.
 
+% ----------------------------------------------------------
+% Muscle attachment points
+% (used in UDOT for calculating the muscles' lengths)
+% 3 attachment points for the Hyoglosse :
+
+% Coordinates X1,Y1, X2, Y2, X3, Y3 read in the contour file
+
+% 1 attachment point for the styloglossus
+% % coordinates Xs, Ys read in the contour file
+
+% remaining muscles are not attached: their position depends solely on the
+% position of the nodes.
+
 % --------------------------------------------------------
 % Calcul de la longueur des fibres au repos
 % Definition des facteurs de distribution sur les fibres d'un muscle
 % et calcul par interpolation si fact>1
 
+% -----------------------------------------------------------
+% Calculation of fibre length in rest position
+% Definition of the factors of the distribution on the fibres of a muscle
+% and calculation by interpolation if fact>1
+
 % GGP
-longrepos_GGP = 0;
-for k=1:1+3*fact            % boucle sur le nombre de fibres
+longrepos_GGP = zeros(1+3*fact,1);
+for k=1:1+3*fact            % boucle sur le nombre de fibres/loop over number of fibers
     longrepos_GGP(k)=0;
-    o=NN*fact+1+(k-1)*NN;     % indice du plus petit noeud concerne
-    i=o+NN-fact;              % indice du plus grand noeud concerne
+    o=NN*fact+1+(k-1)*NN;     % indice du plus petit noeud concerne/index of the smaller relevant node
+    i=o+NN-fact;              % indice du plus grand noeud concerne/index of the karger relevant node
     for j=i:-1:o+1
         longrepos_GGP(k)=longrepos_GGP(k)+sqrt((XY(2*j-1)-XY(2*j-3))^2+(XY(2*j)-XY(2*j-2))^2);
     end
 end
 longrepos_GGP=longrepos_GGP';
 % fac_GGP est lu dans rest_file PP: 16 juillet 2006
+% fac_GGP is read in rest_file
 
 % GGA
-longrepos_GGA = 0;
+longrepos_GGA = zeros(1+3*fact,1);
 for k=1:3*fact  % 6 fibres (apres les comm. de Reiner - Nov 99
     longrepos_GGA(k)=0;
     o=4*NN*fact+1+k*NN;
@@ -388,9 +446,11 @@ for k=1:3*fact  % 6 fibres (apres les comm. de Reiner - Nov 99
 end
 longrepos_GGA=longrepos_GGA';
 % fac_GGA est lu dans rest_file PP: 16 juillet 2006
-
+% fac_GGA is read in rest_file
 
 % Hyo
+% this is really obscure
+% GET BACK TO THIS
 i=(5*fact-1)*NN+1+3*fact; % Modifs YP-PP Dec 99
 j=6*fact*NN+1+4*fact; % Modifs YP-PP Dec 99
 long1=sqrt((XY(2*i-1)-X1)^2+(XY(2*i)-Y1)^2);
@@ -486,6 +546,7 @@ longrepos_Vert=longrepos_Vert';
 % --------------------------------------------------------
 % Variables d'indexation utilisees pour le calcul de la matrice
 % d'elasticite A0
+% Indexing variables used for the calculation of the elasticity matrix A0
 
 global IA;
 global IB;
@@ -515,6 +576,8 @@ IE=[5*ones(1,8),1*ones(1,8),6*ones(1,8),2*ones(1,8),7*ones(1,8),3*ones(1,8),8*on
 % Variables de Gauss utilisees pour la quadrature de A0
 % On remplace ainsi le calcul de l'integrale par le calcul
 % d'une somme : SOMME(Hi*f(Gi))
+% Gaussian variables used for squaring A0
+% In this way, calculating the integral is replaced by a sum: sum(Hi*f(Gi))
 
 global ordre
 global H
