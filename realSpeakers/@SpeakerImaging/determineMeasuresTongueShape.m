@@ -1,6 +1,7 @@
 function [measures, basicData] = ...
     determineMeasuresTongueShape(obj)
 
+
     innerPt = obj.filteredContours.innerPt;
     landmarksDerivedMorpho = obj.landmarksDerivedMorpho;
     gridZoning = obj.gridZoning;
@@ -12,10 +13,10 @@ function [measures, basicData] = ...
     % extract tongue back contour (feasable part) -------------------------
     indexStart = gridZoning.tongue(1) + 1;
     
-    ptContStartInvRadius = innerPt(1:2, indexStart);
+    ptContStart = innerPt(1:2, indexStart);
 
     distancePtStartPharWall = line_exp_point_dist_2d(ptPharH_d', ptPharL_d', ...
-        ptContStartInvRadius');
+        ptContStart');
 
     % find end point of the relevant part of the contour
     hasNext = 1;
@@ -39,79 +40,24 @@ function [measures, basicData] = ...
 
     innerPtPart = innerPt(1:2, indexStart:indexEnd);
 
-    
-    % start calculating tongue back curvature -----------------------------
     nPointsPart = indexEnd - indexStart + 1;
 
-    ptMidInvRadius = innerPtPart(1:2, round(nPointsPart / 2));
-    ptEndInvRadius = innerPtPart(1:2, nPointsPart);
-
-    % calculate inverse radius of circle paasing three points
-    curvatureInversRadius = segments_curvature_2d(ptContStartInvRadius', ptMidInvRadius', ptEndInvRadius');
-
+    ptContMid = innerPtPart(1:2, round(nPointsPart / 2));
+    ptContEnd = innerPtPart(1:2, nPointsPart);
+    
+    % start calculating tongue back curvature -----------------------------
+    [curvInvRadius, bDataInvRadius] = ...
+        obj.determineCurvatureInvRadius(ptContStart, ptContMid, ptContEnd);
+        
     % start calculating the quadratic approximation -----------------------
+    [curvQuadCoeff, bDataQuadCoeff] = ...
+        obj.determineCurvatureQuadCoeff(innerPtPart);
     
-    % determine contour length in mm
-    lenCont = 0;
-    for k = 2:nPointsPart
-        p1 = innerPtPart(1:2, k-1);
-        p2 = innerPtPart(1:2, k);
-        lenCont = lenCont + points_dist_nd(2, p1, p2);
-    end
+    % assign values --------------------------------------------------------
+    measures.curvatureInversRadius = curvInvRadius;
+    measures.curvatureQuadCoeff = curvQuadCoeff;
 
-    % determine number of points; point to point distance is 1mm
-    nPointsPartSubSampl = round(lenCont);
-
-    innerPtPartSubSampl(1:2, :) = curvspace(innerPtPart', nPointsPartSubSampl)';
-    
-    % incice of the origin (for rotation, roughly approximates the constriction
-    % location
-    indexRotationPoint = round(nPointsPartSubSampl / 2);
-
-    % calculate rotation angle
-    ptStartSubSampl(2:3) = innerPtPartSubSampl(1:2, 1);
-    ptMidSubSampl(2:3) = innerPtPartSubSampl(1:2, indexRotationPoint);
-    ptEndSubSampl(2:3) = innerPtPartSubSampl(1:2, end);
-    
-    innerPtSubSampl3D(2:3, :) = innerPtPartSubSampl(1:2, :);
-
-    angleTmp = vector_directions_nd(3, ptEndSubSampl'-ptStartSubSampl');
-    angleRot = radians_to_degrees(angleTmp(2));
-
-    % transform to enable quadratic function approximation
-    tMat = tmat_init;
-    tMat = tmat_trans(tMat, -ptMidSubSampl);
-    tMat = tmat_rot_axis(tMat, -angleRot, 'X');
-
-    % transform points
-    innerPtSubSampl3DTrans = tmat_mxp2(tMat, nPointsPartSubSampl, ...
-        innerPtSubSampl3D);
-    
-    % approximate quadratic function
-    polynomialCoeff = polyfit(innerPtSubSampl3DTrans(2, :), ...
-        innerPtSubSampl3DTrans(3, :), 2);
-
-    xMin = innerPtSubSampl3DTrans(2, 1);
-    xMax = innerPtSubSampl3DTrans(2, nPointsPartSubSampl);
-
-    xValsNew = xMin:0.1:xMax;
-    yValsNew = polyval(polynomialCoeff, xValsNew);
-    nVals = length(xValsNew);
-    
-    contPartApproximated(1:3, :) = [zeros(1, nVals); xValsNew; yValsNew];
-
-    tMatInv = inv(tMat);
-    contPartApproximatedTrans(1:3, :) = tmat_mxp2(tMatInv, nVals, contPartApproximated);
-    
-    % assign values
-    % ---------------------------------------------------------
-    measures.curvatureInversRadius = curvatureInversRadius;
-    measures.curvatureQuadCoeff = polynomialCoeff(1);
-
-    basicData.ptStartInvRadius = ptContStartInvRadius;
-    basicData.ptMidInvRadius = ptMidInvRadius;
-    basicData.ptEndInvRadius = ptEndInvRadius;
-    
-    basicData.ptsContPartTransQuadCoeff = contPartApproximatedTrans;
+    basicData.invRadius = bDataInvRadius;
+    basicData.quadCoeff = bDataQuadCoeff;
     
 end

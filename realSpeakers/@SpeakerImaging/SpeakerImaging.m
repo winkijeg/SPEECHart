@@ -15,7 +15,7 @@ classdef SpeakerImaging
         
         measuresMorphology = [];
         measuresTongueShape = [];
-        derivedPointsTongueShape = [];
+        basicData = [];
         
         semipolarGrid = [];
         gridZoning = [];
@@ -59,7 +59,7 @@ classdef SpeakerImaging
             
             [mTS, dTS] = determineMeasuresTongueShape(obj);
             obj.measuresTongueShape = mTS;
-            obj.derivedPointsTongueShape = dTS;
+            obj.basicData = dTS;
 
             
         end
@@ -90,6 +90,11 @@ classdef SpeakerImaging
 
     end
 
+    methods (Static)
+        
+        [val, basicData] = determineCurvatureInvRadius(ptStart, ptMid, ptEnd)
+        [val, basicData] = determineCurvatureQuadCoeff(innerPtPart)
+    end
     
 end
 
