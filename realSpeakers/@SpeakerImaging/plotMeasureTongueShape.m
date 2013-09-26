@@ -8,9 +8,9 @@ function [] = plotMeasureTongueShape(obj, featureName, col)
         
         case 'curvatureInversRadius'
         
-            ptLower = obj.derivedPointsTongueShape.ptStart;
-            ptOrigin = obj.derivedPointsTongueShape.ptMid;
-            ptUpper = obj.derivedPointsTongueShape.ptEnd;
+            ptLower = obj.derivedPointsTongueShape.ptStartInvRadius;
+            ptOrigin = obj.derivedPointsTongueShape.ptMidInvRadius;
+            ptUpper = obj.derivedPointsTongueShape.ptEndInvRadius;
             
             [r, pc] = circle_exp2imp_2d(ptLower', ptOrigin', ptUpper');
             ptCircle = circle_imp_points_2d(r, pc, nPointsOnCircle);
