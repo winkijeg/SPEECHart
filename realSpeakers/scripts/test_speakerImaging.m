@@ -25,8 +25,8 @@ mySpk = resampleMidSagittSlice(mySpk, 1, 1);
 
 %plotMidSagittSlice(mySpk);
 %mySpk = normalizeMidSagittSlice(mySpk);
-% figure
-% hold on
+figure
+hold on
 %plotMidSagittSlice(mySpk);
 
 plotLandmarks(mySpk, 'm')

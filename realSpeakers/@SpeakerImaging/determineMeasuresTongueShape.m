@@ -1,4 +1,4 @@
-function [measuresTongueShape, basicData] = ...
+function [measures, basicData] = ...
     determineMeasuresTongueShape(obj)
 
     innerPt = obj.filteredContours.innerPt;
@@ -101,22 +101,22 @@ function [measuresTongueShape, basicData] = ...
     contPartApproximated(1:3, :) = [zeros(1, nVals); xValsNew; yValsNew];
 
     tMatInv = inv(tMat);
-    cFin(1:3, :) = tmat_mxp2(tMatInv, nVals, contPartApproximated);
+    contPartApproximatedTrans(1:3, :) = tmat_mxp2(tMatInv, nVals, contPartApproximated);
 
-    figure
-    hold on
-    plot(cFin(2, :), cFin(3, :), 'g-', 'Linewidth', 2)
+%     plot(contPartApproximatedTrans(2, :), contPartApproximatedTrans(3, :), 'g-', 'Linewidth', 2)
 %     plot(ptLower(2), ptLower(3),'ro')
 %     plot(ptOrigin(2), ptOrigin(3),'ro')
 %     plot(ptUpper(2), ptUpper(3),'ro')
     
     % assign values
     % ---------------------------------------------------------
-    measuresTongueShape.curvatureInversRadius = curvatureInversRadius;
-    measuresTongueShape.curvatureQuadCoeff = polynomialCoeff(1);
+    measures.curvatureInversRadius = curvatureInversRadius;
+    measures.curvatureQuadCoeff = polynomialCoeff(1);
 
-    basicData.ptStart = ptContStartInvRadius;
-    basicData.ptMid = ptMidInvRadius;
-    basicData.ptEnd = ptEndInvRadius;
+    basicData.ptStartInvRadius = ptContStartInvRadius;
+    basicData.ptMidInvRadius = ptMidInvRadius;
+    basicData.ptEndInvRadius = ptEndInvRadius;
+    
+    basicData.ptsContPartTransQuadCoeff = contPartApproximatedTrans;
     
 end
