@@ -1,4 +1,4 @@
-function [measuresTongueShape, derivedPointsTongueShape] = ...
+function [measuresTongueShape, basicData] = ...
     determineMeasuresTongueShape(obj)
 
     innerPt = obj.filteredContours.innerPt;
@@ -12,10 +12,10 @@ function [measuresTongueShape, derivedPointsTongueShape] = ...
     % extract tongue back contour (feasable part) -------------------------
     indexStart = gridZoning.tongue(1) + 1;
     
-    ptContStart = innerPt(1:2, indexStart);
+    ptContStartInvRadius = innerPt(1:2, indexStart);
 
     distancePtStartPharWall = line_exp_point_dist_2d(ptPharH_d', ptPharL_d', ...
-        ptContStart');
+        ptContStartInvRadius');
 
     % find end point of the relevant part of the contour
     hasNext = 1;
@@ -43,11 +43,11 @@ function [measuresTongueShape, derivedPointsTongueShape] = ...
     % start calculating tongue back curvature -----------------------------
     nPointsPart = indexEnd - indexStart + 1;
 
-    ptMid = innerPtPart(1:2, round(nPointsPart / 2));
-    ptEnd = innerPtPart(1:2, nPointsPart);
+    ptMidInvRadius = innerPtPart(1:2, round(nPointsPart / 2));
+    ptEndInvRadius = innerPtPart(1:2, nPointsPart);
 
     % calculate inverse radius of circle paasing three points
-    curvatureInversRadius = segments_curvature_2d(ptContStart', ptMid', ptEnd');
+    curvatureInversRadius = segments_curvature_2d(ptContStartInvRadius', ptMidInvRadius', ptEndInvRadius');
 
     % start calculating the quadratic approximation -----------------------
     
@@ -87,8 +87,6 @@ function [measuresTongueShape, derivedPointsTongueShape] = ...
     innerPtSubSampl3DTrans = tmat_mxp2(tMat, nPointsPartSubSampl, ...
         innerPtSubSampl3D);
     
-    plot(innerPtSubSampl3DTrans(2, :), innerPtSubSampl3DTrans(3,:), 'g-')
-
     % approximate quadratic function
     polynomialCoeff = polyfit(innerPtSubSampl3DTrans(2, :), ...
         innerPtSubSampl3DTrans(3, :), 2);
@@ -100,7 +98,6 @@ function [measuresTongueShape, derivedPointsTongueShape] = ...
     yValsNew = polyval(polynomialCoeff, xValsNew);
     nVals = length(xValsNew);
     
-
     contPartApproximated(1:3, :) = [zeros(1, nVals); xValsNew; yValsNew];
 
     tMatInv = inv(tMat);
@@ -118,8 +115,8 @@ function [measuresTongueShape, derivedPointsTongueShape] = ...
     measuresTongueShape.curvatureInversRadius = curvatureInversRadius;
     measuresTongueShape.curvatureQuadCoeff = polynomialCoeff(1);
 
-    derivedPointsTongueShape.ptStart = ptContStart;
-    derivedPointsTongueShape.ptMid = ptMid;
-    derivedPointsTongueShape.ptEnd = ptEnd;
+    basicData.ptStart = ptContStartInvRadius;
+    basicData.ptMid = ptMidInvRadius;
+    basicData.ptEnd = ptEndInvRadius;
     
 end
