@@ -102,11 +102,6 @@ function [measures, basicData] = ...
 
     tMatInv = inv(tMat);
     contPartApproximatedTrans(1:3, :) = tmat_mxp2(tMatInv, nVals, contPartApproximated);
-
-%     plot(contPartApproximatedTrans(2, :), contPartApproximatedTrans(3, :), 'g-', 'Linewidth', 2)
-%     plot(ptLower(2), ptLower(3),'ro')
-%     plot(ptOrigin(2), ptOrigin(3),'ro')
-%     plot(ptUpper(2), ptUpper(3),'ro')
     
     % assign values
     % ---------------------------------------------------------

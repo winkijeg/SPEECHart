@@ -29,6 +29,12 @@ function [] = plotMeasureTongueShape(obj, featureName, col)
             plot(ptCircle(1,:), ptCircle(2,:), [col '--'], 'LineWidth', 1)
             plot(circSeg(1,:), circSeg(2,:), [col '-'], 'LineWidth', 2)
             
+        case 'quadCoeff'
+            
+            contPart = obj.derivedPointsTongueShape.ptsContPartTransQuadCoeff;
+                        
+            plot(contPart(2, :), contPart(3, :), [col '-'], 'Linewidth', 2)
+            
     end
 
 end
