@@ -13,6 +13,11 @@ function elast_init=elast_init(activGGA,activGGP,activHyo,activStylo,activSL,act
 %    matrice d'elasticite dependent en effet des points fixes de
 %    l'element considere.
 
+% Compute the elasticity matrix A0 as a function of the different muscles'
+% activities : E'value is 15kPa for an element at rest and 250 250 kPa for
+% an element at maximum contraction.
+% This corresponds to multiplying lambda and mu to upto 16 timestheir
+% initial value.
 
 global XY
 global NN
