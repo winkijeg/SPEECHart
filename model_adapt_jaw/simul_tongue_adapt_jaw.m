@@ -375,7 +375,7 @@ tongue_lar_mri = tongue_lar(:, ideptongue_lar:end); % PP Juli 2011
 % XY(i) i odd: y coordinate
 %%% LB: I think it's X on odd and y on even indeces...
 
-XY=zeros((i-1)*2*NN+2*j,1);
+XY=zeros((MM-1)*2*NN+2*NN,1);
 for i=1:MM
     for j=1:NN
         XY((i-1)*2*NN+2*j-1,1)=X0(i,j);
@@ -577,7 +577,7 @@ IE=[5*ones(1,8),1*ones(1,8),6*ones(1,8),2*ones(1,8),7*ones(1,8),3*ones(1,8),8*on
 % On remplace ainsi le calcul de l'integrale par le calcul
 % d'une somme : SOMME(Hi*f(Gi))
 % Gaussian variables used for squaring A0
-% In this way, calculating the integral is replaced by a sum: sum(Hi*f(Gi))
+% In this way, calculating the integral is replaced by a sum: SUM(Hi*f(Gi))
 
 global ordre
 global H
@@ -602,9 +602,12 @@ G(3,3)=0.774597;
 % --------------------------------------------------------
 % Creation du vecteur force FXY qui s'applique aux noeuds.
 % il est de dimension 2*NN*MM.
+% Creation of the force vector FXY which is applied to the nodes.
+% its dimensions are 2*NN*MM
 FXY=sparse(2*NN*MM,1);
 
 % Creation de U et Ufin, vecteurs deplacement de dimension 4*NN*MM
+% Creation of U and Ufin, displacement vectors of dimension 4*NN*MM
 Ufin=zeros(1,4*NN*MM);
 tfin=0;
 LOOP=0;
@@ -614,52 +617,61 @@ t=0;
 
 % --------------------------------------------------------
 % Constantes de la langue
-% nu : rapport de Poisson
-% E  : module d'Young
+% Tongue constantes
+% nu : rapport de Poisson (Poisson's ratio)
+% E  : module d'Young (Young's modulus: stiffness)
+
 nu=0.49;
 % E=0.7; Valeur de Yohan dans sa these
 E = 0.35;
 % Constantes d'elasticite lambda et mu
-lambda=(nu*E)/((1+nu)*(1-2*nu));
-mu=E/(2*(1+nu));
+lambda=(nu*E)/((1+nu)*(1-2*nu)); % elastic modulus
+mu=E/(2*(1+nu)); % shear
 
 
 % --------------------------------------------------------
 % Calcul de la matrice de Masse (dim 2*NN*MM par 2*NN*MM) : la masse
 % associee a chaque noeud est proportionnelle a l'aire des elements qui
 % entourent ce noeud.
+% Compute the matrix of mass (dim 2*NN*MM by 2*NN*MM) : the mass associated
+% to each node is proportional to the area of the elements sorrounding the
+% node.
 disp('Calcul de la matrice masse');
 % Calcul de l'aire de chaque element
-aire_totale=0;
+% Compute each element's area
+aire_element = zeros(MM-1, NN-1);
 for i=1:MM-1,
     for j=1:NN-1,
         aire_element(i,j)=abs(( (Y0(i+1,j)+Y0(i,j))*(X0(i+1,j)-X0(i,j)) + (Y0(i+1,j+1)+Y0(i+1,j))*(X0(i+1,j+1)-X0(i+1,j)) + (Y0(i,j+1)+Y0(i+1,j+1))*(X0(i,j+1)-X0(i+1,j+1)) + (Y0(i,j)+Y0(i,j+1))*(X0(i,j)-X0(i,j+1))) / 2.0);
-        aire_totale=aire_totale+aire_element(i,j);
     end
 end
-% Calcul de la masse
+aire_totale = sum(aire_element(:)); % sum of all areas
+
+% Calcul de la masse / compute the mass
 Mass=eye(2*NN*MM);
 masse_totale=0.15/35;      % <=> 150 grammes sur 40 mm de large
+                           % <=> 150 grams per 40 mm width
+                           % possibly 35 mm??
 for i=1:MM
     for j=1:NN
         k=(i-1)*2*NN+2*j;
-        if (k==2)                  % coin bas gauche
+        if (k==2)                  % coin bas gauche / lower left corner
             aire=aire_element(1,1)/4;
-        elseif (k==2*(MM*NN-NN+1)) % coin haut gauche
+        elseif (k==2*(MM*NN-NN+1)) % coin haut gauche / upper left corner
             aire=aire_element(MM-1,1)/4;
-        elseif (k==2*NN)           % coin bas droit
+        elseif (k==2*NN)           % coin bas droit / lower right cor
             aire=aire_element(1,NN-1)/4;
-        elseif (k==2*NN*MM)        % coin haut droit
+        elseif (k==2*NN*MM)        % coin haut droit / upper right corner
             aire=aire_element(MM-1,NN-1)/4;
-        elseif (i==1)              % bords bas
+        elseif (i==1)              % bords bas / lower edge
             aire=aire_element(1,j-1)/4+aire_element(1,j)/4;
-        elseif (j==1)              % bord gauche
+        elseif (j==1)              % bord gauche / left edge
             aire=aire_element(i-1,1)/4+aire_element(i,1)/4;
-        elseif (i==MM)             % bord haut
+        elseif (i==MM)             % bord haut / upper edge
             aire=aire_element(MM-1,j-1)/4+aire_element(MM-1,j)/4;
-        elseif (j==NN)             % bord droit
+        elseif (j==NN)             % bord droit / right edge
             aire=aire_element(i,NN-1)/4+aire_element(i-1,NN-1)/4;
-        else                       % tous les autres noeuds
+        else                       % tous les autres noeuds / all the oether nodes
             aire=aire_element(i-1,j-1)/4+aire_element(i,j-1)/4+aire_element(i-1,j)/4+aire_element(i,j)/4;
         end
         Mass(k,k)=Mass(k,k)*masse_totale/aire_totale*aire;
@@ -669,16 +681,21 @@ end
 
 % Pour accelerer les calculs, on prend tout de suite l'inverse de
 % cette matrice :
+% To accelerate computation, get the inverse of this matrix :
 invMass=inv(Mass);
 
 % Calcul de la matrice d'elasticite initiale
+% Compute the elasticity matrix
 A0=elast_init(0,0,0,0,0,0,0);
 
 % initialisation de la position de repos apres le premiere voyelle
 % dans le sequence
+% initialisation of the rest positions after the first vowel in the
+% sequence
 
 % --------------------------------------------------------
 % Calcul et dessin des parties fixes : dents, palais, ...
+% Calculation and design of fixed parts: teeth, palate, ...
 
 % Position des dents inferieures
 % En effet, il faut limiter le mouvement de la langue au niveau
@@ -686,12 +703,17 @@ A0=elast_init(0,0,0,0,0,0,0);
 % On lit sur le disque le fichier data_palais_repos.mat qui
 % contient entre autre les dents inferieures.
 % les vecteurs Vect_dents et Point_dents sont passes a UDOT.m
-
+% Position of the lower teeth
+% Indeed, tongue movements must be limited on the level of the lower teeth.
+% The file data_palais_repos.mat is read from disk which contains among
+% others the lower teeth.
+% The vectors Vect_dents et Point_dents are passed to UDOT.m
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % CONTACT AVEC LES DENTS (FACON 1)
+% CONTACT WITH THE TEETH (1. FORM)
 
 global Vect_dents;
 global Point_dents;
@@ -702,6 +724,7 @@ pente_D=(dents_inf(2,11)-dents_inf(2,13))/(dents_inf(1,11)-dents_inf(1,13));
 org_D=dents_inf(2,11)-pente_D*dents_inf(1,11);
 
 % FIN CONTACT AVEC LES DENTS (FACON 1)
+% END OF CONTACT WITH THE TEETH (!. FORM)
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -735,16 +758,27 @@ org_D=dents_inf(2,11)-pente_D*dents_inf(1,11);
 % differents noeuds 'superieurs' de la langue et les points suivants
 % Avec comme toujours : indice impair -> composante X
 %                               pair  -> composante Y
+% Position of palate and velum
+% The contact for the production of consonantes will be between the
+% different 'superior' nodes of the tongue and the following points
+% As akways : odd indices -> X coordinante
+%            even indices -> Y coordinate
 % Points du palais :
+% Points of the palate :
 P_palais=(8:length(palate(1,:))); % On prend tous les points du palais MRI
 %(points 1 à 7 = dents standard ajoutée par transform_data_mri (PP Nov06)
+% All points from the MRI palate are taken, (points 1 to 7 = standard teeth
+% added by transform_data_mri)
 for i=1:size(P_palais,2)
     Point_P(2*i-1)=palate(1,P_palais(i));
     Point_P(2*i)=palate(2,P_palais(i));
 end
 % Points du velum :
+% Points of the velum :
 P_velum=(2:(length(velum(1,:))-5)); % On prend tous les points du palais mou mesurés MRI sauf le premier
 % qui correspond au dernier du palais dur (PP Nov06)
+% All points of the soft palate are taken exept the first which corresponds
+% to the last of the hard palate
 
 for j=i+1:i+size(P_velum,2)
     Point_P(2*j-1)=velum(1,P_velum(j-i));
