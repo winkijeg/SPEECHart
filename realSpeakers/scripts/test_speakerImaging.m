@@ -25,8 +25,8 @@ mySpk = resampleMidSagittSlice(mySpk, 1, 1);
 
 %plotMidSagittSlice(mySpk);
 %mySpk = normalizeMidSagittSlice(mySpk);
-figure
-hold on
+% figure
+% hold on
 %plotMidSagittSlice(mySpk);
 
 plotLandmarks(mySpk, 'm')
@@ -41,4 +41,5 @@ plotContours(mySpk, flagBspline, 'b')
 plotSemipolarGrid(mySpk, 'r', 5:20)
 
 % plot tongue shape measures
-plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'g')
+%plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'g')
+
