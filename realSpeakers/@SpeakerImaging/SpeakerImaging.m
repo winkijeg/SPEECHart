@@ -57,11 +57,6 @@ classdef SpeakerImaging
             obj.contours = determineOutlineFromSegmentation(obj);
             obj.filteredContours = determineFilteredContour(obj);
             
-            [mTS, dTS] = determineMeasuresTongueShape(obj);
-            obj.measuresTongueShape = mTS;
-            obj.basicData = dTS;
-
-            
         end
         
         [] = plotMidSagittSlice(obj)
@@ -74,7 +69,9 @@ classdef SpeakerImaging
         
         obj = resampleMidSagittSlice(obj, targetPixelWidth, targetPixelHeight)
         obj = normalizeMidSagittSlice(obj)
-                
+
+        obj = determineMeasuresTongueShape(obj);
+
     end
     
     methods (Access = private)
@@ -82,7 +79,6 @@ classdef SpeakerImaging
         ptPhysioDerived = deriveLandmarksMorpho(obj);
         ptPhysioDerived = deriveLandmarksGrid(obj);
         measuresMorphology = determineMeasuresMorphology(obj);
-        [mTS, dTS] = determineMeasuresTongueShape(obj);
         grid = determineSemipolarGrid(obj);
         gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);

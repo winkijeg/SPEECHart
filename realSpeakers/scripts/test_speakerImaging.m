@@ -23,6 +23,8 @@ mat = load([path_fList fn_speakerMat]);
 mySpk = SpeakerImaging(mat);
 mySpk = resampleMidSagittSlice(mySpk, 1, 1);
 
+mySpk = determineMeasuresTongueShape(mySpk);
+
 %plotMidSagittSlice(mySpk);
 %mySpk = normalizeMidSagittSlice(mySpk);
 figure
