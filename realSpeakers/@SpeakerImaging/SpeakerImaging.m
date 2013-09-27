@@ -94,6 +94,8 @@ classdef SpeakerImaging
         
         [val, basicData] = determineCurvatureInvRadius(ptStart, ptMid, ptEnd)
         [val, basicData] = determineCurvatureQuadCoeff(innerPtPart)
+        [val, basicData] = determineTongueLength(innerPtPart, indTongStart, indTongEnd)
+        
     end
     
 end

@@ -49,15 +49,25 @@ function [measures, basicData] = ...
     [curvInvRadius, bDataInvRadius] = ...
         obj.determineCurvatureInvRadius(ptContStart, ptContMid, ptContEnd);
         
-    % start calculating the quadratic approximation -----------------------
+    % start calculating quadratic approximation ---------------------------
     [curvQuadCoeff, bDataQuadCoeff] = ...
         obj.determineCurvatureQuadCoeff(innerPtPart);
+    
+    % start calculating tongue length -------------------------------------
+    
+    indexTongueStart = obj.gridZoning.tongue(1);
+    indexTongueEnd = obj.gridZoning.tongue(2);
+    
+    [tongueLength, bDataTongLength] = ...
+        obj.determineTongueLength(innerPt, indexTongueStart, indexTongueEnd);
     
     % assign values --------------------------------------------------------
     measures.curvatureInversRadius = curvInvRadius;
     measures.curvatureQuadCoeff = curvQuadCoeff;
-
+    measures.tongueLength = tongueLength;
+    
     basicData.invRadius = bDataInvRadius;
     basicData.quadCoeff = bDataQuadCoeff;
+    basicData.tongLength = bDataTongLength;
     
 end

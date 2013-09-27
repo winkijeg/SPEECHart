@@ -35,6 +35,17 @@ function [] = plotMeasureTongueShape(obj, featureName, col)
                         
             plot(contPart(2, :), contPart(3, :), [col '-'], 'Linewidth', 2)
             
+        case 'tongLength'
+            
+            contPart = obj.basicData.tongLength.contPart;
+            ptStart = obj.basicData.tongLength.ptStart;
+            ptEnd = obj.basicData.tongLength.ptEnd;
+            
+            plot(contPart(1, :), contPart(2, :), [col '-'], 'Linewidth', 2)
+            
+            plot(ptStart(1), ptStart(2), [col 's'])
+            plot(ptEnd(1), ptEnd(2), [col 's'])
+            
     end
 
 end
