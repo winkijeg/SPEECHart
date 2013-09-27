@@ -1,5 +1,4 @@
-function [measures, basicData] = ...
-    determineMeasuresTongueShape(obj)
+function obj = determineMeasuresTongueShape(obj)
 
 
     innerPt = obj.filteredContours.innerPt;
@@ -10,6 +9,15 @@ function [measures, basicData] = ...
     ptPharH_d(1:2, 1) = landmarksDerivedMorpho.PharH_d(2:3);
     ptPharL_d(1:2, 1) = landmarksDerivedMorpho.PharL_d(2:3);
 
+    % check phoneme because so far that measures make sense for /a/ only!
+    if (strcmp(obj.phoneme, 'a') == false)
+        
+        str1 = 'SO FAR the m-file %s makes sence for /a/ only ... ';
+        str2 = 'Do NOT use this method for other phonemes!';
+        
+        error( [str1 str2], mfilename);       
+    end
+    
     % extract tongue back contour (feasable part) -------------------------
     indexStart = gridZoning.tongue(1) + 1;
     
@@ -69,5 +77,8 @@ function [measures, basicData] = ...
     basicData.invRadius = bDataInvRadius;
     basicData.quadCoeff = bDataQuadCoeff;
     basicData.tongLength = bDataTongLength;
+    
+    obj.measuresTongueShape = measures;
+    obj.basicData = basicData;
     
 end
