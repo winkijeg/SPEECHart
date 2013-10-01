@@ -4,7 +4,7 @@ function A0=elast_init(TSObj, activeGGA, activeGGP, activeHyo, activeStylo,...
 %   A0 = ELAST_INIT(ACTIVEGGA, ACTIVEGGP, ACTIVEHYO, ACTIVESTYLO, ACTIVESL, 
 %        ACTIVEVERT, NCONTACT)
 %   Compute the elasticity matrix A0 as a function of the different muscles'
-%   activities : E's value is 15kPa for an element at rest and 250 250 kPa for
+%   activities : E's value is 15kPa for an element at rest and 250 kPa for
 %   an element at maximum contraction.
 %   This corresponds to multiplying lambda and mu to upto 16 times their
 %   initial value.
