@@ -15,6 +15,7 @@ classdef SpeakerImaging
         
         measuresMorphology = [];
         measuresTongueShape = [];
+        measuresConstriction = [];
         basicData = [];
         
         semipolarGrid = [];
@@ -71,6 +72,7 @@ classdef SpeakerImaging
         obj = normalizeMidSagittSlice(obj)
 
         obj = determineMeasuresTongueShape(obj);
+        obj = determineMeasuresConstriction(obj)
 
     end
     
@@ -91,6 +93,11 @@ classdef SpeakerImaging
         [val, basicData] = determineCurvatureInvRadius(ptStart, ptMid, ptEnd)
         [val, basicData] = determineCurvatureQuadCoeff(innerPtPart)
         [val, basicData] = determineTongueLength(innerPtPart, indTongStart, indTongEnd)
+        [val, basicData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
+            innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
+
+        [valMin, indMin] = calculateMinBetweenContours(innerCont, outerCont)
+
         
     end
     
