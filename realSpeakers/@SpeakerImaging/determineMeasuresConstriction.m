@@ -37,10 +37,10 @@ function obj = determineMeasuresConstriction(obj)
 %     ptContEnd = innerPtPart(1:2, nPointsPart);
 %     
     % assign values --------------------------------------------------------
-    measures.constrictionHeight = hightRel;
+    measures.relativeConstrHeight = hightRel;
     measures.constrictionWidth = valMin;
     
     obj.measuresConstriction = measures;
-    obj.basicData.constrHeight = bData;
+    obj.UserData.relConstrHeight = bData;
     
 end

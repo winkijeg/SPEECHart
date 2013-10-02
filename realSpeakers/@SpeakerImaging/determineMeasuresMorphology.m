@@ -30,7 +30,6 @@ function measuresMorphology = determineMeasuresMorphology( obj )
     measuresMorphology.lenHoriAbs = lenHoriAbs;
     measuresMorphology.lenVertAbs = lenVertAbs;
     measuresMorphology.ratioVH = ratioVH;
-
     measuresMorphology.palateAngle = palateAngleDegree;
 
 end
