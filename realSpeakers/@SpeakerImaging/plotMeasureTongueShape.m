@@ -1,7 +1,7 @@
 function [] = plotMeasureTongueShape(obj, featureName, col)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-    
+
+
+
     nPointsOnCircle = 100;
 
     switch featureName
