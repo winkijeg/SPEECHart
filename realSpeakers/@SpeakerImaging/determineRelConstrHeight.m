@@ -13,7 +13,6 @@ function [height, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, .
     relHeight =  1 - (lenConstrANSPNSAbs / lenVertAbs);
 
     % assign output values ----------------------------------------------
-    
     height = relHeight;
     UserData.ptConstrHeight = ptConstrHeight;
     
