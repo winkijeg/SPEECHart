@@ -175,17 +175,16 @@ function grd = determineSemipolarGrid(obj)
     end
 
     % determine gridline of bending ------------------------------------
-%     
-%     ptNPW_d(1:2, 1) = obj.landmarksDerivedMorpho.NPW_d(2:3);
-%     midPt2D(1:2, 1) = ptCircleMidpoint(2:3);
-% 
-%     indBending = obj.calcGridlineOfBending(ptInner, ptOuter, midPt2D, ...
-%         ptNPW_d);
+    
+    ptNPW_d = obj.landmarksDerivedMorpho.NPW_d;
+
+    indBending = obj.calcGridlineOfBending(ptInner(2:3, :), ptOuter(2:3, :), ...
+        ptCircleMidpoint, ptNPW_d);
 
     % assign values ...
     grd.innerPt = [ptInner(2, :); ptInner(3, :)];
     grd.outerPt = [ptOuter(2, :); ptOuter(3, :)];
     grd.numberOfGridlines = k;
-    %grd.indexBending = indBending;
+    grd.indexBending = indBending;
 
 end

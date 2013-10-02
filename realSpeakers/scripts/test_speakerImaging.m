@@ -50,3 +50,4 @@ plotMeasureTongueShape(mySpk, 'tongLength', 'k')
 mySpk = determineMeasuresConstriction(mySpk);
 
 plotMeasureConstriction(mySpk, 'relConstrHeight', 'k')
+plotSemipolarGrid(mySpk, 'c', mySpk.semipolarGrid.indexBending)
