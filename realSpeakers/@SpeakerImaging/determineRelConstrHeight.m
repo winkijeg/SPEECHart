@@ -1,14 +1,14 @@
 function [height, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
     innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs)
 
-    pt_ppdPharL_d = landmarksDerivedMorpho.ppdPharL_d(2:3);
-    pt_PharH_d = landmarksDerivedMorpho.PharH_d(2:3);
-    pt_PharL_d = landmarksDerivedMorpho.PharL_d(2:3);
+    ptPpdPharL_d = landmarksDerivedMorpho.ppdPharL_d;
+    ptPharH_d = landmarksDerivedMorpho.PharH_d;
+    ptPharL_d = landmarksDerivedMorpho.PharL_d;
 
-    [~, ptConstrHeight] = lines_exp_int_2d(pt_PharH_d, pt_PharL_d, ...
-        innerPtGrdlineConstr, outerPtGrdlineConstr);
+    [~, ptConstrHeight] = lines_exp_int_2d(ptPharH_d', ptPharL_d', ...
+        innerPtGrdlineConstr', outerPtGrdlineConstr');
 
-    lenConstrANSPNSAbs = points_dist_nd(2, pt_ppdPharL_d, ptConstrHeight);
+    lenConstrANSPNSAbs = points_dist_nd(2, ptPpdPharL_d', ptConstrHeight);
 
     relHeight =  1 - (lenConstrANSPNSAbs / lenVertAbs);
 

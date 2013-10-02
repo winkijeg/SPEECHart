@@ -12,17 +12,17 @@ function gridZoning = zoneGridIntoAnatomicalRegions(obj)
     grd = obj.semipolarGrid;
 
     % anatomical landmarks necessary to zone the contours
-    pt_tongStart = obj.landmarks.VallSin(2:3);
-    pt_tongEnd = obj.landmarks.TongTip(2:3);
+    ptTongStart = obj.landmarks.VallSin;
+    ptTongEnd = obj.landmarks.TongTip;
     
-    pt_pharStart = obj.landmarks.PharL(2:3);
-    pt_pharEnd = obj.landmarks.PharH(2:3);
+    ptPharStart = obj.landmarks.PharL;
+    ptPharEnd = obj.landmarks.PharH;
     
-    pt_velumStart = obj.landmarks.PharH(2:3);
-    pt_velumEnd = obj.landmarks.Velum(2:3);
+    ptVelumStart = obj.landmarks.PharH;
+    ptVelumEnd = obj.landmarks.Velum;
     
-    pt_palateStart = obj.landmarks.Velum(2:3);
-    pt_palateEnd = obj.landmarks.AlvRidge(2:3);
+    ptPalateStart = obj.landmarks.Velum;
+    ptPalateEnd = obj.landmarks.AlvRidge;
 
     % memory allocation
     distGrdLineTargetLandmarkTongStart = ones(1, grd.numberOfGridlines) * NaN;
@@ -40,21 +40,21 @@ function gridZoning = zoneGridIntoAnatomicalRegions(obj)
         ptGrdOuter = grd.outerPt(1:2, k)';
 
         distGrdLineTargetLandmarkTongStart(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_tongStart);
+            ptGrdOuter, ptTongStart');
         distGrdLineTargetLandmarkTongEnd(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_tongEnd);
+            ptGrdOuter, ptTongEnd');
         distGrdLineTargetLandmarkPharStart(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_pharStart);
+            ptGrdOuter, ptPharStart');
         distGrdLineTargetLandmarkPharEnd(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_pharEnd);
+            ptGrdOuter, ptPharEnd');
         distGrdLineTargetLandmarkVelumStart(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_velumStart);
+            ptGrdOuter, ptVelumStart');
         distGrdLineTargetLandmarkVelumEnd(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_velumEnd);
+            ptGrdOuter, ptVelumEnd');
         distGrdLineTargetLandmarkPalateStart(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_palateStart);
+            ptGrdOuter, ptPalateStart');
         distGrdLineTargetLandmarkPalateEnd(k) = segment_point_dist_2d(ptGrdInner, ...
-            ptGrdOuter, pt_palateEnd);
+            ptGrdOuter, ptPalateEnd');
     end
 
 

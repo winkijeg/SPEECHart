@@ -33,7 +33,7 @@ function [] = plotMeasureTongueShape(obj, featureName, col)
             
             contPart = obj.UserData.quadCoeff.contPartApproximated;
                         
-            plot(contPart(2, :), contPart(3, :), [col '-'], 'Linewidth', 2)
+            plot(contPart(1, :), contPart(2, :), [col '-'], 'Linewidth', 2)
             
         case 'tongLength'
             

@@ -52,12 +52,14 @@ function [val, basicData] = determineCurvatureQuadCoeff(innerPtPart)
     contPartApproximated(1:3, :) = [zeros(1, nVals); xValsNew; yValsNew];
 
     tMatInv = inv(tMat);
-    contPartApproximatedTrans(1:3, :) = tmat_mxp2(tMatInv, nVals, contPartApproximated);
+    contPartApproximatedTransTmp(1:3, :) = tmat_mxp2(tMatInv, nVals, ...
+        contPartApproximated);
+    
     
 
     % assign data ---------------------------------------------------------
     val = polynomialCoeff(1);   
-    basicData.contPartApproximated = contPartApproximatedTrans;
+    basicData.contPartApproximated = contPartApproximatedTransTmp(2:3, :);
     
 end
 
