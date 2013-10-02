@@ -48,7 +48,3 @@ plotMeasureTongueShape(mySpk, 'quadCoeff', 'g')
 plotMeasureTongueShape(mySpk, 'tongLength', 'k')
 
 mySpk = determineMeasuresConstriction(mySpk);
-
-
-
-

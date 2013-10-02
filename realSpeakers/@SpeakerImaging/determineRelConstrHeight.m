@@ -1,4 +1,4 @@
-function [height, bData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
+function [height, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
     innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs)
 
     pt_ppdPharL_d = landmarksDerivedMorpho.ppdPharL_d(2:3);
@@ -17,6 +17,6 @@ function [height, bData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
     % assign output values ----------------------------------------------
     
     height = relHeight;
-    bData.pt_h1 = pt_h1;
+    UserData.pt_h1 = pt_h1;
     
 end

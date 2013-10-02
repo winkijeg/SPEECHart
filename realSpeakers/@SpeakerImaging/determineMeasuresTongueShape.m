@@ -70,15 +70,12 @@ function obj = determineMeasuresTongueShape(obj)
         obj.determineTongueLength(innerPt, indexTongueStart, indexTongueEnd);
     
     % assign values --------------------------------------------------------
-    measures.curvatureInversRadius = curvInvRadius;
-    measures.curvatureQuadCoeff = curvQuadCoeff;
-    measures.tongueLength = tongueLength;
+    obj.measuresTongueShape.curvatureInversRadius = curvInvRadius;
+    obj.measuresTongueShape.curvatureQuadCoeff = curvQuadCoeff;
+    obj.measuresTongueShape.tongueLength = tongueLength;
     
-    basicData.invRadius = bDataInvRadius;
-    basicData.quadCoeff = bDataQuadCoeff;
-    basicData.tongLength = bDataTongLength;
-    
-    obj.measuresTongueShape = measures;
-    obj.basicData = basicData;
+    obj.UserData.invRadius = bDataInvRadius;
+    obj.UserData.quadCoeff = bDataQuadCoeff;
+    obj.UserData.tongLength = bDataTongLength;
     
 end

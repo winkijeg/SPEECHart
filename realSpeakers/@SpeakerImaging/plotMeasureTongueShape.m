@@ -8,9 +8,9 @@ function [] = plotMeasureTongueShape(obj, featureName, col)
         
         case 'curvatureInversRadius'
         
-            ptLower = obj.basicData.invRadius.ptStart;
-            ptOrigin = obj.basicData.invRadius.ptMid;
-            ptUpper = obj.basicData.invRadius.ptEnd;
+            ptLower = obj.UserData.invRadius.ptStart;
+            ptOrigin = obj.UserData.invRadius.ptMid;
+            ptUpper = obj.UserData.invRadius.ptEnd;
             
             [r, pc] = circle_exp2imp_2d(ptLower', ptOrigin', ptUpper');
             ptCircle = circle_imp_points_2d(r, pc, nPointsOnCircle);
@@ -31,15 +31,15 @@ function [] = plotMeasureTongueShape(obj, featureName, col)
             
         case 'quadCoeff'
             
-            contPart = obj.basicData.quadCoeff.contPartApproximated;
+            contPart = obj.UserData.quadCoeff.contPartApproximated;
                         
             plot(contPart(2, :), contPart(3, :), [col '-'], 'Linewidth', 2)
             
         case 'tongLength'
             
-            contPart = obj.basicData.tongLength.contPart;
-            ptStart = obj.basicData.tongLength.ptStart;
-            ptEnd = obj.basicData.tongLength.ptEnd;
+            contPart = obj.UserData.tongLength.contPart;
+            ptStart = obj.UserData.tongLength.ptStart;
+            ptEnd = obj.UserData.tongLength.ptEnd;
             
             plot(contPart(1, :), contPart(2, :), [col '-'], 'Linewidth', 2)
             
