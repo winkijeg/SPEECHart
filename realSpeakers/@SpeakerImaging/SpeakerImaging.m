@@ -65,6 +65,7 @@ classdef SpeakerImaging
         [] = plotLandmarksDerived(obj, col)
         [] = plotMeasureMorphology(obj, featureName, col)
         [] = plotMeasureTongueShape(obj, featureName, col)
+        [] = plotMeasureConstriction(obj, featureName, col)
         [] = plotSemipolarGrid(obj, col, nbsOfGrdLines)
         [] = plotContours(obj, flagBspline, col)
         
