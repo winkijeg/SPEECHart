@@ -6,8 +6,8 @@ function obj = determineMeasuresTongueShape(obj)
     gridZoning = obj.gridZoning;
     
     % extract relevant part of the tongue contour
-    ptPharH_d(1:2, 1) = landmarksDerivedMorpho.PharH_d(2:3);
-    ptPharL_d(1:2, 1) = landmarksDerivedMorpho.PharL_d(2:3);
+    ptPharH_d(1:2, 1) = landmarksDerivedMorpho.PharH_d;
+    ptPharL_d(1:2, 1) = landmarksDerivedMorpho.PharL_d;
 
     % check phoneme because so far that measures make sense for /a/ only!
     if (strcmp(obj.phoneme, 'a') == false)

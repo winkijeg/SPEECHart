@@ -8,8 +8,8 @@ function [] = plotLandmarks(obj, col)
         lab_tmp = fieldNamesStr{k};
         ptTmp = obj.landmarks.(fieldNamesStr{k})';
     
-        plot(ptTmp(2), ptTmp(3), [col 'o'], 'MarkerFaceColor', col)
-        text(ptTmp(2)+3, ptTmp(3)+3, lab_tmp, 'Color', col)
+        plot(ptTmp(1), ptTmp(2), [col 'o'], 'MarkerFaceColor', col)
+        text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', col)
     
     end
 

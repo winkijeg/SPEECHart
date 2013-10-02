@@ -8,6 +8,7 @@ classdef SpeakerImaging
         name = '';
         phoneme = '';
         scanOrientation = '';
+        slicePosition3D = [];
         
         landmarks = [];
         landmarksDerivedMorpho = [];
@@ -40,7 +41,15 @@ classdef SpeakerImaging
             obj.phoneme = mat.phonLab;
             obj.scanOrientation = mat.scanOrient;
             
-            obj.landmarks = mat.ptPhysio;
+            obj.slicePosition3D = mat.ptPhysio.Lx(1);
+            
+            % assign landmarks
+            fieldnamesTmp = fieldnames(mat.ptPhysio);
+            for k = 1:length(fieldnamesTmp)
+                ptTmp = mat.ptPhysio.(fieldnamesTmp{k});
+                obj.landmarks.(fieldnamesTmp{k}) = ptTmp(2:3)';
+            end
+            
             obj.landmarksDerivedMorpho = deriveLandmarksMorpho(obj);
             obj.landmarksDerivedGrid = deriveLandmarksGrid(obj);
             
@@ -98,6 +107,7 @@ classdef SpeakerImaging
             innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
 
         [valMin, indMin] = calculateMinBetweenContours(innerCont, outerCont)
+        indBending = calcGridlineOfBending(innerPt, outerPt, ptCircleMidpoint, ptNPW_d)
 
         
     end
