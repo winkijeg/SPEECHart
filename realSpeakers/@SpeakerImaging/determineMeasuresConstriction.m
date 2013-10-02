@@ -32,10 +32,6 @@ function obj = determineMeasuresConstriction(obj)
     [hightRel, bData] = obj.determineRelConstrHeight(landmarksDerivedMorpho, ...
         innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
     
-%     ptContStart = innerPtPart(1:2, 1);
-%     ptContMid = innerPtPart(1:2, round(nPointsPart / 2));
-%     ptContEnd = innerPtPart(1:2, nPointsPart);
-%     
     % assign values --------------------------------------------------------
     measures.relativeConstrHeight = hightRel;
     measures.constrictionWidth = valMin;
