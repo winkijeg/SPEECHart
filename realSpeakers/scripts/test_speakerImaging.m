@@ -10,6 +10,8 @@ scanOrient = 'm';
 
 flagBspline = true;
 
+imgFlag = false;
+
 if ~exist('path_root', 'var')
     [path_root, path_model, path_fList, path_seg] = ...
         initPaths(princInvestigator, speakerName);
@@ -24,12 +26,9 @@ mySpk = SpeakerImaging(mat);
 mySpk = resampleMidSagittSlice(mySpk, 1, 1);
 
 mySpk = determineMeasuresTongueShape(mySpk);
+mySpk = normalizeMidSagittSlice(mySpk);
 
-%plotMidSagittSlice(mySpk);
-%mySpk = normalizeMidSagittSlice(mySpk);
-figure
-hold on
-%plotMidSagittSlice(mySpk);
+initPlotFigure(mySpk, imgFlag);
 
 plotLandmarks(mySpk, 'm')
 plotLandmarksDerived(mySpk, 'c')
