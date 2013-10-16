@@ -69,7 +69,8 @@ classdef SpeakerImaging
             
         end
         
-        [] = plotMidSagittSlice(obj)
+        [] = initPlotFigure(obj, imageFlag);
+
         [] = plotLandmarks(obj, col)
         [] = plotLandmarksDerived(obj, col)
         [] = plotMeasureMorphology(obj, featureName, col)
