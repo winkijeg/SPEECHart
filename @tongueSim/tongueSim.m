@@ -9,6 +9,10 @@ classdef tongueSim < handle
         % coordinates
         XY % Vector containing the tongue shape, odd = x; even = y
         X0; Y0; X0Y0;					  % Modified by Yohan & Majid; Nov 30, 99
+
+        % -----
+        % the vocal tract contour as read from the contour file
+        cont; % an object of class vtcontour
         
         
         % Indexing variables used for the calculation of the elasticity matrix A0
@@ -94,6 +98,7 @@ classdef tongueSim < handle
             end
             TSObj.initSequence(seq);
             TSObj.speaker = spkStr;
+            TSObj.cont = vtcontour([path_model filesep 'data_palais_repos_' spkStr], 'frenchmat');
             %TSObj.initMass();
         end
     end
