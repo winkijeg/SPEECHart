@@ -5,7 +5,7 @@ classdef vtcontour
     properties
         source % Name of the data source (e.g. mat file name)
         X1; X2; X3; X_condyle;
-        Y1; Y2; Y3; Y_condyle;
+        Y1; Y2; Y3; YS; Y_condyle;
         meanx_deviation; % used to be ecarts_meanx
         meany_deviation; % used to be ecarts_meany
         lar_ar; % ???

@@ -7,11 +7,12 @@ try
     cnt.X1 = X1;
     cnt.X2 = X2;
     cnt.X3 = X3;
-    cnt.XS = XS;
+    cnt.X_condyle = XS;
     cnt.Y1 = Y1;
     cnt.Y2 = Y2;
     cnt.Y3 = Y3;
     cnt.YS = YS;
+    cnt.Y_condyle = XS + 8; %center of the jaw movement -- condyle point
     cnt.lowerteeth = dents_inf;
     cnt.meanx_deviation = ecart_meanx; % used to be ecart_meanx
     cnt.meany_deviation = ecart_meany; % used to be ecart_meany
