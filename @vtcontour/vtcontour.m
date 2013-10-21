@@ -4,8 +4,8 @@ classdef vtcontour
     
     properties
         source % Name of the data source (e.g. mat file name)
-        X1; X2; X3; XS;
-        Y1; Y2; Y3; YS;
+        X1; X2; X3; X_condyle;
+        Y1; Y2; Y3; Y_condyle;
         meanx_deviation; % used to be ecarts_meanx
         meany_deviation; % used to be ecarts_meany
         lar_ar; % ???
@@ -60,7 +60,7 @@ classdef vtcontour
             plot(cnt.X1, cnt.Y1, 'o', 'MarkerSize', 10);
             plot(cnt.X2, cnt.Y2, 'o', 'MarkerSize', 10);
             plot(cnt.X3, cnt.Y3, 'o', 'MarkerSize', 10);
-            plot(cnt.XS, cnt.YS, 'o', 'MarkerSize', 10);
+            plot(cnt.X_condyle, cnt.Y_condyle, 'o', 'MarkerSize', 10);
             if (~oldHold) % set hold off if necessary
                 hold('off');
             end
