@@ -13,6 +13,9 @@ classdef tongueSim < handle
         % -----
         % the vocal tract contour as read from the contour file
         cont; % an object of class vtcontour
+        % -----
+        % the rest position as read from the rest file
+        restpos; % an object of class restPos
         
         
         % Indexing variables used for the calculation of the elasticity matrix A0
@@ -99,6 +102,8 @@ classdef tongueSim < handle
             TSObj.initSequence(seq);
             TSObj.speaker = spkStr;
             TSObj.cont = vtcontour([path_model filesep 'data_palais_repos_' spkStr], 'frenchmat');
+            TSObj.restpos = restPos([path_model filesep 'XY_repos_' spkStr], 'frenchmat');
+            TSObj.restpos.interpolate(TSObj.fact);
             %TSObj.initMass();
         end
     end
@@ -112,6 +117,10 @@ classdef tongueSim < handle
         udot3_init(TSObj);
         initMass(TSObj);
         initSequence(TSObj, seq);
+        function plot(TSObj)
+            TSObj.cont.plot();
+            TSObj.restpos.plot();
+        end
     end
     
 end
