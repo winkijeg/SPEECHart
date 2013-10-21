@@ -18,6 +18,7 @@ function A0=elast_init(TSObj, activeGGA, activeGGP, activeHyo, activeStylo,...
 AA=zeros(1,(2*TSObj.NN*TSObj.MM)^2);
 jump=-2;
 xy = zeros(8, (TSObj.NN-1)*(TSObj.MM-1));
+% xy is filled column by column in the for loop, but then xy is never used...
 
 for jj=1:(TSObj.NN-1)*(TSObj.MM-1)    % Loop over elements
   if rem(jj-1,TSObj.NN-1)==0  % jump is incremented at every row change
