@@ -617,7 +617,7 @@ t=0;
 
 % --------------------------------------------------------
 % Constantes de la langue
-% Tongue constantes
+% Tongue constants
 % nu : rapport de Poisson (Poisson's ratio)
 % E  : module d'Young (Young's modulus: stiffness)
 
@@ -787,6 +787,7 @@ end
 nbpalais=size(P_palais,2)+size(P_velum,2);
 
 % Calcul des equations de chaque segment du palais
+% Calculate the equations of every segment of the palate
 pente_P=zeros(nbpalais-1,1);
 org_P=zeros(nbpalais-1,1);
 for i=1:nbpalais-1
