@@ -1,4 +1,6 @@
 classdef tongueSim < handle
+%TONGUESIM a class to handle tongue simulations
+%   SEEALSO restPos vtcontour
     
     properties (Access = public)
         % General Properties

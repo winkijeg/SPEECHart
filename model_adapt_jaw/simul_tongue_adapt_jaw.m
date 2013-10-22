@@ -25,7 +25,7 @@ function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, delta_lambda_
 %           made in reference to the position at rest but to the position for the preceding phoneme
 % light: Specifies the values stored in the output file. If light=1, the
 %           last configuration only is saved (in this case the file is called out_file_light. Otherwise all configurations are saved.
-% For the jaw, the lips and the larynx are the time variations are made
+% For the jaw, the lips and the larynx the time variations are made
 % according to an undamped second order model (Bell-shaped velocity profile)
 %
 % Exemple : simul_tongue_adapt_jaw('av', 'ria', 'ria_trial', [-10 +10], [0 -10], [+10 -10], [-10 +10], [0 -3], [200 200], [-1 -3], [0.05 0.05], [0.150 0.150], [-3 +4], [-2 -2], [0 0], [0 0],0)
