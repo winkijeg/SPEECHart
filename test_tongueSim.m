@@ -5,6 +5,7 @@
 % adapted by Lasse 10/2013
 
 clear *
+close all
 
 spkStr = 'pp_FF1';
 
