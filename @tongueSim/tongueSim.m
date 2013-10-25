@@ -39,6 +39,7 @@ classdef tongueSim < handle
         MMx2 %
         NNxMMx2 %
         Mass % Mass of the nodes
+        invMass % inverse of the mass
         
         % -----
         % tongue constants
@@ -106,7 +107,7 @@ classdef tongueSim < handle
             TSObj.cont = vtcontour([path_model filesep 'data_palais_repos_' spkStr], 'frenchmat');
             TSObj.restpos = restPos([path_model filesep 'XY_repos_' spkStr], 'frenchmat');
             TSObj.restpos.interpolate(TSObj.fact);
-            %TSObj.initMass();
+            TSObj.initMass();
         end
     end
     

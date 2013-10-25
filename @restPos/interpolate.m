@@ -7,7 +7,7 @@ function rp = interpolate( rp, fact )
 
 [MM, NN] = size(rp.X_rest);
 rp.fact = fact;
-disp('Calculate rest positions');
+disp('Calculating rest positions');
 % preallocate for (a marginal gain of) speed
 rp.X0 = zeros(fact*(MM-1)+1,fact*(NN-1)+1);
 rp.Y0 = zeros(fact*(MM-1)+1,fact*(NN-1)+1);
@@ -51,5 +51,7 @@ rp.XY=zeros((MM-1)*2*NN+2*NN,1);
 tX0 = rp.X0'; tY0 = rp.Y0';
 rp.XY = [tX0(:) tY0(:)]'; 
 rp.XY = rp.XY(:);
+rp.NN = NN;
+rp.MM = MM;
 end
 
