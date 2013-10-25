@@ -7,6 +7,7 @@ function rp = initFromFrenchMatfile(rp, source)
 
 try
     load(source);
+    rp.source = fullfile(pwd, source);
     rp.X_rest               = X_repos;
     rp.Y_rest               = Y_repos;
     rp.fac_GGA              = fac_GGA;

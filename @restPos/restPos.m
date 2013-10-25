@@ -8,6 +8,7 @@ classdef restPos < handle
 %   'mandibular symphysis border'.
 
     properties
+       source;
        X_rest; % X components/coordinates of the 9x7 grid
        Y_rest; % Y components/coordinates of the 9x7 grid
        % Proportionality factor between the lambdas of fibres of the
