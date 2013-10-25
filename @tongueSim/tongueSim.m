@@ -1,11 +1,12 @@
 classdef tongueSim < handle
 %TONGUESIM a class to handle tongue simulations
 %   SEEALSO restPos vtcontour
-    
-    properties (Access = public)
+
+properties (Access = public)
         % General Properties
         SEQUENCE
         speaker
+        spkConf; % an object of class spkConfig
         
         % -----
         % coordinates
@@ -90,29 +91,67 @@ classdef tongueSim < handle
         contact;               % Variable indicating wether contact has been made
                                % (for press.m only) (PP Mars 2000)
 
+        activationTime; % WHATSTHIS
+        holdTime; % WHATSTHIS
+        n_phon; % WHATSTHIS
+        jaw_rotation;
+        ll_rotation;
+        lip_protrusion;
+        hyoid_movment;
+        finalTime; finalTimeCum;
+        delta_lambda;
+        kkk;
+        MATRICE_LAMBDA
 
     end
     methods (Access = public)
         % Conctructor
         function TSObj = tongueSim(path_model, spkStr, seq, out_file, ...
-                delta_lambda_ggp, delta_lambda_gga, delta_lambda_hyo, ...
-                delta_lambda_sty, delta_lambda_ver, delta_lambda_sl, ...
-                delta_lambda_il, t_trans, t_hold, jaw_rot, lip_prot, ...
-                ll_rot, hyoid_mov, light)
+            delta_lambda_ggp, delta_lambda_gga, delta_lambda_hyo, ...
+            delta_lambda_sty, delta_lambda_ver, delta_lambda_sl, ...
+            delta_lambda_il, t_trans, t_hold, jaw_rot, lip_prot, ...
+            ll_rot, hyoid_mov, light)
             % TONGUESIM Constructor for the tongueSim class
             if (nargin < 1)
             end
+            %
             TSObj.initSequence(seq);
             TSObj.speaker = spkStr;
             TSObj.cont = vtcontour([path_model filesep 'data_palais_repos_' spkStr], 'frenchmat');
             TSObj.restpos = restPos([path_model filesep 'XY_repos_' spkStr], 'frenchmat');
             TSObj.restpos.interpolate(TSObj.fact);
             TSObj.initMass();
+
+            TSObj.activationTime = t_trans;
+            TSObj.holdTime = t_hold;
+            TSObj.jaw_rotation = jaw_rot;
+            TSObj.ll_rotation = ll_rot;
+            TSObj.lip_protrusion = lip_prot;
+            TSObj.hyoid_movment = hyoid_mov;
+            TSObj.finalTime = activationTime + holdTime; % combiner le t-rise et le t-hold pour t-final
+                                             % combine t_trans (!) and
+                                             % t_hold to t_final
+            TSObj.finalTimeCum = cumsum(finalTime);     % Vector avec le temps final de chaque transition
+                                           % Vector with every transitions'
+                                           % final times
+
+            %A modifier ICI
+            %to modify HERE
+            TSObj.n_phon = length(holdTime);
+            TSObj.delta_lambda=[delta_lambda_ggp' delta_lambda_gga' delta_lambda_hyo' delta_lambda_sty' delta_lambda_ver' delta_lambda_sl' delta_lambda_il']';
+            TSObj.MATRICE_LAMBDA(:,1) = TSObj.spkConf.CONFIGS(1,1:2:14)';
+
+            for np=1:n_phon
+                TSObj.MATRICE_LAMBDA(:,1+np) = delta_lambda(:,np) + TSObj.spkConf.CONFIGS(1,1:2:14)';
+            end
+
+            TSObj.kkk=0; % ??
+
         end
     end
-    
+
     methods (Access = public) % will al lbecome private
-        
+
         % Signatures of methods defined in separate files
         A0 = elast_init(TSObj,activGGA,activGGP,activHyo,activStylo,activSL,...
             activVert,ncontact);
