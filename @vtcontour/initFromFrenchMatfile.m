@@ -21,6 +21,7 @@ try
     cnt.lowerlip = lowlip; % contour of the lower lip, used to be lowlip
     cnt.upperlip = upperlip; % contour of upper lip
     cnt.palate = palate; % contour of the palate, incl upper teeth
+    cnt.upperteeth = palate(:, 1:7);
     cnt.velum = velum; % contour of the velum
     cnt.pharynx = pharynx; % contour of pharyngeal wall
     cnt.tongue_lar = tongue_lar;

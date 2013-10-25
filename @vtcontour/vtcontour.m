@@ -13,6 +13,7 @@ classdef vtcontour
         lowerlip; % contour of the lower lip, used to be lowlip
         upperlip; % contour of upper lip
         palate; % contour of the palate, incl upper teeth
+        upperteeth; % a subset of the palate, actually
         velum; % contour of the velum
         pharynx; % contour of pharyngeal wall
         tongue_lar; % tongue contour from tip to larynx       
