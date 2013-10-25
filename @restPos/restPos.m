@@ -5,7 +5,7 @@ classdef restPos < handle
 %   PLEASE CHECK THIS:
 %   First row represents 'hyoid border', last row represents sublingual
 %   surface, first column represents tongue surface, last column represents
-%   'symphysis border'.
+%   'mandibular symphysis border'.
 
     properties
        X_rest; % X components/coordinates of the 9x7 grid
@@ -32,6 +32,7 @@ classdef restPos < handle
        X0   = []; % Upscaled/interpolated X_rest
        Y0   = []; % Upscaled/interpolated Y_rest
        XY   = []; % collapsed [X0; Y0]'
+       NN; MM;
 
     end
     methods
