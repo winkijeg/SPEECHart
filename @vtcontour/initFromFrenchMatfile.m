@@ -7,6 +7,7 @@ try
     cnt.X1 = X1;
     cnt.X2 = X2;
     cnt.X3 = X3;
+    cnt.XS = XS;
     cnt.X_condyle = XS;
     cnt.Y1 = Y1;
     cnt.Y2 = Y2;
