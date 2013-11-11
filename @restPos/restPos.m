@@ -28,6 +28,14 @@ classdef restPos < handle
        max_restLength_SL; % maximum length at rest for SL
        max_restLength_Stylo; % maximum length at rest for Stylo
        max_restLength_Vert; % maximum length at rest for Vert
+       % actual fibre lengths at rest
+       restLength_GGA; % actual length at rest for GGA
+       restLength_GGP; % actual length at rest for GGP
+       restLength_Hyo; % actual length at rest for Hyo
+       restLength_IL; % actual length at rest for IL
+       restLength_SL; % actual length at rest for SL
+       restLength_Stylo; % actual length at rest for Stylo
+       restLength_Vert; % actual length at rest for Vert
        % scaling and collapsing
        fact = -1; % Scaling factor, to be passed to method interpolate
        X0   = []; % Upscaled/interpolated X_rest
@@ -57,6 +65,7 @@ classdef restPos < handle
         
         rp = initFromFrenchMatfile(rp, source);
         rp = interpolate(rp, fact);
+        rp = calcFiberLength(rp, cont);
         
         function plot(rp)
             oldHold = ishold();
