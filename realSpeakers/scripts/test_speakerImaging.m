@@ -4,7 +4,7 @@ clear *
 close all
 
 princInvestigator = 'PP';
-speakerName = 'FF1';
+speakerName = 'FM2';
 phonLab = 'a';
 scanOrient = 'm';
 
