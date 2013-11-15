@@ -28,10 +28,13 @@ function filteredContours = determineFilteredContour(obj)
         numberOfPointsTmp = size(ptsSelected, 2); % i.e. approx. 28 for tongue
 
         knotsCont = linspace(0, 1, numberOfPointsTmp-splineOrder+2);
-		evaluationPoints = linspace(0, 1, 4*numberOfPointsTmp);
+		evaluationPoints = linspace(0, 1, 5*numberOfPointsTmp);
         
         ptsSelectedSmoothed = deboor_tuned(knotsCont, ptsSelected', ...
             evaluationPoints, splineOrder)';
+        
+        plot(ptsSelectedSmoothed(1, :), ptsSelectedSmoothed(2, :), 'ro')
+        hold on
         
         % get the points back to the grid ---------------------------------
         indGrdLines = contourBoundaries(1)+2:contourBoundaries(2)-1;
@@ -44,6 +47,8 @@ function filteredContours = determineFilteredContour(obj)
             p1 = grd.innerPt(1:2, nbGrdLine);
             p2 = grd.outerPt(1:2, nbGrdLine);
 
+            plot([p1(1) p2(1)], [p1(2) p2(2)], 'b*-')
+            
             stillNoIntersection = true;
             cnt = 1;
             while stillNoIntersection
@@ -51,7 +56,9 @@ function filteredContours = determineFilteredContour(obj)
                 q1 = ptsSelectedSmoothed(1:2, cnt);
                 q2 = ptsSelectedSmoothed(1:2, cnt+1);
 
-                [flag, r] = segments_int_2d(p1', p2', q1', q2');
+                plot([q1(1) q2(1)], [q1(2) q2(2)],'g*-')
+                
+                [flag, r] = segments_int_2d(p1', p2', q1', q2')
 
                 if flag
                     stillNoIntersection = false;
