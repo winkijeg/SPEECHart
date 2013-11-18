@@ -15,6 +15,8 @@ function A0=elast_init(TSObj, activeGGA, activeGGP, activeHyo, activeStylo,...
 %    matrice d'elasticite dependent en effet des points fixes de
 %    l'element considere.
 
+disp('Initializing elasticity matrix.')
+
 AA=zeros(1,(2*TSObj.NN*TSObj.MM)^2);
 jump=-2;
 xy = zeros(8, (TSObj.NN-1)*(TSObj.MM-1));
@@ -36,8 +38,8 @@ for jj=1:(TSObj.NN-1)*(TSObj.MM-1)    % Loop over elements
   %                 -------------
   %                1            2
   % 
-  xy(:,jj)=[TSObj.XY(2*jj-1+jump:2*jj+2+jump);...
-      TSObj.XY(2*jj-1+2*TSObj.NN+jump:2*jj+2+2*TSObj.NN+jump)];
+  xy(:,jj)=[TSObj.restpos.XY(2*jj-1+jump:2*jj+2+jump);...
+      TSObj.restpos.XY(2*jj-1+2*TSObj.NN+jump:2*jj+2+2*TSObj.NN+jump)];
   
   % The components of the elasticity matrix corresponding to each element
   % are added to KK which is a piece of a row of A0.
