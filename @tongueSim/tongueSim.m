@@ -41,22 +41,26 @@ properties (Access = public)
         NNxMMx2 %
         Mass % Mass of the nodes
         invMass % inverse of the mass
+        A0 % the elasticity matrix
         
         % -----
         % tongue constants
         lambda % elastic modulus
         mu % shear
         
+        % Displacement variables
+        Ufin; U; tfin; LOOP; t;
+
         % -----
         % Gaussian variables for squaring the elasticity matrix
-        order = 2; % unclear
-        H = [2., 0, 0; 1., 1., 0; 0.555556, 0.888889, 0.555556;];
-        G = [0., 0, 0; -0.577350, 0.577350, 0; -0.774597, 0., 0.774597;];
-        
+        order;
+        H;
+        G;
+
         f1; f2; f3; f4; f5;          % Coefficients for computing forces
         MU; c;                    % Idem
         f; F;                     % frication constant and frication matrix
-        PXY;                     % Weight
+        FXY;                     % Weight
         v1; v2; v3;                % Temporary variables
         
         % Temporary variables 
@@ -80,6 +84,11 @@ properties (Access = public)
         Att_GGP; Att_GGA; Att_Hyo; 
         Att_Stylo; Att_SL; Att_IL; 
         Att_Vert;      
+
+        % -----
+        % Muscle forces
+        rho; % an object of class muscleForce
+        rho_GG; rho_Hyo; rho_Stylo; rho_SL; rho_IL; 
         
         % -----
         % Flags that might ahve to be made accessable by setter functions
@@ -101,7 +110,7 @@ properties (Access = public)
         finalTime; finalTimeCum;
         delta_lambda;
         kkk;
-        MATRICE_LAMBDA
+        MATRICE_LAMBDA;
 
     end
     methods (Access = public)
@@ -119,8 +128,7 @@ properties (Access = public)
             TSObj.speaker = spkStr;
             TSObj.cont = vtcontour([path_model filesep 'data_palais_repos_' spkStr], 'frenchmat');
             TSObj.restpos = restPos([path_model filesep 'XY_repos_' spkStr], 'frenchmat');
-            TSObj.restpos.interpolate(TSObj.fact);
-            TSObj.initMass();
+            TSObj.spkConf = spkConfig([path_model filesep 'result_stocke_' spkStr], 'frenchmat');
 
             TSObj.activationTime = t_trans;
             TSObj.holdTime = t_hold;
@@ -128,25 +136,39 @@ properties (Access = public)
             TSObj.ll_rotation = ll_rot;
             TSObj.lip_protrusion = lip_prot;
             TSObj.hyoid_movment = hyoid_mov;
-            TSObj.finalTime = activationTime + holdTime; % combiner le t-rise et le t-hold pour t-final
+            TSObj.finalTime = TSObj.activationTime + TSObj.holdTime; % combiner le t-rise et le t-hold pour t-final
                                              % combine t_trans (!) and
                                              % t_hold to t_final
-            TSObj.finalTimeCum = cumsum(finalTime);     % Vector avec le temps final de chaque transition
+            TSObj.finalTimeCum = cumsum(TSObj.finalTime);     % Vector avec le temps final de chaque transition
                                            % Vector with every transitions'
                                            % final times
 
+           TSObj.kkk=0; % ??
+            TSObj.rho = muscleForce(0.22, ...% K_m: in N/mm2, value from Van Lunteren & al. 1990
+                308/(6*TSObj.fact+1), ...%CSA_GG
+                296/3, ... %CSA_Hyo
+                40/2, ... %CSA_Stylo
+                65, ... %CSA_SL
+                88, ... %CSA_IL
+                66/(3*TSObj.fact)); %CSA_vert
+
+            TSObj.restpos.interpolate(TSObj.fact);
+            TSObj.restpos.calcFiberLength(TSObj.cont);
+            TSObj.initVariables();
+
+            TSObj.initMass();
+
             %A modifier ICI
             %to modify HERE
-            TSObj.n_phon = length(holdTime);
+            TSObj.n_phon = length(TSObj.holdTime);
             TSObj.delta_lambda=[delta_lambda_ggp' delta_lambda_gga' delta_lambda_hyo' delta_lambda_sty' delta_lambda_ver' delta_lambda_sl' delta_lambda_il']';
-            TSObj.MATRICE_LAMBDA(:,1) = TSObj.spkConf.CONFIGS(1,1:2:14)';
+            TSObj.MATRICE_LAMBDA(:,1) = TSObj.spkConf.configs(1,1:2:14)';
 
-            for np=1:n_phon
-                TSObj.MATRICE_LAMBDA(:,1+np) = delta_lambda(:,np) + TSObj.spkConf.CONFIGS(1,1:2:14)';
+            for np=1:TSObj.n_phon
+                TSObj.MATRICE_LAMBDA(:,1+np) = TSObj.delta_lambda(:,np) + TSObj.spkConf.configs(1,1:2:14)';
             end
 
-            TSObj.kkk=0; % ??
-
+            TSObj.A0 = TSObj.elast_init(0,0,0,0,0,0,0);
         end
     end
 
@@ -159,6 +181,7 @@ properties (Access = public)
         udot3_init(TSObj);
         initMass(TSObj);
         initSequence(TSObj, seq);
+        initVariables(TSObj);
         function plot(TSObj)
             TSObj.cont.plot();
             TSObj.restpos.plot();
