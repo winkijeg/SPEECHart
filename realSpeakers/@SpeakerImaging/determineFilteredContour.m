@@ -16,7 +16,7 @@ function filteredContours = determineFilteredContour(obj)
     filteredContours = contours;
     
     for k = 1:size(structureListing, 2)
-
+        
         splineOrder = str2double(splineOrderListing{k});
 
         % determine point indices of the part of contour to be smoothed
@@ -32,27 +32,41 @@ function filteredContours = determineFilteredContour(obj)
         
         ptsSelectedSmoothed = deboor_tuned(knotsCont, ptsSelected', ...
             evaluationPoints, splineOrder)';
-        
+                
         % get the points back to the grid ---------------------------------
         indGrdLines = contourBoundaries(1)+2:contourBoundaries(2)-1;
         nGrdLines = length(indGrdLines);
         
+        
+        cnt = 1;
         for j = 1:nGrdLines
                         
             nbGrdLine = indGrdLines(j);
-            % search the intersect. point of the j-th grdline with contour
+            
+            % search the intersection point of the j-th grdline with contour
             p1 = grd.innerPt(1:2, nbGrdLine);
             p2 = grd.outerPt(1:2, nbGrdLine);
 
             stillNoIntersection = true;
-            cnt = 1;
             while stillNoIntersection
                 
                 q1 = ptsSelectedSmoothed(1:2, cnt);
                 q2 = ptsSelectedSmoothed(1:2, cnt+1);
-  
-                [flag, r] = segments_int_2d(p1', p2', q1', q2');
-
+                
+                % test if point q1 lies on grid line (segment p1 -> p2)
+                distTmp = segment_point_dist_2d(p1', p2', q1');
+                
+                if (distTmp <= 0.001)
+                    
+                    flag = true;
+                    r = q1;
+                
+                else
+                    
+                    [flag, r] = segments_int_2d(p1', p2', q1', q2');
+                
+                end
+                
                 if flag
                     stillNoIntersection = false;
                     filteredContours.(pointSelection{k})(1:2, nbGrdLine) = r;
@@ -62,6 +76,7 @@ function filteredContours = determineFilteredContour(obj)
             end
             
         end
+        
     end
 
 end

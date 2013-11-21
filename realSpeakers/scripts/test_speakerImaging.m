@@ -3,10 +3,10 @@
 clear *
 close all
 
-princInvestigator = 'PP';
-speakerName = 'FM7';
+princInvestigator = 'PH';
+speakerName = 'GM6';
 phonLab = 'a';
-scanOrient = 'm';
+scanOrient = 's';
 
 flagBspline = true;
 
