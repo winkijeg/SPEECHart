@@ -17,6 +17,15 @@ classdef vtcontour
         velum; % contour of the velum
         pharynx; % contour of pharyngeal wall
         tongue_lar; % tongue contour from tip to larynx       
+        Vect_dents; % 
+        Point_dents; 
+        slope_D;
+        org_D;
+        nbpalais;
+        Point_P;
+        slope_P;
+        org_P;
+        nbpdent;
     end
     
     methods
@@ -40,10 +49,13 @@ classdef vtcontour
             else
                 error('Unknown contour contructor type');
             end
+            cnt = cnt.fixedParts();
         end
         
         cnt = initFromFrenchMatfile(cnt, source);
         
+        cnt = fixedParts(cnt);
+
         function plot(cnt)
             % PLOT plot a vtcontour object
             cntNames = properties(cnt); % get names of all properties
@@ -56,16 +68,17 @@ classdef vtcontour
                 if (size(cnt.(cur),1)~=2)
                     continue;
                 end;
-                plot(cnt.(cur)(1,:), cnt.(cur)(2,:));
+                plot(cnt.(cur)(1,:), cnt.(cur)(2,:), 'k-');
             end
             plot(cnt.X1, cnt.Y1, 'o', 'MarkerSize', 10);
             plot(cnt.X2, cnt.Y2, 'o', 'MarkerSize', 10);
             plot(cnt.X3, cnt.Y3, 'o', 'MarkerSize', 10);
-            plot(cnt.X_condyle, cnt.Y_condyle, 'o', 'MarkerSize', 10);
+            plot(cnt.X_condyle, cnt.Y_condyle, 'ro', 'MarkerSize', 10);
             if (~oldHold) % set hold off if necessary
                 hold('off');
             end
         end
+
     end
     
 end
