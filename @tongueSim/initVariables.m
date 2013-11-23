@@ -52,6 +52,9 @@ function initIndices( TSObj )
 	TSObj.LOOP=0;
 	TSObj.U=zeros(1,4*TSObj.NN*TSObj.MM);
 	TSObj.t=0;
+	% TSObj.t0=0;
+	TSObj.U0=[TSObj.U(size(TSObj.t)*[0;1],1:2*TSObj.NN*TSObj.MM)]';
+	TSObj.U0(2*TSObj.NN*TSObj.MM+1:4*TSObj.NN*TSObj.MM,1)=zeros(2*TSObj.NN*TSObj.MM,1);
 
 
 	% --------------------------------------------------------
@@ -66,4 +69,11 @@ function initIndices( TSObj )
 	% Constantes d'elasticite lambda et mu
 	TSObj.lambda=(nu*E)/((1+nu)*(1-2*nu)); % elastic modulus
 	TSObj.mu=E/(2*(1+nu)); % shear
+
+
+	TSObj.TEMPS = 0;
+	TSObj.FXY_T = zeros(1, 2*TSObj.MM*TSObj.NN);
+	TSObj.ACCL_T = zeros(1, 2*TSObj.MM*TSObj.NN);
+	TSObj.ACTIV_T = 0;
+	TSObj.LAMBDA_T = 0;
 
