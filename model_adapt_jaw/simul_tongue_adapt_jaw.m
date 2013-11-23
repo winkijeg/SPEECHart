@@ -840,6 +840,8 @@ plot(tongue_lar_mri(1,:), tongue_lar_mri(2,:),'r')
 % Resolution de l'equa diff qui donne les tableaux tfin et Ufin
 % ODE45 calcule lui-meme les differents t de t0 a tf*nb_voyelles
 
+
+%%ACHTUNG 
 disp('Calcul de l''equa diff')
 t0=0;
 U0=[U(size(t)*[0;1],1:2*NN*MM)]';
