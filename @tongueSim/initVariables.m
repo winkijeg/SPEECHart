@@ -1,4 +1,4 @@
-function initIndices( TSObj )
+function initVariables( TSObj )
 	
 
 	% Indexing variables used for the calculation of the elasticity matrix A0
