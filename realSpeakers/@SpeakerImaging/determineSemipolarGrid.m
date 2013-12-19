@@ -54,7 +54,7 @@ function grd = determineSemipolarGrid(obj)
     k = 1;
     hasNext = 1;
     while hasNext
-
+        
         [ptInnerNew, ptOuterNew] = ...
             get_grdLine_Translation(ptInnerTmp, ptOuterTmp, (k-1)*distGridlines, ...
             [0; h4], [0 0 0]', angleRot);
