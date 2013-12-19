@@ -1,9 +1,8 @@
-function [root, model, fList, seg] = initPaths(princInvestigator, spkName)
-
-root = 'e:\projects\project_refactoring\';
+function [root, model, mri] = initPaths(princInvest, spkName)
     
-model = [root 'data\db_final\' princInvestigator '_' spkName '\model\'];
-fList = [root 'data\db_final\' princInvestigator '_' spkName '\'];
-seg = [root 'data\db_final\' princInvestigator '_' spkName '\2d\'];
+    root = 'e:/projects/project_refactoring/code_matlab/';
+    
+    model = [root 'data/db_examples/' princInvest '_' spkName '/speakerModel/'];
+    mri = [root 'data/db_examples/' princInvest '_' spkName '/speakerImaging/'];
 
-
+end
