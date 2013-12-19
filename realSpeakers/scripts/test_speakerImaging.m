@@ -1,11 +1,12 @@
-% script 
+% read data prepared for SpeakerImaging object, create it and plot some
+% features
 
 clearvars
 close all
 
 princInvestigator = 'PP';
 speakerName = 'FF1';
-phonLab = '@';
+phonLab = 'a';
 
 flagBspline = true;
 
@@ -22,7 +23,6 @@ mat = load([pathImaging fn_speakerMat]);
 mySpk = SpeakerImaging(mat);
 
 mySpk = resampleMidSagittSlice(mySpk, 1, 1);
-
 
 if strcmp(phonLab, 'a')
     mySpk = determineMeasuresTongueShape(mySpk);

@@ -5,7 +5,7 @@ clearvars
 % specify whose data should be collected into a matlab structure
 princInvestigator = 'PP';
 speakerName = 'FF1';
-phonLab = '@';
+phonLab = 'a';
 
 % specify name of output mat-file with collected data 
 fn_mat_out = [princInvestigator '_' speakerName '_' phonLab '.mat'];
