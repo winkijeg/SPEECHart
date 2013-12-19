@@ -1,31 +1,33 @@
 % script 
 
-clear *
+clearvars
 close all
 
-princInvestigator = 'PH';
-speakerName = 'GM6';
-phonLab = 'a';
-scanOrient = 's';
+princInvestigator = 'PP';
+speakerName = 'FF1';
+phonLab = '@';
 
 flagBspline = true;
 
-imgFlag = false;
+imgFlag = true; %false;
 
-if ~exist('path_root', 'var')
-    [path_root, path_model, path_fList, path_seg] = ...
-        initPaths(princInvestigator, speakerName);
-end
+[~, ~, pathImaging] = ...
+    initPaths(princInvestigator, speakerName);
 
 % ------------------------------------------------------------------------
 
 fn_speakerMat = [princInvestigator '_' speakerName '_' phonLab '.mat'];
-mat = load([path_fList fn_speakerMat]);
+mat = load([pathImaging fn_speakerMat]);
 
 mySpk = SpeakerImaging(mat);
+
 mySpk = resampleMidSagittSlice(mySpk, 1, 1);
 
-mySpk = determineMeasuresTongueShape(mySpk);
+
+if strcmp(phonLab, 'a')
+    mySpk = determineMeasuresTongueShape(mySpk);
+end
+
 mySpk = normalizeMidSagittSlice(mySpk);
 
 initPlotFigure(mySpk, imgFlag);
@@ -42,11 +44,13 @@ plotContours(mySpk, flagBspline, 'b')
 plotSemipolarGrid(mySpk, 'r', 5:20)
 
 % plot tongue shape measures
-plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'm')
-plotMeasureTongueShape(mySpk, 'quadCoeff', 'g')
-plotMeasureTongueShape(mySpk, 'tongLength', 'k')
+if strcmp(phonLab, 'a')
+    plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'm')
+    plotMeasureTongueShape(mySpk, 'quadCoeff', 'g')
+    plotMeasureTongueShape(mySpk, 'tongLength', 'k')
 
-mySpk = determineMeasuresConstriction(mySpk);
+    mySpk = determineMeasuresConstriction(mySpk);
 
-plotMeasureConstriction(mySpk, 'relConstrHeight', 'k')
-plotSemipolarGrid(mySpk, 'c', mySpk.semipolarGrid.indexBending)
+    plotMeasureConstriction(mySpk, 'relConstrHeight', 'k')
+    plotSemipolarGrid(mySpk, 'c', mySpk.semipolarGrid.indexBending)
+end

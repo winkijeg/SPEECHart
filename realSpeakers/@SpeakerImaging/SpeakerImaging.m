@@ -7,7 +7,6 @@ classdef SpeakerImaging
         princInvestigator = '';
         name = '';
         phoneme = '';
-        scanOrientation = '';
         slicePosition3D = [];
         
         landmarks = [];
@@ -39,7 +38,6 @@ classdef SpeakerImaging
             obj.princInvestigator = mat.princInvestigator;
             obj.name = mat.speakerName;
             obj.phoneme = mat.phonLab;
-            obj.scanOrientation = mat.scanOrient;
             
             obj.slicePosition3D = mat.ptPhysio.Lx(1);
             
@@ -71,19 +69,24 @@ classdef SpeakerImaging
         
         [] = initPlotFigure(obj, imageFlag);
 
-        [] = plotLandmarks(obj, col)
-        [] = plotLandmarksDerived(obj, col)
-        [] = plotMeasureMorphology(obj, featureName, col)
-        [] = plotMeasureTongueShape(obj, featureName, col)
-        [] = plotMeasureConstriction(obj, featureName, col)
-        [] = plotSemipolarGrid(obj, col, nbsOfGrdLines)
-        [] = plotContours(obj, flagBspline, col)
+        [] = plotLandmarks(obj, col);
+        [] = plotLandmarksDerived(obj, col);
+        [] = plotMeasureMorphology(obj, featureName, col);
+        [] = plotMeasureTongueShape(obj, featureName, col);
+        [] = plotMeasureConstriction(obj, featureName, col);
+        [] = plotSemipolarGrid(obj, col, nbsOfGrdLines);
+        [] = plotContours(obj, flagBspline, col);
         
-        obj = resampleMidSagittSlice(obj, targetPixelWidth, targetPixelHeight)
-        obj = normalizeMidSagittSlice(obj)
+        obj = resampleMidSagittSlice(obj, targetPixelWidth, targetPixelHeight);
+        obj = normalizeMidSagittSlice(obj);
 
         obj = determineMeasuresTongueShape(obj);
         obj = determineMeasuresConstriction(obj);
+        
+        landmarks = exportLandmarksToModelFormat(obj)
+        structures = exportStructuresToModelFormat(obj);
+        
+
 
     end
     
@@ -101,15 +104,14 @@ classdef SpeakerImaging
 
     methods (Static)
         
-        [val, UserData] = determineCurvatureInvRadius(ptStart, ptMid, ptEnd)
-        [val, UserData] = determineCurvatureQuadCoeff(innerPtPart)
-        [val, UserData] = determineTongueLength(innerPtPart, indTongStart, indTongEnd)
+        [val, UserData] = determineCurvatureInvRadius(ptStart, ptMid, ptEnd);
+        [val, UserData] = determineCurvatureQuadCoeff(innerPtPart);
+        [val, UserData] = determineTongueLength(innerPtPart, indTongStart, indTongEnd);
         [val, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
             innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
 
-        [valMin, indMin] = calculateMinBetweenContours(innerCont, outerCont)
-        indBending = calcGridlineOfBending(innerPt, outerPt, ptCircleMidpoint, ptNPW_d)
-
+        [valMin, indMin] = calculateMinBetweenContours(innerCont, outerCont);
+        indBending = calcGridlineOfBending(innerPt, outerPt, ptCircleMidpoint, ptNPW_d);
         
     end
     
