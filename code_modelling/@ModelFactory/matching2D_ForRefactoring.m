@@ -1,4 +1,4 @@
-function mat = matching2D_ForRefactoring(obj, speaker)
+function mat = matching2D_ForRefactoring(obj, matRawModelTarget)
 % fits the generic model to the speaker-specific anatomy
 %
 
@@ -9,12 +9,12 @@ ncol = 13;
 % vocal tract contours, and the (P1, P2, and P3) of the speaker to which the
 % model will be adapted.
 
-X_contour = obj.matSource.structures.tongueSurface(1, :);
-Y_contour = obj.matSource.structures.tongueSurface(2, :);
+X_contour = matRawModelTarget.structures.tongueSurface(1, :);
+Y_contour = matRawModelTarget.structures.tongueSurface(2, :);
 
-styloidProcess = obj.matSource.landmarks.styloidProcess;
-tongInsL = obj.matSource.landmarks.tongInsL;
-tongInsH = obj.matSource.landmarks.tongInsH;
+styloidProcess = matRawModelTarget.landmarks.styloidProcess;
+tongInsL = matRawModelTarget.landmarks.tongInsL;
+tongInsH = matRawModelTarget.landmarks.tongInsH;
 
 % Insertion points: 3 points for the hyoglossus on the hyoid bone :
 X1 = obj.modelGeneric.landmarks.hyoA(1);
@@ -24,12 +24,12 @@ Y2 = obj.modelGeneric.landmarks.hyoB(2);
 X3 = obj.modelGeneric.landmarks.hyoC(1);
 Y3 = obj.modelGeneric.landmarks.hyoC(2);
 
-lar_ar_mri = obj.matSource.structures.larynxArytenoid;
-palate_mri = obj.matSource.structures.upperIncisorPalate;
-pharynx_mri = obj.matSource.structures.backPharyngealWall;
-tongue_lar_mri = obj.matSource.structures.tongueLarynx;
-upperlip_mri = obj.matSource.structures.upperLip;
-velum_mri = obj.matSource.structures.velum;
+lar_ar_mri = matRawModelTarget.structures.larynxArytenoid;
+palate_mri = matRawModelTarget.structures.upperIncisorPalate;
+pharynx_mri = matRawModelTarget.structures.backPharyngealWall;
+tongue_lar_mri = matRawModelTarget.structures.tongueLarynx;
+upperlip_mri = matRawModelTarget.structures.upperLip;
+velum_mri = matRawModelTarget.structures.velum;
 
 % Data related to the original (generic) tongue model (YPM)
 % Mesh at rest
@@ -619,7 +619,7 @@ title('Matching in sagittal plane')
 
 
 % plot the final result
-figure('NumberTitle', 'off', 'Name',['Model adapted to speaker ' speaker]);
+figure
 for j=1:ncol
     for i=1:nligne-1
         plot([X_repos_new(i,j) X_repos_new(i+1,j)], ...
@@ -645,7 +645,7 @@ plot(lowlip_new(1,:),lowlip_new(2,:),'k')
 axis('equal')
 
 
-% ------------------ save data -----------------------------------------------
+% ------------------ store data in matrix ------------------------------------
 
 mat.landmarks.styloidProcess = [XS_new; YS_new];
 mat.landmarks.hyo1 = [X1_new; Y1_new];
@@ -670,5 +670,5 @@ mat.structures.lowerIncisor = dents_inf_new;
 mat.structures.lowerLip = lowlip_new;
 
 % Save the adopted tongue rest position 
-mat.tongGrid.x = X_repos_new;
-mat.tongGrid.y = Y_repos_new;
+mat.tongGrid.x = reshape(X_repos_new', 1, 221);
+mat.tongGrid.y = reshape(Y_repos_new', 1, 221);

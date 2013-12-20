@@ -83,11 +83,8 @@ classdef SpeakerImaging
         obj = determineMeasuresTongueShape(obj);
         obj = determineMeasuresConstriction(obj);
         
-        landmarks = exportLandmarksToModelFormat(obj)
-        structures = exportStructuresToModelFormat(obj);
+        matModelTarget = convertToRawModelFormat(obj)
         
-
-
     end
     
     methods (Access = private)
@@ -100,6 +97,10 @@ classdef SpeakerImaging
         contours = determineOutlineFromSegmentation(obj);
         filteredContours = determineFilteredContour(obj);
 
+        landmarks = exportLandmarksToModelFormat(obj)
+        structures = exportStructuresToModelFormat(obj);
+
+        
     end
 
     methods (Static)
