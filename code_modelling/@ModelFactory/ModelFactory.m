@@ -6,25 +6,17 @@ classdef ModelFactory
         
         modelGeneric
         
-        matSource
-        
     end
     
     methods
         
-        function obj = ModelFactory(matFileName)
+        function obj = ModelFactory(matModelGeneric)
             
-            % load target model data (mat-file of ypm-model)
-            mat = load(matFileName);
-            
-            obj.modelGeneric = SpeakerModel(mat);
+            obj.modelGeneric = SpeakerModel(matModelGeneric);
             
         end
-    
         
-        
-        obj = adoptSpeakerImagingToGeneric(obj, spkImaging);
-        mat = matching2D_ForRefactoring(obj, spkName);
+        mat = matching2D_ForRefactoring(obj, matRawModelTarget);
 
     end
         
