@@ -16,4 +16,4 @@ ts=tongueSim(path_model, spkStr, 'rya', 'rya', [-20 10], [20 -10], ...
     [-3 8], [3 -5], [-4 6], [5 -3], 1);
 
 ts.plot();
-
+ts.simulate()
