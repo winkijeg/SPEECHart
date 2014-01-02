@@ -15,8 +15,6 @@ try
     cnt.YS = YS;
     cnt.Y_condyle = XS + 8; %center of the jaw movement -- condyle point
     cnt.lowerteeth = dents_inf;
-    cnt.meanx_deviation = ecart_meanx; % used to be ecart_meanx
-    cnt.meany_deviation = ecart_meany; % used to be ecart_meany
     cnt.lar_ar = lar_ar; % ???
     cnt.lowerteeth = dents_inf; % used to be dents_inf
     cnt.lowerlip = lowlip; % contour of the lower lip, used to be lowlip
