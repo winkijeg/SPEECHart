@@ -32,7 +32,7 @@ function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, delta_lambda_
 
 % next two lines: loaded from 'path_model/contour' file, except *_mri
 % (variables in file do not have this suffix)
-global dents_inf ecart_meanx ecart_meany lar_ar_mri tongue_lar_mri lowlip palate pharynx_mri
+global dents_inf lar_ar_mri tongue_lar_mri lowlip palate pharynx_mri
 global tongue_lar upperlip velum
 % Variables qui est transmises comme variables globales
 global sujet % PP Dec 06
