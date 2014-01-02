@@ -251,7 +251,7 @@ end
 
 % ---------------------------------------------------------------
 % Calcul de lambda a l'instant t grace a la fonction COMLAMBDA
-LAMBDA = sparse(Comlambda_adapt_jaw(t));    % Plusieurs transitions (pas d'influence
+LAMBDA = sparse(comLambda_adapt_jaw(t));    % Plusieurs transitions (pas d'influence
 %            des muscles dont les lambdas ont la valeur de repos)
 % Attribution de chaque lambda aux muscles
 for i=1:1+3*fact

@@ -1,4 +1,4 @@
-function LAMBDA = Comlambda_adapt_jaw(t)
+function LAMBDA = comLambda_adapt_jaw(t)
 % no clue what happens (so far)
 
     global TEMPS_FINAL_CUM
