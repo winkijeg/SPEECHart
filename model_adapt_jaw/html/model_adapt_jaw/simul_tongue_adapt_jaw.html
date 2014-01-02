@@ -1,0 +1,1216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of simul_tongue_adapt_jaw</title>
+  <meta name="keywords" content="simul_tongue_adapt_jaw">
+  <meta name="description" content="Modèle Payan &amp; Perrier /Zandipour Tongue Jaw">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; simul_tongue_adapt_jaw.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>simul_tongue_adapt_jaw
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Modèle Payan &amp; Perrier /Zandipour Tongue Jaw</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, delta_lambda_ggp, delta_lambda_gga, delta_lambda_hyo, delta_lambda_sty, delta_lambda_ver, delta_lambda_sl, delta_lambda_il, t_trans, t_hold, jaw_rot, lip_prot, ll_rot, hyoid_mov, light) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Modèle Payan &amp; Perrier /Zandipour Tongue Jaw
+ Juli 2011 PP
+ nom_sujet: speaker name
+ seq: Sequence of phonemes (always starting with r (rest position)
+ out_file: Name of the output file
+ delta_lambda_ggp: GGP commands in mm for all phonemes of the sequence except
+                 the initial rest position - These values are referenced to
+                 the value at rest (negatif=activation)
+ delta_lambda_gga: GGA commands (see details for GGP)
+ delta_lambda_hyo: HYO commands (see details for GGP)
+ delta_lambda_sty: STY commands (see details for GGP)
+ delta_lambda_ver: VERT commands (see details for GGP)
+ delta_lambda_sl: SL commands (see details for GGP)
+ delta_lambda_il: IL commands (see details for GGP)
+ t_trans: Transition duration in (s) between phonemes including the initial rest position
+ t_hold: Hold duration (in s) for all phonemes except the initial rest position
+ jaw_rot: Successive rotation angles of the jaw in degrees. Positiv= aperture. These commands are not
+           made in reference to the position at rest but to the position for the preceding phoneme
+ lip_prot: Successive horizontal displacement of lips in mm. Positiv= protrusion. These commands are not
+           made in reference to the position at rest but to the position for the preceding phoneme.
+ ll_rot: Successive rotation angles of the lips in degrees. Positiv= aperture. These commands are not
+           made in reference to the position at rest but to the position for the preceding phoneme
+ hyoid_mov: Successive vertical displacement of the epipharynx in mm. positiv= lowering. These commands are not
+           made in reference to the position at rest but to the position for the preceding phoneme
+ light: Specifies the values stored in the output file. If light=1, the
+           last configuration only is saved (in this case the file is called out_file_light. Otherwise all configurations are saved.
+ For the jaw, the lips and the larynx the time variations are made
+ according to an undamped second order model (Bell-shaped velocity profile)
+
+ Exemple : simul_tongue_adapt_jaw('av', 'ria', 'ria_trial', [-10 +10], [0 -10], [+10 -10], [-10 +10], [0 -3], [200 200], [-1 -3], [0.05 0.05], [0.150 0.150], [-3 +4], [-2 -2], [0 0], [0 0],0)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="elast_init.html" class="code" title="function A0 = elast_init(XY, lambda, mu, ordre, H, G, MM, NN)">elast_init</a>	initialises the elasticity matrix</li><li><a href="ode45plus.html" class="code" title="function [tout, yout] = ode45plus(ypfun, t0, tf, y0, tol, storestep)">ode45plus</a>	ODE45PLUS Solve differential equation in the same fashion as</li><li><a href="udot3init_adapt.html" class="code" title="">udot3init_adapt</a>	udot3init_adapt.m</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, delta_lambda_ggp, delta_lambda_gga, delta_lambda_hyo, delta_lambda_sty, delta_lambda_ver, delta_lambda_sl, delta_lambda_il, t_trans, t_hold, jaw_rot, lip_prot, ll_rot, hyoid_mov, light)</a>
+0002 <span class="comment">% Modèle Payan &amp; Perrier /Zandipour Tongue Jaw</span>
+0003 <span class="comment">% Juli 2011 PP</span>
+0004 <span class="comment">% nom_sujet: speaker name</span>
+0005 <span class="comment">% seq: Sequence of phonemes (always starting with r (rest position)</span>
+0006 <span class="comment">% out_file: Name of the output file</span>
+0007 <span class="comment">% delta_lambda_ggp: GGP commands in mm for all phonemes of the sequence except</span>
+0008 <span class="comment">%                 the initial rest position - These values are referenced to</span>
+0009 <span class="comment">%                 the value at rest (negatif=activation)</span>
+0010 <span class="comment">% delta_lambda_gga: GGA commands (see details for GGP)</span>
+0011 <span class="comment">% delta_lambda_hyo: HYO commands (see details for GGP)</span>
+0012 <span class="comment">% delta_lambda_sty: STY commands (see details for GGP)</span>
+0013 <span class="comment">% delta_lambda_ver: VERT commands (see details for GGP)</span>
+0014 <span class="comment">% delta_lambda_sl: SL commands (see details for GGP)</span>
+0015 <span class="comment">% delta_lambda_il: IL commands (see details for GGP)</span>
+0016 <span class="comment">% t_trans: Transition duration in (s) between phonemes including the initial rest position</span>
+0017 <span class="comment">% t_hold: Hold duration (in s) for all phonemes except the initial rest position</span>
+0018 <span class="comment">% jaw_rot: Successive rotation angles of the jaw in degrees. Positiv= aperture. These commands are not</span>
+0019 <span class="comment">%           made in reference to the position at rest but to the position for the preceding phoneme</span>
+0020 <span class="comment">% lip_prot: Successive horizontal displacement of lips in mm. Positiv= protrusion. These commands are not</span>
+0021 <span class="comment">%           made in reference to the position at rest but to the position for the preceding phoneme.</span>
+0022 <span class="comment">% ll_rot: Successive rotation angles of the lips in degrees. Positiv= aperture. These commands are not</span>
+0023 <span class="comment">%           made in reference to the position at rest but to the position for the preceding phoneme</span>
+0024 <span class="comment">% hyoid_mov: Successive vertical displacement of the epipharynx in mm. positiv= lowering. These commands are not</span>
+0025 <span class="comment">%           made in reference to the position at rest but to the position for the preceding phoneme</span>
+0026 <span class="comment">% light: Specifies the values stored in the output file. If light=1, the</span>
+0027 <span class="comment">%           last configuration only is saved (in this case the file is called out_file_light. Otherwise all configurations are saved.</span>
+0028 <span class="comment">% For the jaw, the lips and the larynx the time variations are made</span>
+0029 <span class="comment">% according to an undamped second order model (Bell-shaped velocity profile)</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Exemple : simul_tongue_adapt_jaw('av', 'ria', 'ria_trial', [-10 +10], [0 -10], [+10 -10], [-10 +10], [0 -3], [200 200], [-1 -3], [0.05 0.05], [0.150 0.150], [-3 +4], [-2 -2], [0 0], [0 0],0)</span>
+0032 
+0033 <span class="comment">% next two lines: loaded from 'path_model/contour' file, except *_mri</span>
+0034 <span class="comment">% (variables in file do not have this suffix)</span>
+0035 <span class="keyword">global</span> dents_inf lar_ar_mri tongue_lar_mri lowlip palate pharynx_mri
+0036 <span class="keyword">global</span> tongue_lar upperlip velum
+0037 <span class="comment">% Variables qui est transmises comme variables globales</span>
+0038 <span class="keyword">global</span> sujet <span class="comment">% PP Dec 06</span>
+0039 <span class="keyword">global</span> rest_file <span class="comment">% PP Juillet 2006</span>
+0040 <span class="keyword">global</span> contour_file <span class="comment">% PP Juillet 2006</span>
+0041 <span class="keyword">global</span> result_stocke_file <span class="comment">%PP Nov 06</span>
+0042 <span class="keyword">global</span> MATRICE_LAMBDA
+0043 <span class="keyword">global</span> X_origin_initial Y_origin_initial <span class="comment">% GB Mars 2011</span>
+0044 <span class="keyword">global</span> X_repos Y_repos <span class="comment">%PP Nov 06</span>
+0045 <span class="keyword">global</span> longrepos_GGA_max longrepos_GGP_max longrepos_Hyo_max longrepos_IL_max longrepos_SL_max longrepos_Stylo_max longrepos_Vert_max <span class="comment">%PP Nov 06</span>
+0046 <span class="keyword">global</span> file_mat <span class="comment">% PP Mars 2011</span>
+0047 <span class="keyword">global</span> jaw_rotation t_initial t_transition t_final theta X0_rest_pos Y0_rest_pos alpha_rest_pos dist_rest_pos
+0048 <span class="keyword">global</span> alpha_rest_pos_dents_inf dist_rest_pos_dents_inf alpha_rest_pos_lowlip dist_rest_pos_lowlip
+0049 <span class="keyword">global</span> X_origin Y_origin theta_start X_origin_ll Y_origin_ll U_X_origin U_Y_origin
+0050 <span class="keyword">global</span> ll_rotation lip_protrusion theta_ll dist_lip lowlip_initial dist_hyoid hyoid_movment hyoid_start
+0051 <span class="keyword">global</span> lar_ar_mri_initial tongue_lar_mri_initial pharynx_mri_initial
+0052 
+0053 <span class="comment">%</span>
+0054 <span class="keyword">global</span> A0;
+0055 <span class="keyword">global</span> N;
+0056 <span class="keyword">global</span> NN;
+0057 <span class="keyword">global</span> MM;
+0058 <span class="keyword">global</span> fact;
+0059 <span class="keyword">global</span> lambda;
+0060 <span class="keyword">global</span> mu;
+0061 <span class="keyword">global</span> X;
+0062 <span class="keyword">global</span> Y;
+0063 <span class="keyword">global</span> XY;
+0064 <span class="keyword">global</span> FXY;
+0065 <span class="keyword">global</span> l;
+0066 <span class="keyword">global</span> L;
+0067 <span class="keyword">global</span> X0;
+0068 <span class="keyword">global</span> Y0;
+0069 <span class="keyword">global</span> H;
+0070 <span class="keyword">global</span> G;
+0071 <span class="comment">% Points d'attaches des muscles externes</span>
+0072 <span class="comment">% Attachment points of the external muscles</span>
+0073 <span class="keyword">global</span> XS; <span class="comment">% loaded from 'path_model/contour' file</span>
+0074 <span class="keyword">global</span> YS; <span class="comment">% loaded from 'path_model/contour' file</span>
+0075 <span class="keyword">global</span> X1; <span class="comment">% loaded from 'path_model/contour' file</span>
+0076 <span class="keyword">global</span> Y1; <span class="comment">% loaded from 'path_model/contour' file</span>
+0077 <span class="keyword">global</span> X2; <span class="comment">% loaded from 'path_model/contour' file</span>
+0078 <span class="keyword">global</span> Y2; <span class="comment">% loaded from 'path_model/contour' file</span>
+0079 <span class="keyword">global</span> X3; <span class="comment">% loaded from 'path_model/contour' file</span>
+0080 <span class="keyword">global</span> Y3; <span class="comment">% loaded from 'path_model/contour' file</span>
+0081 <span class="comment">% Longueurs au repos des muscles</span>
+0082 <span class="comment">% Length of muscles at rest</span>
+0083 <span class="keyword">global</span> longrepos_GGP; <span class="comment">% loaded from 'path_model/repos' file</span>
+0084 <span class="keyword">global</span> longrepos_GGA; <span class="comment">% loaded from 'path_model/repos' file</span>
+0085 <span class="keyword">global</span> longrepos_Hyo; <span class="comment">% loaded from 'path_model/repos' file</span>
+0086 <span class="keyword">global</span> longrepos_Stylo; <span class="comment">% loaded from 'path_model/repos' file</span>
+0087 <span class="keyword">global</span> longrepos_SL; <span class="comment">% loaded from 'path_model/repos' file</span>
+0088 <span class="keyword">global</span> longrepos_IL; <span class="comment">% loaded from 'path_model/repos' file</span>
+0089 <span class="keyword">global</span> longrepos_Vert; <span class="comment">% loaded from 'path_model/repos' file</span>
+0090 <span class="comment">% Amplitude des variations min max prévues pour les lambdas % PP - 9 May 2011</span>
+0091 <span class="comment">% Amplitude of the anticipated min max variations for the lambdas</span>
+0092 <span class="keyword">global</span> delta_lambda_tot_GGP;
+0093 <span class="keyword">global</span> delta_lambda_tot_GGA;
+0094 <span class="keyword">global</span> delta_lambda_tot_Hyo;
+0095 <span class="keyword">global</span> delta_lambda_tot_Stylo;
+0096 <span class="keyword">global</span> delta_lambda_tot_SL;
+0097 <span class="keyword">global</span> delta_lambda_tot_IL;
+0098 <span class="keyword">global</span> delta_lambda_tot_Vert;
+0099 
+0100 <span class="comment">% Facteur de proportionnalite entre les lambda des fibres d'un meme</span>
+0101 <span class="comment">% muscle</span>
+0102 <span class="comment">% Proportionality factor between the lambdas of the fibres of the same</span>
+0103 <span class="comment">% muscle</span>
+0104 <span class="keyword">global</span> fac_GGP; <span class="comment">% loaded from 'path_model/repos' file</span>
+0105 <span class="keyword">global</span> fac_GGA; <span class="comment">% loaded from 'path_model/repos' file</span>
+0106 <span class="keyword">global</span> fac_Hyo; <span class="comment">% loaded from 'path_model/repos' file</span>
+0107 <span class="keyword">global</span> fac_Stylo; <span class="comment">% loaded from 'path_model/repos' file</span>
+0108 <span class="keyword">global</span> fac_SL; <span class="comment">% loaded from 'path_model/repos' file</span>
+0109 <span class="keyword">global</span> fac_IL; <span class="comment">% loaded from 'path_model/repos' file</span>
+0110 <span class="keyword">global</span> fac_Vert; <span class="comment">% loaded from 'path_model/repos' file</span>
+0111 <span class="keyword">global</span> Ufin;
+0112 <span class="keyword">global</span> tfin;
+0113 <span class="keyword">global</span> LOOP;
+0114 <span class="keyword">global</span> U;
+0115 <span class="keyword">global</span> t;
+0116 <span class="keyword">global</span> TEMPS_ACTIVATION; <span class="comment">% later assigned from input arg t_trans</span>
+0117 <span class="keyword">global</span> TEMPS_HOLD; <span class="comment">% later assigned from input arg t_hold</span>
+0118 <span class="keyword">global</span> TEMPS_FINAL;
+0119 <span class="keyword">global</span> TEMPS_FINAL_CUM;
+0120 <span class="keyword">global</span> tf;
+0121 format long e;
+0122 <span class="comment">%</span>
+0123 <span class="comment">% Variables de sections des muscles</span>
+0124 <span class="comment">% Variables of muscle sections</span>
+0125 <span class="keyword">global</span> rho_GG;
+0126 <span class="keyword">global</span> rho_Hyo;
+0127 <span class="keyword">global</span> rho_Stylo;
+0128 <span class="keyword">global</span> rho_SL;
+0129 <span class="keyword">global</span> rho_IL;
+0130 <span class="keyword">global</span> rho_Vert;
+0131 
+0132 <span class="keyword">global</span> kkk;
+0133 <span class="comment">% Variables de mouvement</span>
+0134 <span class="comment">% Movement variables</span>
+0135 <span class="keyword">global</span> U_dents_inf U_lowlip U_upperlip U_pharynx_mri U_lar_ar_mri U_tongue_lar_mri
+0136 <span class="comment">% global U_mandibule</span>
+0137 <span class="comment">% ???</span>
+0138 <span class="keyword">global</span> X0_seq Y0_seq length_ttout ttout
+0139 
+0140 <span class="comment">% Variables concernant le contact</span>
+0141 <span class="comment">% Variables concerning contact</span>
+0142 <span class="keyword">global</span> Point_dent;
+0143 <span class="keyword">global</span> pente_D;
+0144 <span class="keyword">global</span> org_D;
+0145 <span class="keyword">global</span> nbpalais;
+0146 <span class="keyword">global</span> Point_P;
+0147 <span class="keyword">global</span> pente_P;
+0148 <span class="keyword">global</span> org_P;
+0149 <span class="keyword">global</span> nbpdent;
+0150 
+0151 <span class="keyword">global</span> Mass;
+0152 <span class="keyword">global</span> invMass;
+0153 <span class="comment">%</span>
+0154 <span class="comment">% Variable global pour affiches les resultats</span>
+0155 <span class="comment">% Global variables for plotting the results (???)</span>
+0156 <span class="keyword">global</span> couleurs;
+0157 couleurs = <span class="string">'rkbygcmr'</span>;
+0158 <span class="comment">% Variables globales temporaires</span>
+0159 <span class="comment">% global temporary variables</span>
+0160 <span class="keyword">global</span> aff_fin;
+0161 aff_fin=0;
+0162 <span class="keyword">global</span> t_affiche;
+0163 <span class="keyword">global</span> t_verbose;
+0164 <span class="keyword">global</span> nb_contact;
+0165 <span class="keyword">global</span> S_enr;
+0166 <span class="keyword">global</span> X_enr;
+0167 <span class="keyword">global</span> Yn_enr;
+0168 <span class="keyword">global</span> Yp_enr;
+0169 <span class="keyword">global</span> F_enr;
+0170 <span class="keyword">global</span> P_enr;
+0171 <span class="keyword">global</span> V_enr;
+0172 <span class="keyword">global</span> t_calcul;
+0173 <span class="keyword">global</span> Pref
+0174 <span class="keyword">global</span> VOY_DEF;
+0175 
+0176 <span class="comment">%</span>
+0177 <span class="comment">% SEQUENCE</span>
+0178 <span class="comment">% A matrix with as many rowas as there are phonemes (including rest) and</span>
+0179 <span class="comment">% ten columns of not entirely clear meaning</span>
+0180 <span class="keyword">global</span> SEQUENCE
+0181 SEQUENCE=<span class="string">''</span>;
+0182 
+0183 dim=size(seq);
+0184 <span class="keyword">for</span> i=1:dim(2)
+0185     SEQUENCE(i,1)=seq(i);
+0186     SEQUENCE(i,2)=<span class="string">' '</span>;
+0187     SEQUENCE(i,3)=<span class="string">' '</span>;
+0188     SEQUENCE(i,4)=<span class="string">' '</span>;
+0189     SEQUENCE(i,5)=<span class="string">' '</span>;
+0190     SEQUENCE(i,6)=<span class="string">' '</span>;
+0191     SEQUENCE(i,7)=<span class="string">' '</span>;
+0192     SEQUENCE(i,8)=<span class="string">' '</span>;
+0193     SEQUENCE(i,9)=<span class="string">' '</span>;
+0194     SEQUENCE(i,10)=<span class="string">' '</span>;
+0195 <span class="keyword">end</span>
+0196 <span class="keyword">for</span> i=1:dim(2)
+0197     <span class="keyword">if</span> SEQUENCE(i,1)==<span class="string">'r'</span>;
+0198         SEQUENCE(i,2)=<span class="string">'e'</span>;
+0199         SEQUENCE(i,3)=<span class="string">'p'</span>;
+0200         SEQUENCE(i,4)=<span class="string">'o'</span>;
+0201         SEQUENCE(i,5)=<span class="string">'s'</span>;
+0202         SEQUENCE(i,6)=<span class="string">' '</span>;
+0203         SEQUENCE(i,7)=<span class="string">' '</span>;
+0204         SEQUENCE(i,8)=<span class="string">' '</span>;
+0205         SEQUENCE(i,9)=<span class="string">' '</span>;
+0206         SEQUENCE(i,10)=<span class="string">' '</span>;
+0207     <span class="keyword">end</span>
+0208 <span class="keyword">end</span>
+0209 SEQUENCE
+0210 <span class="comment">% Calcul de la matrice d'elasticite a chaque fois ou une seule fois</span>
+0211 <span class="comment">% Calculate elasticity matrix every time or just once?</span>
+0212 <span class="keyword">global</span> CALC_ELA;
+0213 CALC_ELA = 1;                 <span class="comment">% Calcul a chaque fois</span>
+0214 <span class="comment">%</span>
+0215 
+0216 Pref = 0; <span class="comment">% Do not account for pressure PP Sept08</span>
+0217 
+0218 <span class="comment">%</span>
+0219 tic
+0220 sujet = spkStr;
+0221 rest_file = [<span class="string">'XY_repos_'</span> spkStr]; <span class="comment">%PP Nov 06</span>
+0222 contour_file = [<span class="string">'data_palais_repos_'</span> spkStr]; <span class="comment">%PP Nov 06</span>
+0223 result_stocke_file = [<span class="string">'result_stocke_'</span> spkStr]; <span class="comment">% stocke means something like storage</span>
+0224 fact = 2;
+0225 
+0226 <span class="comment">%</span>
+0227 close all;
+0228 load([path_model rest_file]);
+0229 load([path_model contour_file]);
+0230 load([path_model result_stocke_file]);
+0231 <span class="comment">%</span>
+0232 palate_mri = palate; <span class="comment">% PP Juli 2011 % variable in contour file has no _mri suffix</span>
+0233 lar_ar_mri = lar_ar; <span class="comment">% PP Juli 2011 % variable in contour file has no _mri suffix</span>
+0234 pharynx_mri = pharynx; <span class="comment">% PP Juli 2011 % variable in contour file has no _mri suffix</span>
+0235 lower_lip = lowlip; <span class="comment">% PP Juli 2011</span>
+0236 upper_lip = upperlip; <span class="comment">% PP Juli 2011</span>
+0237 upperlip_mri = upperlip; <span class="comment">% PP Juli 2011</span>
+0238 lower_incisive = dents_inf; <span class="comment">% PP Juli 2011</span>
+0239 upper_incisive = palate(:,1:7); <span class="comment">% PP Juli 2011</span>
+0240 velum_mri = velum; <span class="comment">% PP Juli 2011</span>
+0241 X_condyle = XS;
+0242 Y_condyle = YS+8; <span class="comment">%center of the jaw movement -- condyle point</span>
+0243 
+0244 <span class="comment">%</span>
+0245 TEMPS_ACTIVATION = t_trans;
+0246 TEMPS_HOLD = t_hold;
+0247 jaw_rotation = jaw_rot;
+0248 ll_rotation = ll_rot;
+0249 lip_protrusion = lip_prot;
+0250 hyoid_movment = hyoid_mov;
+0251 TEMPS_FINAL = TEMPS_ACTIVATION + TEMPS_HOLD; <span class="comment">% combiner le t-rise et le t-hold pour t-final</span>
+0252                                              <span class="comment">% combine t_trans (!) and</span>
+0253                                              <span class="comment">% t_hold to t_final</span>
+0254 TEMPS_FINAL_CUM = cumsum(TEMPS_FINAL);     <span class="comment">% Vector avec le temps final de chaque transition</span>
+0255                                            <span class="comment">% Vector with every transitions'</span>
+0256                                            <span class="comment">% final times</span>
+0257 
+0258 <span class="comment">%A modifier ICI</span>
+0259 <span class="comment">%to modify HERE</span>
+0260 n_phon = length(TEMPS_HOLD);
+0261 delta_lambda=[delta_lambda_ggp' delta_lambda_gga' delta_lambda_hyo' delta_lambda_sty' delta_lambda_ver' delta_lambda_sl' delta_lambda_il']';
+0262 MATRICE_LAMBDA(:,1) = CONFIGS(1,1:2:14)';
+0263 
+0264 <span class="keyword">for</span> np=1:n_phon
+0265     MATRICE_LAMBDA(:,1+np) = delta_lambda(:,np) + CONFIGS(1,1:2:14)';
+0266 <span class="keyword">end</span>
+0267 
+0268 kkk=0; <span class="comment">% ??</span>
+0269 <span class="comment">% --------------------------------------------------------</span>
+0270 NN=7;       <span class="comment">% NN : nombre de noeuds par ligne; number columns</span>
+0271 MM=9;       <span class="comment">% MM : nombre de noeuds par colonne; number of rows</span>
+0272 <span class="comment">% Pour fact=1, on obtient 48 elements et 63 noeuds</span>
+0273 <span class="comment">% With fact=1, 48 elements and 63 nodes are obtained</span>
+0274 <span class="comment">% Pour fact=2, on obtient 192 elements et 221 noeuds</span>
+0275 <span class="comment">% With fact=2, 192 elements and 221 nodes are obtained</span>
+0276 <span class="comment">% whats an element</span>
+0277 
+0278 <span class="comment">% ---------------------------------------------------------------------</span>
+0279 <span class="comment">% Calcul pour chaque muscle de rho</span>
+0280 <span class="comment">% tel que la force musculaire active M soit :</span>
+0281 <span class="comment">% Calculate rho for every muscle</span>
+0282 <span class="comment">% such that the active mucle force M be:</span>
+0283 <span class="comment">%     M = rho(exp(c.A)-1)</span>
+0284 <span class="comment">% ou A est l'activation musculaire :</span>
+0285 <span class="comment">% where A is the muscle activation :</span>
+0286 <span class="comment">%     A = [l-lambda+MU.l']+</span>
+0287 
+0288 <span class="comment">% Chaque muscle est divise en plusieurs fibres.</span>
+0289 <span class="comment">% On suppose que chacune de ces branches fournit la meme force.</span>
+0290 <span class="comment">% Les CSA (cross section area) sont les sections de ces fibres.</span>
+0291 <span class="comment">% La valeur de rho est proportionnelle aux CSA.</span>
+0292 <span class="comment">% Every muscle is divided into several fibers.</span>
+0293 <span class="comment">% It is assumed that each of these branches provides the same force.</span>
+0294 <span class="comment">% The CSAs (cross section area) are the sections of these fibers.</span>
+0295 <span class="comment">% The value of rho is proportional to the CSAs.</span>
+0296 <span class="comment">% Rho is the Force!</span>
+0297 K_m = 0.22;    <span class="comment">% en N/mm2, valeur obtenue chez Van Lunteren &amp; al. 1990</span>
+0298                <span class="comment">% in N/mm2, value obtained from Van Lunteren &amp; al. 1990</span>
+0299 CSA_GG = 308/(6*fact+1);
+0300 rho_GG = CSA_GG * K_m;
+0301 
+0302 CSA_Hyo = 296/3;
+0303 rho_Hyo = CSA_Hyo*K_m;
+0304 
+0305 <span class="comment">% CSA_Stylo=110/2;</span>
+0306 CSA_Stylo = 40/2; <span class="comment">% Modifs Pascal Mars 2000 a la suite du scratch de aka</span>
+0307 rho_Stylo = CSA_Stylo * K_m;
+0308 
+0309 CSA_SL = 65;
+0310 rho_SL=CSA_SL*K_m;
+0311 <span class="comment">%rho_SL=0;</span>
+0312 
+0313 CSA_IL=88;
+0314 rho_IL=CSA_IL*K_m;
+0315 
+0316 CSA_Vert=66/(3*fact); <span class="comment">% Modifs PP_YP Dec 99</span>
+0317 rho_Vert=CSA_Vert*K_m;
+0318 
+0319 
+0320 <span class="comment">% --------------------------------------------------------</span>
+0321 <span class="comment">% Charge depuis le disque les variables suivantes :</span>
+0322 <span class="comment">% X0 = X_repos (dim 9x7) : coordonnees X au repos</span>
+0323 <span class="comment">% Y0 = Y_repos (dim 9x7) : coordonnees Y au repos</span>
+0324 <span class="comment">% com (dim 1x47)       : texte</span>
+0325 
+0326 disp(<span class="string">'Calcul de la position de repos'</span>);
+0327 <span class="comment">% preallocate for (a marginal gain of) speed</span>
+0328 X0 = zeros(fact*(MM-1)+1,fact*(NN-1)+1);
+0329 Y0 = zeros(fact*(MM-1)+1,fact*(NN-1)+1);
+0330 
+0331 <span class="comment">% Calcul par interpolation la position de repos en fonction du</span>
+0332 <span class="comment">% nombre de noeuds</span>
+0333 <span class="comment">% Intrepolate the rest positions as a function of the number of nodes</span>
+0334 <span class="comment">% !!!!!!       MATLAB 4 &lt;=&gt; MATLAB 5         !!!!!!!</span>
+0335 <span class="comment">% !!!!!! changer les transposees des interp1 !!!!!!!</span>
+0336 <span class="keyword">for</span> j = 1:MM
+0337     X0(fact*(j-1)+1, 1:fact*(NN-1)+1) = interp1(1:NN, X_repos(j,1:NN), 1:1/fact:NN,<span class="string">'spline'</span>);
+0338 <span class="keyword">end</span>
+0339 
+0340 <span class="keyword">for</span> j=1:NN
+0341     Y0(1:fact*(MM-1)+1,fact*(j-1)+1)=interp1(1:MM,Y_repos(1:MM,j),1:1/fact:MM,<span class="string">'spline'</span>)';
+0342 <span class="keyword">end</span>
+0343 
+0344 <span class="keyword">for</span> j=1:fact*(NN-1)+1 <span class="comment">% = 1:size(X0,2)</span>
+0345     X0(:,j)=interp1(find(X0(:,j)),nonzeros(X0(:,j)),1:fact*(MM-1)+1,<span class="string">'spline'</span>)';
+0346 <span class="keyword">end</span>
+0347 
+0348 <span class="keyword">for</span> j=1:fact*(MM-1)+1<span class="comment">% = 1:size(X0,1)</span>
+0349     Y0(j,:)=interp1(find(Y0(j,:)),nonzeros(Y0(j,:)),1:fact*(NN-1)+1,<span class="string">'spline'</span>);
+0350 <span class="keyword">end</span>
+0351 
+0352 NN = fact*(NN-1)+1; <span class="comment">% = size(X0,2)</span>
+0353 MM = fact*(MM-1)+1; <span class="comment">% = size(X0,1)</span>
+0354 
+0355 <span class="comment">% PP juli 2011 - Detection tongue root node on the tongue_lar contour</span>
+0356 <span class="keyword">for</span> itongue_lar = length(tongue_lar)-1:-1:1
+0357     <span class="keyword">if</span> tongue_lar(2,itongue_lar) &gt;= Y0(1,NN)-1 
+0358         ideptongue_lar = itongue_lar + 1;
+0359         <span class="keyword">break</span>;
+0360     <span class="keyword">end</span>
+0361 <span class="keyword">end</span>
+0362 tongue_lar_mri = tongue_lar(:, ideptongue_lar:end); <span class="comment">% PP Juli 2011</span>
+0363 
+0364 <span class="comment">% --------------------------------------------------------</span>
+0365 <span class="comment">% Calcul de la position au repos des noeuds sous la forme XY.</span>
+0366 <span class="comment">% Les coordonnees des noeuds sont ranges a la suite, ligne</span>
+0367 <span class="comment">% par ligne :</span>
+0368 <span class="comment">% XY(i)  i pair   : coordonnee X</span>
+0369 <span class="comment">% XY(i)  i impair : coordonnee Y</span>
+0370 <span class="comment">% Calculate the rest position of the nodes in the form of XY.</span>
+0371 <span class="comment">% The coordinates of the nodes are arranged succesively, row</span>
+0372 <span class="comment">% by row:</span>
+0373 <span class="comment">% XY(i) i even  : x coordinate</span>
+0374 <span class="comment">% XY(i) i odd: y coordinate</span>
+0375 <span class="comment">%%% LB: I think it's X on odd and y on even indeces...</span>
+0376 
+0377 XY=zeros((MM-1)*2*NN+2*NN,1);
+0378 <span class="keyword">for</span> i = 1:MM
+0379     <span class="keyword">for</span> j = 1:NN
+0380         XY((i-1)*2*NN+2*j-1,1) = X0(i,j);
+0381         XY((i-1)*2*NN+2*j,1) = Y0(i,j);
+0382     <span class="keyword">end</span>
+0383 <span class="keyword">end</span>
+0384 
+0385 <span class="comment">% --------------------------------------------------------</span>
+0386 <span class="comment">% Points d'attache des muscles</span>
+0387 <span class="comment">% (utilises dans UDOT pour le caclcul des longueurs des muscles)</span>
+0388 <span class="comment">% 3 points d'attache pour le Hyoglosse :</span>
+0389 
+0390 <span class="comment">% coordonnées X1,Y1, X2, Y2, X3, Y3 lues dans le fichier contour PP Nov06</span>
+0391 
+0392 <span class="comment">% 1 point d'attache pour le Styloglosse :</span>
+0393 <span class="comment">% % coodonnées XS YS lues dans le fichier contour PP Nov06</span>
+0394 
+0395 <span class="comment">% Les autres muscles ne sont pas attaches : leur position depend</span>
+0396 <span class="comment">% seulement de la position des noeuds.</span>
+0397 
+0398 <span class="comment">% ----------------------------------------------------------</span>
+0399 <span class="comment">% Muscle attachment points</span>
+0400 <span class="comment">% (used in UDOT for calculating the muscles' lengths)</span>
+0401 <span class="comment">% 3 attachment points for the Hyoglosse :</span>
+0402 
+0403 <span class="comment">% Coordinates X1,Y1, X2, Y2, X3, Y3 read in the contour file</span>
+0404 
+0405 <span class="comment">% 1 attachment point for the styloglossus</span>
+0406 <span class="comment">% % coordinates Xs, Ys read in the contour file</span>
+0407 
+0408 <span class="comment">% remaining muscles are not attached: their position depends solely on the</span>
+0409 <span class="comment">% position of the nodes.</span>
+0410 
+0411 <span class="comment">% --------------------------------------------------------</span>
+0412 <span class="comment">% Calcul de la longueur des fibres au repos</span>
+0413 <span class="comment">% Definition des facteurs de distribution sur les fibres d'un muscle</span>
+0414 <span class="comment">% et calcul par interpolation si fact&gt;1</span>
+0415 
+0416 <span class="comment">% -----------------------------------------------------------</span>
+0417 <span class="comment">% Calculation of fibre length in rest position</span>
+0418 <span class="comment">% Definition of the factors of the distribution on the fibres of a muscle</span>
+0419 <span class="comment">% and calculation by interpolation if fact&gt;1</span>
+0420 
+0421 <span class="comment">% GGP</span>
+0422 longrepos_GGP = zeros(1+3*fact,1);
+0423 <span class="keyword">for</span> k=1:1+3*fact            <span class="comment">% boucle sur le nombre de fibres/loop over number of fibers</span>
+0424     longrepos_GGP(k)=0;
+0425     o=NN*fact+1+(k-1)*NN;     <span class="comment">% indice du plus petit noeud concerne/index of the smaller relevant node</span>
+0426     i=o+NN-fact;              <span class="comment">% indice du plus grand noeud concerne/index of the karger relevant node</span>
+0427     <span class="keyword">for</span> j=i:-1:o+1
+0428         longrepos_GGP(k)=longrepos_GGP(k)+sqrt((XY(2*j-1)-XY(2*j-3))^2+(XY(2*j)-XY(2*j-2))^2);
+0429     <span class="keyword">end</span>
+0430 <span class="keyword">end</span>
+0431 longrepos_GGP=longrepos_GGP';
+0432 <span class="comment">% fac_GGP est lu dans rest_file PP: 16 juillet 2006</span>
+0433 <span class="comment">% fac_GGP is read in rest_file</span>
+0434 
+0435 <span class="comment">% GGA</span>
+0436 longrepos_GGA = zeros(1+3*fact,1);
+0437 <span class="keyword">for</span> k=1:3*fact  <span class="comment">% 6 fibres (apres les comm. de Reiner - Nov 99</span>
+0438     longrepos_GGA(k)=0;
+0439     o=4*NN*fact+1+k*NN;
+0440     i=o+NN-fact;   <span class="comment">% on demarre de la surface avec 63 noeuds et de la</span>
+0441     <span class="comment">% ligne en dessous de la surface avec 221 noeuds</span>
+0442     <span class="keyword">for</span> j=i:-1:o+1
+0443         longrepos_GGA(k)=longrepos_GGA(k)+sqrt((XY(2*j-1)-XY(2*j-3))^2+(XY(2*j)-XY(2*j-2))^2);
+0444     <span class="keyword">end</span>
+0445 <span class="keyword">end</span>
+0446 longrepos_GGA=longrepos_GGA';
+0447 <span class="comment">% fac_GGA est lu dans rest_file PP: 16 juillet 2006</span>
+0448 <span class="comment">% fac_GGA is read in rest_file</span>
+0449 
+0450 <span class="comment">% Hyo</span>
+0451 <span class="comment">% this is really obscure</span>
+0452 <span class="comment">% GET BACK TO THIS</span>
+0453 i=(5*fact-1)*NN+1+3*fact; <span class="comment">% Modifs YP-PP Dec 99</span>
+0454 j=6*fact*NN+1+4*fact; <span class="comment">% Modifs YP-PP Dec 99</span>
+0455 long1=sqrt((XY(2*i-1)-X1)^2+(XY(2*i)-Y1)^2);
+0456 long2=sqrt((XY(2*j-1)-XY(2*i-1))^2+(XY(2*j)-XY(2*i))^2);
+0457 i=4*fact*NN+1+4*fact;  <span class="comment">% Modifs YP-PP Dec 99</span>
+0458 long_Hyo2=sqrt((XY(2*i-1)-X2)^2+(XY(2*i)-Y2)^2);
+0459 i=3*fact*NN+1+5*fact;    <span class="comment">% i=27</span>
+0460 long_Hyo3=sqrt((XY(2*i-1)-X3)^2+(XY(2*i)-Y3)^2);
+0461 longrepos_Hyo=[long1+long2;long_Hyo2;long_Hyo3];
+0462 <span class="comment">% fac_Hyo est lu dans rest_file PP: 16 juillet 2006</span>
+0463 
+0464 <span class="comment">% Stylo</span>
+0465 <span class="keyword">if</span> fact~=3
+0466     j=3*fact*NN+1+4*fact;    <span class="comment">% j=26</span>
+0467     longStylo1=sqrt((XY(2*j-1)-XS)^2+(XY(2*j)-YS)^2);
+0468     <span class="comment">%  i=(8*fact-1)*NN+4*fact;    % Modifs Nov 99 PP-YP</span>
+0469     i=(7*fact)*NN+4*fact;    <span class="comment">% Modifs PP-YP Mars 2000</span>
+0470     j=4*fact*NN+1+4*fact;    <span class="comment">% j=33</span>
+0471     long1=sqrt((XY(2*i-1)-XY(2*j-1))^2+(XY(2*i)-XY(2*j))^2);
+0472     long2=sqrt((XY(2*j-1)-XS)^2+(XY(2*j)-YS)^2);
+0473     longrepos_Stylo=[longStylo1;long1+long2];
+0474 <span class="keyword">else</span>
+0475     XY(499)=XS;
+0476     XY(500)=YS;
+0477     ind_n=[250 115 114:13:192];
+0478     longtot=0;
+0479     <span class="keyword">for</span> j=1:size(ind_n,2)-1
+0480         long(j)=sqrt((XY(2*ind_n(j+1)-1)-XY(2*ind_n(j)-1))^2+(XY(2*ind_n(j+1))-XY(2*ind_n(j)))^2);
+0481         longtot=longtot+long(j);
+0482     <span class="keyword">end</span>
+0483     ind_n=[250 101 100:13:204];
+0484     longtot2=0;
+0485     <span class="keyword">for</span> j=1:size(ind_n,2)-1
+0486         long(j)=sqrt((XY(2*ind_n(j+1)-1)-XY(2*ind_n(j)-1))^2+(XY(2*ind_n(j+1))-XY(2*ind_n(j)))^2);
+0487         longtot2=longtot2+long(j);
+0488     <span class="keyword">end</span>
+0489     longrepos_Stylo=[longtot;longtot2];
+0490 <span class="keyword">end</span>
+0491 <span class="comment">% fac_Stylo est lu dans rest_file PP: 16 juillet 2006</span>
+0492 
+0493 <span class="comment">% SL</span>
+0494 <span class="comment">% Fibre 1 (Superieure) % Modif Dec 99 YP-PP</span>
+0495 long_SL(1)=0;
+0496 k=fact*(2*NN+6)+1;         <span class="comment">% k=21;</span>
+0497 i=NN*MM;                 <span class="comment">% i=63;</span>
+0498 long1 = 0;
+0499 <span class="keyword">for</span> j=k+NN:NN:i
+0500     long1(j)=sqrt((XY(2*j-1)-XY(2*(j-NN)-1))^2+(XY(2*j)-XY(2*(j-NN)))^2);
+0501     long_SL(1)=long_SL(1)+long1(j);
+0502 <span class="keyword">end</span>
+0503 
+0504 <span class="comment">% Fibre 2)</span>
+0505 long_SL(2)=0;
+0506 k=fact*(2*NN+6);
+0507 i=NN*MM-1;
+0508 long2 = 0;
+0509 <span class="keyword">for</span> j=k+NN:NN:i
+0510     long2(j)=sqrt((XY(2*j-1)-XY(2*(j-NN)-1))^2+(XY(2*j)-XY(2*(j-NN)))^2);
+0511     long_SL(2)=long_SL(2)+long2(j);
+0512 <span class="keyword">end</span>
+0513 longrepos_SL=[long_SL(1);long_SL(2)];
+0514 <span class="comment">% fac_SL est lu dans rest_file PP: 16 juillet 2006</span>
+0515 
+0516 <span class="comment">% IL</span>
+0517 i=4*fact*NN+2*fact+1;     <span class="comment">% i=31;</span>
+0518 j=7*fact*NN+3*fact+1;     <span class="comment">% j=53;</span>
+0519 <span class="keyword">if</span> fact==1
+0520     k=61;
+0521 <span class="keyword">else</span>
+0522     k=221-4;  <span class="comment">% CORRECTION APPORTÉE PAR PASCAL LE 4 MAI 1999 POUR CORRIGER</span>
+0523     <span class="comment">% LA FIBRE FAISAIT UN ALLER RETOUR ET N'ALLAIT PAS DANS L'APEX</span>
+0524 <span class="keyword">end</span>
+0525 long1=sqrt((XY(2*i-1)-X2)^2+(XY(2*i)-Y2)^2);
+0526 long2=sqrt((XY(2*j-1)-XY(2*i-1))^2+(XY(2*j)-XY(2*i))^2);
+0527 long3=sqrt((XY(2*k-1)-XY(2*j-1))^2+(XY(2*k)-XY(2*j))^2);
+0528 longrepos_IL=long1+long2+long3;
+0529 <span class="comment">% fac_IL est lu dans rest_file PP: 16 juillet 2006</span>
+0530 
+0531 <span class="comment">% Vert</span>
+0532 longrepos_Vert = 0;
+0533 <span class="keyword">for</span> k=1:3*fact <span class="comment">%Modifs Dec 99 YP-PP</span>
+0534     longrepos_Vert(k)=0;
+0535     l=(k-1)*NN+fact*(5*NN+3)+1; <span class="comment">%Modifs Dec 99 YP-PP</span>
+0536     i=(k-1)*NN+fact*(5*NN+6); <span class="comment">%Modifs Dec 99 YP-PP</span>
+0537     <span class="keyword">for</span> j=i:-1:l+1
+0538         longrepos_Vert(k)=longrepos_Vert(k)+sqrt((XY(2*j-1)-XY(2*j-3))^2+(XY(2*j)-XY(2*j-2))^2);
+0539     <span class="keyword">end</span>
+0540 <span class="keyword">end</span>
+0541 longrepos_Vert=longrepos_Vert';
+0542 <span class="comment">% fac_Vert est lu dans rest_file PP: 16 juillet 2006</span>
+0543 
+0544 
+0545 <span class="comment">% --------------------------------------------------------</span>
+0546 <span class="comment">% Variables d'indexation utilisees pour le calcul de la matrice</span>
+0547 <span class="comment">% d'elasticite A0</span>
+0548 <span class="comment">% Indexing variables used for the calculation of the elasticity matrix A0</span>
+0549 
+0550 <span class="keyword">global</span> IA;
+0551 <span class="keyword">global</span> IB;
+0552 <span class="keyword">global</span> IC;
+0553 <span class="keyword">global</span> ID;
+0554 <span class="keyword">global</span> IE;
+0555 <span class="keyword">global</span> IX;
+0556 <span class="keyword">global</span> IY;
+0557 
+0558 
+0559 IX=[1,3,5,7];
+0560 IY=[2,4,6,8];
+0561 iaa=[1,5,2,6,3,7,4,8];
+0562 IA=[iaa,iaa,iaa,iaa,iaa,iaa,iaa,iaa];
+0563 IB=[ones(1,8),5*ones(1,8),2*ones(1,8),6*ones(1,8),3*ones(1,8),7*ones(1,8),4*ones(1,8),8*ones(1,8)];
+0564 icx=[0,9,0,9,0,9,0,9];
+0565 iccx=[1,0,1,0,1,0,1,0];
+0566 icy=[9,0,9,0,9,0,9,0];
+0567 iccy=[0,1,0,1,0,1,0,1];
+0568 IC=[icx+iccx,icy+5*iccy,icx+2*iccx,icy+6*iccy,icx+3*iccx,icy+7*iccy,icx+4*iccx,icy+8*iccy];
+0569 idd=[5,1,6,2,7,3,8,4];
+0570 ID=[idd,idd,idd,idd,idd,idd,idd,idd];
+0571 IE=[5*ones(1,8),1*ones(1,8),6*ones(1,8),2*ones(1,8),7*ones(1,8),3*ones(1,8),8*ones(1,8),4*ones(1,8)];
+0572 
+0573 
+0574 <span class="comment">% --------------------------------------------------------</span>
+0575 <span class="comment">% Variables de Gauss utilisees pour la quadrature de A0</span>
+0576 <span class="comment">% On remplace ainsi le calcul de l'integrale par le calcul</span>
+0577 <span class="comment">% d'une somme : SOMME(Hi*f(Gi))</span>
+0578 <span class="comment">% Gaussian variables used for squaring A0</span>
+0579 <span class="comment">% In this way, calculating the integral is replaced by a sum: SUM(Hi*f(Gi))</span>
+0580 
+0581 <span class="keyword">global</span> ordre
+0582 
+0583 ordre = 2;
+0584 H(1,1)=2.;
+0585 H(2,1)=1.;
+0586 H(2,2)=1.;
+0587 H(3,1)=0.555556;
+0588 H(3,2)=0.888889;
+0589 H(3,3)=0.555556;
+0590 
+0591 G(1,1)=0.;
+0592 G(2,1)=-0.577350;
+0593 G(2,2)=0.577350;
+0594 G(3,1)=-0.774597;
+0595 G(3,2)=0.;
+0596 G(3,3)=0.774597;
+0597 
+0598 
+0599 <span class="comment">% --------------------------------------------------------</span>
+0600 <span class="comment">% Creation du vecteur force FXY qui s'applique aux noeuds.</span>
+0601 <span class="comment">% il est de dimension 2*NN*MM.</span>
+0602 <span class="comment">% Creation of the force vector FXY which is applied to the nodes.</span>
+0603 <span class="comment">% its dimensions are 2*NN*MM</span>
+0604 FXY=sparse(2*NN*MM,1);
+0605 
+0606 <span class="comment">% Creation de U et Ufin, vecteurs deplacement de dimension 4*NN*MM</span>
+0607 <span class="comment">% Creation of U and Ufin, displacement vectors of dimension 4*NN*MM</span>
+0608 Ufin=zeros(1,4*NN*MM);
+0609 tfin=0;
+0610 LOOP=0;
+0611 U=zeros(1,4*NN*MM);
+0612 t=0;
+0613 
+0614 
+0615 <span class="comment">% --------------------------------------------------------</span>
+0616 <span class="comment">% Constantes de la langue</span>
+0617 <span class="comment">% Tongue constants</span>
+0618 <span class="comment">% nu : rapport de Poisson (Poisson's ratio)</span>
+0619 <span class="comment">% E  : module d'Young (Young's modulus: stiffness)</span>
+0620 
+0621 nu=0.49;
+0622 <span class="comment">% E=0.7; Valeur de Yohan dans sa these</span>
+0623 E = 0.35;
+0624 <span class="comment">% Constantes d'elasticite lambda et mu</span>
+0625 lambda=(nu*E)/((1+nu)*(1-2*nu)); <span class="comment">% elastic modulus</span>
+0626 mu=E/(2*(1+nu)); <span class="comment">% shear</span>
+0627 
+0628 
+0629 <span class="comment">% --------------------------------------------------------</span>
+0630 <span class="comment">% Calcul de la matrice de Masse (dim 2*NN*MM par 2*NN*MM) : la masse</span>
+0631 <span class="comment">% associee a chaque noeud est proportionnelle a l'aire des elements qui</span>
+0632 <span class="comment">% entourent ce noeud.</span>
+0633 <span class="comment">% Compute the matrix of mass (dim 2*NN*MM by 2*NN*MM) : the mass associated</span>
+0634 <span class="comment">% to each node is proportional to the area of the elements sorrounding the</span>
+0635 <span class="comment">% node.</span>
+0636 disp(<span class="string">'Calcul de la matrice masse'</span>);
+0637 <span class="comment">% Calcul de l'aire de chaque element</span>
+0638 <span class="comment">% Compute each element's area</span>
+0639 aire_element = zeros(MM-1, NN-1);
+0640 <span class="keyword">for</span> i=1:MM-1,
+0641     <span class="keyword">for</span> j=1:NN-1,
+0642         aire_element(i,j)=abs(( (Y0(i+1,j)+Y0(i,j))*(X0(i+1,j)-X0(i,j)) + (Y0(i+1,j+1)+Y0(i+1,j))*(X0(i+1,j+1)-X0(i+1,j)) + (Y0(i,j+1)+Y0(i+1,j+1))*(X0(i,j+1)-X0(i+1,j+1)) + (Y0(i,j)+Y0(i,j+1))*(X0(i,j)-X0(i,j+1))) / 2.0);
+0643     <span class="keyword">end</span>
+0644 <span class="keyword">end</span>
+0645 aire_totale = sum(aire_element(:)); <span class="comment">% sum of all areas</span>
+0646 
+0647 <span class="comment">% Calcul de la masse / compute the mass</span>
+0648 Mass=eye(2*NN*MM);
+0649 masse_totale=0.15/35;      <span class="comment">% &lt;=&gt; 150 grammes sur 40 mm de large</span>
+0650                            <span class="comment">% &lt;=&gt; 150 grams per 40 mm width</span>
+0651                            <span class="comment">% possibly 35 mm??</span>
+0652 <span class="keyword">for</span> i=1:MM
+0653     <span class="keyword">for</span> j=1:NN
+0654         k=(i-1)*2*NN+2*j;
+0655         <span class="keyword">if</span> (k==2)                  <span class="comment">% coin bas gauche / lower left corner</span>
+0656             aire=aire_element(1,1)/4;
+0657         <span class="keyword">elseif</span> (k==2*(MM*NN-NN+1)) <span class="comment">% coin haut gauche / upper left corner</span>
+0658             aire=aire_element(MM-1,1)/4;
+0659         <span class="keyword">elseif</span> (k==2*NN)           <span class="comment">% coin bas droit / lower right cor</span>
+0660             aire=aire_element(1,NN-1)/4;
+0661         <span class="keyword">elseif</span> (k==2*NN*MM)        <span class="comment">% coin haut droit / upper right corner</span>
+0662             aire=aire_element(MM-1,NN-1)/4;
+0663         <span class="keyword">elseif</span> (i==1)              <span class="comment">% bords bas / lower edge</span>
+0664             aire=aire_element(1,j-1)/4+aire_element(1,j)/4;
+0665         <span class="keyword">elseif</span> (j==1)              <span class="comment">% bord gauche / left edge</span>
+0666             aire=aire_element(i-1,1)/4+aire_element(i,1)/4;
+0667         <span class="keyword">elseif</span> (i==MM)             <span class="comment">% bord haut / upper edge</span>
+0668             aire=aire_element(MM-1,j-1)/4+aire_element(MM-1,j)/4;
+0669         <span class="keyword">elseif</span> (j==NN)             <span class="comment">% bord droit / right edge</span>
+0670             aire=aire_element(i,NN-1)/4+aire_element(i-1,NN-1)/4;
+0671         <span class="keyword">else</span>                       <span class="comment">% tous les autres noeuds / all the oether nodes</span>
+0672             aire=aire_element(i-1,j-1)/4+aire_element(i,j-1)/4+aire_element(i-1,j)/4+aire_element(i,j)/4;
+0673         <span class="keyword">end</span>
+0674         Mass(k,k)=Mass(k,k)*masse_totale/aire_totale*aire;
+0675         Mass(k-1,k-1)=Mass(k,k);
+0676     <span class="keyword">end</span>
+0677 <span class="keyword">end</span>
+0678 
+0679 <span class="comment">% Pour accelerer les calculs, on prend tout de suite l'inverse de</span>
+0680 <span class="comment">% cette matrice :</span>
+0681 <span class="comment">% To accelerate computation, get the inverse of this matrix :</span>
+0682 invMass = inv(Mass);
+0683 
+0684 <span class="comment">% Compute the elasticity matrix</span>
+0685 A0 = <a href="elast_init.html" class="code" title="function A0 = elast_init(XY, lambda, mu, ordre, H, G, MM, NN)">elast_init</a>(XY, lambda, mu, ordre, H, G, MM, NN);
+0686 
+0687 <span class="comment">% initialisation de la position de repos apres le premiere voyelle</span>
+0688 <span class="comment">% dans le sequence</span>
+0689 <span class="comment">% initialisation of the rest positions after the first vowel in the</span>
+0690 <span class="comment">% sequence</span>
+0691 
+0692 <span class="comment">% --------------------------------------------------------</span>
+0693 <span class="comment">% Calcul et dessin des parties fixes : dents, palais, ...</span>
+0694 <span class="comment">% Calculation and design of fixed parts: teeth, palate, ...</span>
+0695 
+0696 <span class="comment">% Position des dents inferieures</span>
+0697 <span class="comment">% En effet, il faut limiter le mouvement de la langue au niveau</span>
+0698 <span class="comment">% des dents inferieures.</span>
+0699 <span class="comment">% On lit sur le disque le fichier data_palais_repos.mat qui</span>
+0700 <span class="comment">% contient entre autre les dents inferieures.</span>
+0701 <span class="comment">% les vecteurs Vect_dents et Point_dents sont passes a UDOT.m</span>
+0702 <span class="comment">% Position of the lower teeth</span>
+0703 <span class="comment">% Indeed, tongue movements must be limited on the level of the lower teeth.</span>
+0704 <span class="comment">% The file data_palais_repos.mat is read from disk which contains among</span>
+0705 <span class="comment">% others the lower teeth.</span>
+0706 <span class="comment">% The vectors Vect_dents et Point_dents are passed to UDOT.m</span>
+0707 
+0708 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0709 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0710 
+0711 <span class="comment">% CONTACT AVEC LES DENTS (FACON 1)</span>
+0712 <span class="comment">% CONTACT WITH THE TEETH (1. FORM)</span>
+0713 
+0714 <span class="keyword">global</span> Vect_dents;
+0715 <span class="keyword">global</span> Point_dents;
+0716 
+0717 Vect_dents=[dents_inf(1,11)-dents_inf(1,13)-1 dents_inf(2,11)-dents_inf(2,13)];
+0718 Point_dents=[dents_inf(1,13)+1 dents_inf(2,13)];
+0719 pente_D=(dents_inf(2,11)-dents_inf(2,13))/(dents_inf(1,11)-dents_inf(1,13));
+0720 org_D=dents_inf(2,11)-pente_D*dents_inf(1,11);
+0721 
+0722 <span class="comment">% FIN CONTACT AVEC LES DENTS (FACON 1)</span>
+0723 <span class="comment">% END OF CONTACT WITH THE TEETH (!. FORM)</span>
+0724 
+0725 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0726 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0727 
+0728 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0729 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0730 
+0731 <span class="comment">% CONTACT AVEC LES DENTS (FACON 2)</span>
+0732 <span class="comment">% Interpolation des points des dents inferieurs sinon l'algorithme de</span>
+0733 <span class="comment">% collision converge mal</span>
+0734 <span class="comment">% vectdent=[10:0.5:14];</span>
+0735 <span class="comment">% dentx=interp1([10:14],dents_inf(1,[10:14]),vectdent);</span>
+0736 <span class="comment">% denty=interp1([10:14],dents_inf(2,[10:14]),vectdent);</span>
+0737 <span class="comment">% nbpdent=size(vectdent,2);</span>
+0738 <span class="comment">% for i=1:nbpdent</span>
+0739 <span class="comment">%   Point_dent(1,i)=dentx(nbpdent-i+1);</span>
+0740 <span class="comment">%   Point_dent(2,i)=denty(nbpdent-i+1);</span>
+0741 <span class="comment">% end</span>
+0742 
+0743 <span class="comment">% for i=1:nbpdent-1</span>
+0744 <span class="comment">%   pente_D(i)=(Point_dent(2,i+1)-Point_dent(2,i))/(Point_dent(1,i+1)-Point_dent(1,i));</span>
+0745 <span class="comment">%   org_D(i)=Point_dent(2,i+1)-pente_D(i)*Point_dent(1,i+1);</span>
+0746 <span class="comment">% end</span>
+0747 
+0748 <span class="comment">% FIN CONTACT AVEC LES DENTS (FACON 2)</span>
+0749 
+0750 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0751 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0752 <span class="comment">% Position du palais et du velum</span>
+0753 <span class="comment">% Le contact pour la creation de consonnes se fera entre les</span>
+0754 <span class="comment">% differents noeuds 'superieurs' de la langue et les points suivants</span>
+0755 <span class="comment">% Avec comme toujours : indice impair -&gt; composante X</span>
+0756 <span class="comment">%                               pair  -&gt; composante Y</span>
+0757 <span class="comment">% Position of palate and velum</span>
+0758 <span class="comment">% The contact for the production of consonantes will be between the</span>
+0759 <span class="comment">% different 'superior' nodes of the tongue and the following points</span>
+0760 <span class="comment">% As akways : odd indices -&gt; X coordinante</span>
+0761 <span class="comment">%            even indices -&gt; Y coordinate</span>
+0762 <span class="comment">% Points du palais :</span>
+0763 <span class="comment">% Points of the palate :</span>
+0764 P_palais=(8:length(palate(1,:))); <span class="comment">% On prend tous les points du palais MRI</span>
+0765 <span class="comment">%(points 1 à 7 = dents standard ajoutée par transform_data_mri (PP Nov06)</span>
+0766 <span class="comment">% All points from the MRI palate are taken, (points 1 to 7 = standard teeth</span>
+0767 <span class="comment">% added by transform_data_mri)</span>
+0768 <span class="keyword">for</span> i=1:size(P_palais,2)
+0769     Point_P(2*i-1)=palate(1,P_palais(i));
+0770     Point_P(2*i)=palate(2,P_palais(i));
+0771 <span class="keyword">end</span>
+0772 <span class="comment">% Points du velum :</span>
+0773 <span class="comment">% Points of the velum :</span>
+0774 P_velum=(2:(length(velum(1,:))-5)); <span class="comment">% On prend tous les points du palais mou mesurés MRI sauf le premier</span>
+0775 <span class="comment">% qui correspond au dernier du palais dur (PP Nov06)</span>
+0776 <span class="comment">% All points of the soft palate are taken exept the first which corresponds</span>
+0777 <span class="comment">% to the last of the hard palate</span>
+0778 
+0779 <span class="keyword">for</span> j=i+1:i+size(P_velum,2)
+0780     Point_P(2*j-1)=velum(1,P_velum(j-i));
+0781     Point_P(2*j)=velum(2,P_velum(j-i));
+0782 <span class="keyword">end</span>
+0783 nbpalais=size(P_palais,2)+size(P_velum,2);
+0784 
+0785 <span class="comment">% Calcul des equations de chaque segment du palais</span>
+0786 <span class="comment">% Calculate the equations of every segment of the palate</span>
+0787 pente_P=zeros(nbpalais-1,1);
+0788 org_P=zeros(nbpalais-1,1);
+0789 <span class="keyword">for</span> i=1:nbpalais-1
+0790     pente_P(i)=(Point_P(2*i)-Point_P(2*i+2))/(Point_P(2*i-1)-Point_P(2*i+1));
+0791     org_P(i)=Point_P(2*i)-pente_P(i)*Point_P(2*i-1);
+0792 <span class="keyword">end</span>
+0793 
+0794 <span class="comment">%PP Juli 2011</span>
+0795 <span class="keyword">for</span> i=2:nbpalais-1
+0796     <span class="keyword">for</span> j=i-1:-1:1
+0797         <span class="keyword">if</span> pente_P(i)&lt;=pente_P(j)+0.001 &amp;&amp; pente_P(i)&gt;=pente_P(j)-0.001
+0798             fprintf(<span class="string">'Slight displacement (1/4mm) of palate point %i for better contact detection\n'</span>,i)
+0799             Point_P(2*i)=Point_P(2*i)+0.25;
+0800             pente_P(i)=(Point_P(2*i)-Point_P(2*i+2))/(Point_P(2*i-1)-Point_P(2*i+1));
+0801             org_P(i)=Point_P(2*i)-pente_P(i)*Point_P(2*i-1);
+0802             i_P_prec=i-1;
+0803             pente_P(i_P_prec)=(Point_P(2*i_P_prec)-Point_P(2*i_P_prec+2))/(Point_P(2*i_P_prec-1)-Point_P(2*i_P_prec+1));
+0804             org_P(i_P_prec)=Point_P(2*i_P_prec)-pente_P(i_P_prec)*Point_P(2*i_P_prec-1);
+0805         <span class="keyword">end</span>
+0806     <span class="keyword">end</span>
+0807 <span class="keyword">end</span>
+0808 
+0809 <span class="comment">% Trace du palais et du velum</span>
+0810 figure(<span class="string">'Units'</span>,<span class="string">'normal'</span>,<span class="string">'Position'</span>,[0.4 0.41 0.5 0.5]);
+0811 <span class="comment">% Pour eviter un core dump on met un point en 0,0</span>
+0812 <span class="comment">% plot(0,0);</span>
+0813 whitebg([0.8 0.8 1]);
+0814 title([<span class="string">'Jaw-Tongue Model - Speaker '</span> spkStr]);
+0815 hold on;
+0816 axis([-20 150 20 140])
+0817 axis equal;
+0818 <span class="comment">% set(gca,'Visible','off');</span>
+0819 zoom on
+0820 <span class="comment">% for i=1:nbpalais</span>
+0821 <span class="comment">%     plot(Point_P(2*i-1),Point_P(2*i),'k*');</span>
+0822 <span class="comment">% end</span>
+0823 
+0824 plot(dents_inf(1,:),dents_inf(2,:),<span class="string">'k-'</span>);
+0825 plot(palate(1,:),palate(2,:),<span class="string">'k-'</span>);
+0826 plot(velum(1,:),velum(2,:),<span class="string">'k-'</span>);
+0827 X_origin_initial = X_condyle; <span class="comment">% PP Juli 2011</span>
+0828 Y_origin_initial = Y_condyle; <span class="comment">% PP Juli 2011</span>
+0829 plot(X_origin_initial,Y_origin_initial,<span class="string">'ro'</span>); <span class="comment">% GB Mars 2011</span>
+0830 plot(lar_ar_mri(1,:),lar_ar_mri(2,:),<span class="string">'k-'</span>); <span class="comment">% GB Mars 2011</span>
+0831 plot(pharynx_mri(1,:),pharynx_mri(2,:),<span class="string">'k-'</span>); <span class="comment">% GB Mars 2011</span>
+0832 plot(tongue_lar_mri(1,:), tongue_lar_mri(2,:),<span class="string">'r'</span>)
+0833 
+0834 <span class="comment">% --------------------------------------------------------</span>
+0835 <span class="comment">% Resolution de l'equa diff par Runge Kutta  (fonction ODE45 de Matlab)</span>
+0836 <span class="comment">% Resolution de l'equa diff qui donne les tableaux tfin et Ufin</span>
+0837 <span class="comment">% ODE45 calcule lui-meme les differents t de t0 a tf*nb_voyelles</span>
+0838 
+0839 
+0840 <span class="comment">%%ACHTUNG</span>
+0841 disp(<span class="string">'Calcul de l''equa diff'</span>)
+0842 t0=0;
+0843 U0=[U(size(t)*[0;1],1:2*NN*MM)]';
+0844 U0(2*NN*MM+1:4*NN*MM,1)=zeros(2*NN*MM,1);
+0845 
+0846 nb_contact=0;
+0847 nb_instant=0;
+0848 t_affiche=0.001;
+0849 t_verbose=0.001;
+0850 nb_transitions=size(MATRICE_LAMBDA,2)-1;
+0851 <span class="comment">% Variables utilisees par comlambda.m</span>
+0852 <span class="comment">% Longueur minimale pour chaque fibre de chaque muscle</span>
+0853 <span class="keyword">global</span> longmin_GGP;
+0854 <span class="keyword">global</span> longmin_GGA;
+0855 <span class="keyword">global</span> longmin_Hyo;
+0856 <span class="keyword">global</span> longmin_Stylo;
+0857 <span class="keyword">global</span> longmin_SL;
+0858 <span class="keyword">global</span> longmin_IL;
+0859 <span class="keyword">global</span> longmin_Vert;
+0860 
+0861 delta_lambda_tot_GGP=20*2; <span class="comment">% PP - 9 May 2011/Juli2011</span>
+0862 delta_lambda_tot_GGA=20*2; <span class="comment">% PP - 9 May 2011/Juli2011</span>
+0863 delta_lambda_tot_Hyo=20*2; <span class="comment">% PP - 9 May 2011/Juli2011</span>
+0864 delta_lambda_tot_Stylo=20*2; <span class="comment">% PP - 9 May 2011/Juli2011</span>
+0865 delta_lambda_tot_SL=20*2; <span class="comment">% PP - 9 May 2011/Juli2011</span>
+0866 delta_lambda_tot_IL=20*2; <span class="comment">% PP - 9 May 2011/Juli2011</span>
+0867 delta_lambda_tot_Vert=10*2; <span class="comment">% PP - 9 May 2011/Juli2011</span>
+0868 
+0869 longmin_GGP=(longrepos_GGP_max-delta_lambda_tot_GGP/2) * fac_GGP; <span class="comment">% PP - 9 May 2011</span>
+0870 longmin_GGA=(longrepos_GGA_max-delta_lambda_tot_GGA/2) * fac_GGA; <span class="comment">% PP - 9 May 2011</span>
+0871 longmin_Hyo=(longrepos_Hyo_max-delta_lambda_tot_Hyo/2) * fac_Hyo; <span class="comment">% PP - 9 May 2011</span>
+0872 longmin_Stylo=(longrepos_Stylo_max-delta_lambda_tot_Stylo/2) * fac_Stylo; <span class="comment">% PP - 9 May 2011</span>
+0873 longmin_SL=(longrepos_SL_max-delta_lambda_tot_SL/2) * fac_SL; <span class="comment">% PP - 9 May 2011</span>
+0874 longmin_IL=(longrepos_IL_max-delta_lambda_tot_IL/2) * fac_IL; <span class="comment">% PP - 9 May 2011</span>
+0875 longmin_Vert=(longrepos_Vert_max-delta_lambda_tot_Vert/2) * fac_Vert; <span class="comment">% PP - 9 May 2011</span>
+0876 
+0877 <span class="keyword">global</span> TEMPS;
+0878 TEMPS = 0;
+0879 <span class="keyword">global</span> FXY_T;
+0880 FXY_T = zeros(1, 2*MM*NN);
+0881 <span class="keyword">global</span> ACCL_T;
+0882 ACCL_T = zeros(1, 2*MM*NN);
+0883 <span class="keyword">global</span> ACTIV_T;
+0884 ACTIV_T = 0;
+0885 
+0886 <span class="comment">% ACTIV_T va etre une matrice avec l'activation en fonction du temps</span>
+0887 <span class="comment">% pour une fibre de chaque muscle</span>
+0888 <span class="comment">% ACTIV_T(KKK, :) = [GGP(kkk), GGA(), Stylo(), Hyo(), SL(), IL(), Vert()]</span>
+0889 
+0890 <span class="keyword">global</span> LAMBDA_T;
+0891 LAMBDA_T = 0;
+0892 
+0893 <span class="comment">% LAMBDA_T va etre une matrice avec la valeur de lambda en fonction du temps</span>
+0894 <span class="comment">% pour une fibre de chaque muscle</span>
+0895 <span class="comment">% LAMBDA_T(KKK, :) = [GGP(kkk), GGA(), Stylo(), Hyo(), SL(), IL(), Vert()]</span>
+0896 
+0897 
+0898 <span class="comment">% !!!!!! MATLAB 4 &lt;=&gt; MATLAB 5 !!!!!!!!!</span>
+0899 <span class="comment">% MATLAB 5 :</span>
+0900 
+0901 <span class="comment">% CV - 03/03/99</span>
+0902 <span class="comment">% Utilisation de la version udot3.m, ce qui necessite l'appel</span>
+0903 <span class="comment">% de udot3init.m</span>
+0904 
+0905 <span class="comment">%tf=TEMPS_FINAL_CUM(length(TEMPS_FINAL_CUM));</span>
+0906 
+0907 tf_seq=TEMPS_FINAL_CUM;
+0908 t0_seq=[0 TEMPS_FINAL_CUM(1:length(TEMPS_FINAL_CUM)-1)];
+0909 tf=tf_seq(length(tf_seq));
+0910 
+0911 <span class="comment">%Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99</span>
+0912 U_lowlip=zeros(round(200*tf),12); <span class="comment">% 30</span>
+0913 U_upperlip=zeros(round(200*tf),12); <span class="comment">% 46</span>
+0914 U_dents_inf=zeros(round(200*tf),10); <span class="comment">% 34     %% GB Mars 2011</span>
+0915 U_pharynx_mri=zeros(round(200*tf),13);
+0916 U_lar_ar_mri=zeros(round(200*tf),12);
+0917 U_tongue_lar_mri=zeros(round(200*tf),17);
+0918 <span class="comment">% U_mandibule=zeros(round(200*tf),20);</span>
+0919 X0_seq=zeros(round(200*tf),221);
+0920 Y0_seq=zeros(round(200*tf),221);
+0921 ttout=0;
+0922 X0_initial=X0;
+0923 Y0_initial=Y0;
+0924 <span class="comment">%</span>
+0925 jaw_rotation=(pi/180).*jaw_rotation;
+0926 ll_rotation=(pi/180).*ll_rotation;
+0927 
+0928 X_origin=X_origin_initial;
+0929 Y_origin=Y_origin_initial;
+0930 lar_ar_mri_initial = lar_ar_mri;
+0931 tongue_lar_mri_initial = tongue_lar_mri;
+0932 pharynx_mri_initial = pharynx_mri;
+0933 
+0934 <a href="udot3init_adapt.html" class="code" title="">udot3init_adapt</a>;
+0935 
+0936 <span class="comment">% Si simulation normal</span>
+0937 <span class="keyword">for</span> i=1:length(tf_seq)
+0938     <span class="keyword">if</span> i==1
+0939         tfin=[];Ufin=[];
+0940         theta_start=0;
+0941     <span class="keyword">else</span>
+0942         theta_start=sum(jaw_rotation(1:i-1));
+0943     <span class="keyword">end</span>
+0944     
+0945     <span class="keyword">if</span> i==1
+0946         tfin=[];Ufin=[];
+0947         hyoid_start=0;
+0948     <span class="keyword">else</span>
+0949         hyoid_start=sum(hyoid_movment(1:i-1));
+0950     <span class="keyword">end</span>
+0951     
+0952     X0_rest_pos=X0;Y0_rest_pos=Y0;<span class="comment">%intitial tongue position</span>
+0953     
+0954     <span class="comment">% the initial angle alpha for each node of the tongue</span>
+0955     alpha_rest_pos = atan2((X_origin-X0_rest_pos), (Y_origin-Y0_rest_pos));
+0956     <span class="comment">% the distance of each node of the tongue to the center of rotation</span>
+0957     dist_rest_pos = sqrt( (Y0_rest_pos-Y_origin).^2 + <span class="keyword">...</span>
+0958                           (X0_rest_pos-X_origin).^2 );
+0959     
+0960     <span class="comment">%the initial angle alpha of the lower incisor</span>
+0961     alpha_rest_pos_dents_inf = atan2((X_origin-dents_inf(1,:)), <span class="keyword">...</span>
+0962         (Y_origin-dents_inf(2,:)));
+0963     <span class="comment">%the initial distance of the lower incisor to the center of rotation</span>
+0964     dist_rest_pos_dents_inf = sqrt((dents_inf(2,:)-Y_origin).^2 + (dents_inf(1,:)-X_origin).^2);
+0965     
+0966     X_origin_ll=X_origin;
+0967     Y_origin_ll=Y_origin;
+0968     lowlip_initial=lowlip;
+0969     alpha_rest_pos_lowlip=atan2((X_origin_ll-lowlip(1,:)), (Y_origin_ll-lowlip(2,:)));<span class="comment">%the initial angle alpha of the lower lip</span>
+0970     dist_rest_pos_lowlip=sqrt((lowlip(2,:)-Y_origin_ll).^2+(lowlip(1,:)-X_origin_ll).^2);<span class="comment">%the initial distance of the lower lip to the center of rotation</span>
+0971     t_initial=t0_seq(i);
+0972     t_transition=t0_seq(i)+TEMPS_ACTIVATION(i);
+0973     t_final=tf_seq(i);
+0974     theta=jaw_rotation(i);
+0975     theta_ll=ll_rotation(i);
+0976     dist_lip=lip_protrusion(i);
+0977     dist_hyoid=hyoid_movment(i); <span class="comment">% GB MARS 2011</span>
+0978     <span class="comment">%    figure(300)</span>
+0979     <span class="comment">%    plot(X0,Y0,'r+')</span>
+0980     <span class="comment">%    pause</span>
+0981     <span class="comment">%    hold on</span>
+0982     <span class="comment">%</span>
+0983     fprintf(<span class="string">'Integrating from %d to %d\n'</span>,t0_seq(i), tf_seq(i));
+0984     [ts,Us]=<a href="ode45plus.html" class="code" title="function [tout, yout] = ode45plus(ypfun, t0, tf, y0, tol, storestep)">ode45plus</a>(<span class="string">'udot3_adapt_jaw'</span>, t0_seq(i), tf_seq(i), U0, 1e-3, (((3 * fact) - 2) / 500));
+0985     
+0986     <span class="comment">%       figure(300)</span>
+0987     <span class="comment">% plot(X0,Y0,'bo')</span>
+0988     <span class="comment">% color='rbmcygrbmcygrbmcygrbmcygkrbmcygrbmcyg';</span>
+0989     <span class="comment">% length(ts)</span>
+0990     <span class="comment">% for iloop=1:(length(ts)-1)</span>
+0991     <span class="comment">%     iloop</span>
+0992     <span class="comment">% dess=['*' color(iloop)];</span>
+0993     <span class="comment">% plot(X0_seq(iloop,:),Y0_seq(iloop,:),dess)</span>
+0994     <span class="comment">% hold on</span>
+0995     <span class="comment">% end</span>
+0996     <span class="comment">%    pause</span>
+0997     <span class="comment">%    plot(X0_seq(length(ts),:),Y0_seq(length(ts),:),'ow', 'LInewidth',2)</span>
+0998     <span class="comment">% pause</span>
+0999     U0=Us(length(ts),:);
+1000     [tfin]=[tfin;ts];
+1001     [Ufin]=[Ufin;Us];
+1002 <span class="keyword">end</span>
+1003 <span class="comment">%</span>
+1004 <span class="keyword">if</span> ( length_ttout &lt; (200 * tf) )
+1005     U_X_origin=U_X_origin(1:length_ttout);
+1006     U_Y_origin=U_Y_origin(1:length_ttout);
+1007     U_lowlip=U_lowlip(1:length_ttout,1:end);
+1008     U_upperlip=U_upperlip(1:length_ttout,1:end);
+1009     U_dents_inf=U_dents_inf(1:length_ttout,1:end);
+1010     U_pharynx_mri=U_pharynx_mri(1:length_ttout,1:end);
+1011     U_lar_ar_mri=U_lar_ar_mri(1:length_ttout,1:end);
+1012     U_tongue_lar_mri=U_tongue_lar_mri(1:length_ttout,1:end);
+1013     <span class="comment">%    U_mandibule=U_mandibule(1:length_ttout,1:end);</span>
+1014     X0_seq = X0_seq(1:length_ttout, 1:221);
+1015     Y0_seq = Y0_seq(1:length_ttout, 1:221);
+1016 <span class="keyword">end</span>
+1017 
+1018 <span class="comment">%% I AM HERE</span>
+1019 
+1020 t=tfin';
+1021 U=Ufin;
+1022 
+1023 <span class="comment">% interpolation des U pour prendre moins de place sur le disque</span>
+1024 <span class="comment">% chaque 1/500 pour fact = 1</span>
+1025 <span class="comment">% chaque 4/500 pour fact = 2</span>
+1026 disp(<span class="string">'Enregistrement de U ...'</span>)
+1027 
+1028 <span class="comment">% ------------------------------------------------------------------</span>
+1029 <span class="comment">% FXY_T est calcule dans UDOT2 pour la trajectoire de la force en</span>
+1030 <span class="comment">% fonction du temps dans force_gr.m</span>
+1031 
+1032 <span class="comment">% On va ordonner les elements de TEMPS</span>
+1033 
+1034 [t_ord, ind_ord] = sort(TEMPS);
+1035 
+1036 <span class="comment">% On va enlever les elements repetes de t_ord</span>
+1037 t_ord_aux = [t_ord(2:length(t_ord)), 0];
+1038 ind_bon = find((t_ord_aux - t_ord) ~= 0);
+1039 t_bon = t_ord(ind_bon);
+1040 
+1041 FXY_ord = FXY_T(ind_ord, :);
+1042 FXY_bon = FXY_ord(ind_bon, :);
+1043 
+1044 FXY_TRAJ = interp1(t_bon, FXY_bon, t);
+1045 
+1046 ACCL_ord = ACCL_T(ind_ord, :);
+1047 ACCL_bon = ACCL_ord(ind_bon, :);
+1048 
+1049 ACCL_TRAJ = interp1(t_bon, ACCL_bon, t);
+1050 
+1051 ACTIV_ord = ACTIV_T(ind_ord, :);
+1052 ACTIV_bon = ACTIV_ord(ind_bon, :);
+1053 
+1054 ACTIV_TRAJ = interp1(t_bon, ACTIV_bon, t);
+1055 
+1056 <span class="comment">% On enleve les valeurs negatives</span>
+1057 index = find( ACTIV_TRAJ &lt; 0 );
+1058 ACTIV_TRAJ( index ) = zeros( size(index) );
+1059 
+1060 <span class="comment">% ACTIV_TRAJ va etre une matrice avec l'activation en fonction du temps</span>
+1061 <span class="comment">% pour une fibre de chaque muscle</span>
+1062 <span class="comment">% ACTIV_TRAJ(t, :) = [GGP(t), GGA(), Stylo(), Hyo(), SL(), IL(), Vert()]</span>
+1063 
+1064 LAMBDA_ord = LAMBDA_T(ind_ord, :);
+1065 LAMBDA_bon = LAMBDA_ord(ind_bon, :);
+1066 
+1067 LAMBDA_TRAJ = interp1(t_bon, LAMBDA_bon, t);
+1068 
+1069 <span class="comment">% LAMBDA_TRAJ va etre une matrice avec la valeur de lambda en fonction du temps</span>
+1070 <span class="comment">% pour une fibre de chaque muscle</span>
+1071 <span class="comment">% LAMBDA_TRAJ(t, :) = [GGP(t), GGA(), Stylo(), Hyo(), SL(), IL(), Vert()]</span>
+1072 clear <span class="keyword">global</span> TEMPS FXY_T ACCL_T ACTIV_T LAMBDA_T;
+1073 
+1074 <span class="comment">% Enregistrement sur disque des mouvements de la langue, ainsi que des</span>
+1075 <span class="comment">% forces</span>
+1076 file_mat= [spkStr, <span class="string">'_'</span>, out_file];
+1077 U_fin=U(<span class="keyword">end</span>,:);
+1078 FXY_TRAJ_FIN=FXY_TRAJ(<span class="keyword">end</span>,:);
+1079 ACTIV_TRAJ_FIN=ACTIV_TRAJ(<span class="keyword">end</span>,:);
+1080 LAMBDA_TRAJ_FIN=LAMBDA_TRAJ(<span class="keyword">end</span>,:);
+1081 U_dents_inf_fin=U_dents_inf(<span class="keyword">end</span>,:);
+1082 U_lowlip_fin=U_lowlip(<span class="keyword">end</span>,:);
+1083 U_upperlip_fin=U_upperlip(<span class="keyword">end</span>,:);
+1084 U_pharynx_mri_fin=U_pharynx_mri(<span class="keyword">end</span>,:);
+1085 U_lar_ar_mri_fin=U_lar_ar_mri(<span class="keyword">end</span>,:);
+1086 U_tongue_lar_mri_fin=U_tongue_lar_mri(<span class="keyword">end</span>,:);
+1087 <span class="comment">% figure(100)</span>
+1088 <span class="comment">% color='rbmcygkrbmcygkrbmcygkrbmcygkrbmcygkrbmcygk'</span>
+1089 <span class="comment">% for i=1:length(t)</span>
+1090 <span class="comment">% dess=['*' color(i)];</span>
+1091 <span class="comment">% plot(X0_seq(i,:),Y0_seq(i,:),dess)</span>
+1092 <span class="comment">% hold on</span>
+1093 <span class="comment">% end</span>
+1094 <span class="comment">% pause</span>
+1095 X0_seq_fin = X0_seq(<span class="keyword">end</span>,:);
+1096 Y0_seq_fin = Y0_seq(<span class="keyword">end</span>,:);
+1097 U_X_origin_fin = U_X_origin(end);
+1098 U_Y_origin_fin = U_Y_origin(end);
+1099 
+1100 jaw_rotation=jaw_rotation*180/pi;
+1101 ll_rotation=ll_rotation*180/pi;
+1102 <span class="keyword">if</span> light
+1103     list_data_sauv=<span class="string">' sujet U_fin t CALC_ELA fact MM NN SEQUENCE TEMPS_FINAL TEMPS_HOLD TEMPS_FINAL_CUM TEMPS_ACTIVATION MATRICE_LAMBDA nb_transitions'</span>;
+1104     list_data_sauv=[list_data_sauv <span class="string">' jaw_rotation lip_protrusion ll_rotation hyoid_movment FXY_TRAJ_FIN ACTIV_TRAJ_FIN LAMBDA_TRAJ_FIN X0 Y0'</span>];
+1105     list_data_sauv=[list_data_sauv <span class="string">' U_dents_inf_fin U_lowlip_fin U_upperlip_fin U_pharynx_mri_fin  U_lar_ar_mri_fin U_tongue_lar_mri_fin'</span>];
+1106     list_data_sauv=[list_data_sauv <span class="string">' X0_seq_fin Y0_seq_fin U_X_origin_fin U_Y_origin_fin'</span>];
+1107     command=[<span class="string">'save '</span> file_mat <span class="string">'_light'</span>  list_data_sauv];
+1108     eval(command)
+1109 <span class="keyword">else</span>
+1110     list_data_sauv=<span class="string">' sujet U t ttout CALC_ELA fact MM NN SEQUENCE TEMPS_FINAL TEMPS_HOLD TEMPS_FINAL_CUM TEMPS_ACTIVATION MATRICE_LAMBDA nb_transitions'</span>;
+1111     list_data_sauv=[list_data_sauv <span class="string">' jaw_rotation lip_protrusion ll_rotation hyoid_movment FXY_TRAJ ACCL_TRAJ ACTIV_TRAJ LAMBDA_TRAJ X0 Y0'</span>];
+1112     list_data_sauv=[list_data_sauv <span class="string">' U_dents_inf U_lowlip U_upperlip U_pharynx_mri U_lar_ar_mri U_tongue_lar_mri X0_seq Y0_seq U_X_origin U_Y_origin'</span>];
+1113     command=[<span class="string">'save '</span> file_mat list_data_sauv];
+1114     eval(command)
+1115 <span class="keyword">end</span>
+1116 
+1117 <span class="comment">% FERM_MACHOIR supprimé =&gt; jaw_rotation</span>
+1118 
+1119 <span class="comment">% lower_incisive +&gt; U_dents_inf</span>
+1120 <span class="comment">% upper_incisive velum et palate supprimés car fixes donc contenus dans data_palais_repos</span>
+1121 
+1122 <span class="comment">% jaw_rotation lip_protrusion ll_rotation hyoid_movment =&gt;</span>
+1123 <span class="comment">% NOM des variables de commande ajoutées</span>
+1124 
+1125 <span class="comment">% U_structures =&gt; Structures récupérées à chaque pas de temps</span>
+1126 
+1127 disp(<span class="string">'Nombre de contacts : '</span>);
+1128 nb_contact
+1129 disp(<span class="string">'Nombre d''appels a UDOT : '</span>);
+1130 kkk
+1131 <span class="comment">% Sauvegarde sur disque des mouvements du noeud qui entre en contact</span>
+1132 eval([<span class="string">'save mvt'</span>,<span class="string">' X_enr'</span>,<span class="string">' S_enr'</span>,<span class="string">' F_enr'</span>,<span class="string">' Yn_enr'</span>,<span class="string">' Yp_enr'</span>,<span class="string">' P_enr'</span>,<span class="string">' V_enr'</span>]);
+1133 
+1134 toc <span class="comment">% Affichage du temps de calcul</span>
+1135 disp(<span class="string">'Return to finish'</span>)
+1136 pause
+1137 close;
+1138 <span class="comment">%</span>
+1139 disp(<span class="string">'End of simul_tongue_adapt'</span>)
+1140 clear;</pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

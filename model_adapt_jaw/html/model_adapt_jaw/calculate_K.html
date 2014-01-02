@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of calculate_K</title>
+  <meta name="keywords" content="calculate_K">
+  <meta name="description" content="no clues what happens ...">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; calculate_K.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>calculate_K
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>no clues what happens ...</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function K = calculate_K(r, s, XY, lambda2, mu2, pfix) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> no clues what happens ...</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="elast_init.html" class="code" title="function A0 = elast_init(XY, lambda, mu, ordre, H, G, MM, NN)">elast_init</a>	initialises the elasticity matrix</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function K = calculate_K(r, s, XY, lambda2, mu2, pfix)</a>
+0002 <span class="comment">% no clues what happens ...</span>
+0003 
+0004     <span class="keyword">global</span> IX;
+0005     <span class="keyword">global</span> IY;
+0006     <span class="keyword">global</span> IA;
+0007     <span class="keyword">global</span> IB;
+0008     <span class="keyword">global</span> IC;
+0009     <span class="keyword">global</span> ID;
+0010     <span class="keyword">global</span> IE;
+0011 
+0012     x = XY(IX);
+0013     y = XY(IY);
+0014 
+0015     dpsidr = 0.25 * [s-1, 1-s, -1-s, 1+s];
+0016     dpsids = 0.25 * [r-1, -1-r, 1-r, 1+r];
+0017 
+0018     detJ = (dpsidr*x)*(dpsids*y)-(dpsids*x)*(dpsidr*y);
+0019     dpsidx = (dpsids*y)*dpsidr-(dpsidr*y)*dpsids;
+0020     dpsidy = (dpsidr*x)*dpsids-(dpsids*x)*dpsidr;
+0021     dpsi = [dpsidx, dpsidy, 0];
+0022 
+0023     <span class="keyword">if</span> pfix == 0
+0024         
+0025         IAfix = IA;
+0026         IDfix = ID;
+0027         
+0028     <span class="keyword">elseif</span> pfix == 1
+0029 
+0030         IAfix = [9*ones(1,16), IA(17:32), 9*ones(1,16), IA(49:64)];
+0031         IDfix = [9*ones(1,16), ID(17:32), 9*ones(1,16), ID(49:64)];
+0032     
+0033     <span class="keyword">elseif</span> pfix == 2
+0034         
+0035         IAfix = [IA(1:16), 9*ones(1,16), IA(33:64)];
+0036         IDfix = [ID(1:16), 9*ones(1,16), ID(33:64)];
+0037     
+0038     <span class="keyword">end</span>
+0039 
+0040     A = dpsi(IAfix);
+0041     B = dpsi(IB);
+0042     C = dpsi(IC);
+0043     D = dpsi(IDfix);
+0044     E = dpsi(IE);
+0045 
+0046     K = (1/abs(detJ))*(A.*(lambda2*B+2*mu2*C)+mu2*D.*E);
+0047     
+0048 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ode45plus</title>
+  <meta name="keywords" content="ode45plus">
+  <meta name="description" content="ODE45PLUS Solve differential equation in the same fashion as">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; ode45plus.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ode45plus
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ODE45PLUS Solve differential equation in the same fashion as</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [tout, yout] = ode45plus(ypfun, t0, tf, y0, tol, storestep) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">ODE45PLUS Solve differential equation in the same fashion as
+          Matlab 4 ODE45, except that values are stored only each
+          *storestep* secs. The trace capability has been removed.
+
+          INPUT:
+          ypfun     - String containing the name of the problem definition
+          t0        - Initial value of t
+          tf        - Final value of t
+          y0        - Initial value column-vector
+          tol       - The desired accuracy
+          storestep - The storage timestep
+
+          See ODE45, ODEFILE,... for more precisions</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="simul_tongue_adapt_jaw.html" class="code" title="function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, delta_lambda_ggp, delta_lambda_gga, delta_lambda_hyo, delta_lambda_sty, delta_lambda_ver, delta_lambda_sl, delta_lambda_il, t_trans, t_hold, jaw_rot, lip_prot, ll_rot, hyoid_mov, light)">simul_tongue_adapt_jaw</a>	Modèle Payan & Perrier /Zandipour Tongue Jaw</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [tout, yout] = ode45plus(ypfun, t0, tf, y0, tol, storestep)</a>
+0002 <span class="comment">%ODE45PLUS Solve differential equation in the same fashion as</span>
+0003 <span class="comment">%          Matlab 4 ODE45, except that values are stored only each</span>
+0004 <span class="comment">%          *storestep* secs. The trace capability has been removed.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%          INPUT:</span>
+0007 <span class="comment">%          ypfun     - String containing the name of the problem definition</span>
+0008 <span class="comment">%          t0        - Initial value of t</span>
+0009 <span class="comment">%          tf        - Final value of t</span>
+0010 <span class="comment">%          y0        - Initial value column-vector</span>
+0011 <span class="comment">%          tol       - The desired accuracy</span>
+0012 <span class="comment">%          storestep - The storage timestep</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%          See ODE45, ODEFILE,... for more precisions</span>
+0015 
+0016 <span class="keyword">global</span> ttout; <span class="comment">% to know which t is being stored; MZ 12/30/99</span>
+0017 
+0018 
+0019 <span class="comment">% The Fehlberg coefficients:</span>
+0020 alpha = [1/4  3/8  12/13  1  1/2]';
+0021 beta  = [ [    1      0      0     0      0    0]/4
+0022   [    3      9      0     0      0    0]/32
+0023   [ 1932  -7200   7296     0      0    0]/2197
+0024   [ 8341 -32832  29440  -845      0    0]/4104
+0025   [-6080  41040 -28352  9295  -5643    0]/20520 ]';
+0026 gamma = [ [902880  0  3953664  3855735  -1371249  277020]/7618050
+0027   [ -2090  0    22528    21970    -15048  -27360]/752400 ]';
+0028 pow = 1/5;
+0029 
+0030 <span class="keyword">if</span> nargin &lt; 5, tol = 1.e-6; <span class="keyword">end</span>
+0031 <span class="keyword">if</span> nargin &lt; 6, storestep = 0.1; <span class="keyword">end</span>
+0032 
+0033 <span class="comment">% Initialization</span>
+0034 t = t0;
+0035 hmax = (tf - t)/16;
+0036 h = hmax/8;
+0037 y = y0(:);
+0038 f = zeros(length(y),6);
+0039 l = storestep;
+0040 tout(1) = t;
+0041 yout(1,:) = y.';
+0042 forcestep = 0;
+0043 ttout=[ttout; t];
+0044 
+0045 <span class="comment">% here the main loop starts ...</span>
+0046 
+0047 <span class="keyword">global</span> kkk <span class="comment">% RW 01/2011</span>
+0048 <span class="keyword">global</span> contactRW; <span class="comment">% RW 01/2011</span>
+0049 contactRW = 0; <span class="comment">% RW 01/2011</span>
+0050 <span class="keyword">global</span> kkk_max_flag <span class="comment">% RW 01/2011</span>
+0051 kkk_max_flag = 0; <span class="comment">% RW 01/2011</span>
+0052 kkk_max = 10000; <span class="comment">% RW 01/2011</span>
+0053 
+0054 <span class="keyword">while</span> (t &lt; tf) &amp;&amp; (t + h &gt; t) &amp;&amp; (~contactRW) &amp;&amp; (~kkk_max_flag) <span class="comment">% The main loop</span>
+0055     
+0056     <span class="comment">%[h t]</span>
+0057     <span class="keyword">if</span> t + h &gt; tf
+0058         h = tf - t
+0059     <span class="keyword">end</span>
+0060   
+0061     <span class="comment">% Compute the slopes</span>
+0062     temp = feval(ypfun,t,y);
+0063     f(:,1) = temp(:);
+0064     <span class="keyword">for</span> j = 1:5
+0065         temp = feval(ypfun, t+alpha(j)*h, y+h*f*beta(:,j));
+0066         f(:,j+1) = temp(:);
+0067     <span class="keyword">end</span>
+0068   
+0069 <span class="comment">%     t_RW01 = t;</span>
+0070 <span class="comment">%     t_RW02 = t;</span>
+0071 <span class="comment">%</span>
+0072 <span class="comment">%     disp ([num2str(t_RW01) ':' num2str(t_RW02)])</span>
+0073 <span class="comment">%</span>
+0074 
+0075     <span class="comment">% Estimate the error and the acceptable error</span>
+0076     delta = norm(h*f*gamma(:,2),<span class="string">'inf'</span>);
+0077     tau = tol*max(norm(y,<span class="string">'inf'</span>),1.0);
+0078   
+0079     <span class="comment">% Update the solution only if the error is acceptable</span>
+0080     <span class="keyword">if</span> ((delta &lt;= tau) || forcestep )
+0081         forcestep = 0;
+0082         t = t + h;
+0083         y = y + h*f*gamma(:,1);
+0084         <span class="comment">% Problems may arise if storestep is not big enough vs. h</span>
+0085         <span class="comment">% ie l may &quot;run after t&quot;</span>
+0086         <span class="keyword">if</span> t &gt; l
+0087             disp ([num2str(t) <span class="string">'ms'</span>])
+0088             l = l + storestep ;
+0089             tout = [tout ; t];
+0090             yout = [yout ; y.'];
+0091             ttout=[ttout; t];
+0092         <span class="keyword">end</span>
+0093     <span class="keyword">end</span>
+0094   
+0095     <span class="comment">% Update the step size</span>
+0096     <span class="keyword">if</span> delta ~= 0.0
+0097         h = min(hmax, 0.8*h*(tau/delta)^pow);
+0098         <span class="keyword">if</span> h &lt; 1.0e-5
+0099             h = 1.0e-5;
+0100             forcestep = 1;
+0101         <span class="keyword">end</span>
+0102     <span class="keyword">end</span>
+0103     
+0104     kkk_max_flag = (kkk &gt;= kkk_max); <span class="comment">% RW 01/2011</span>
+0105     
+0106 <span class="keyword">end</span> <span class="comment">% end main loop % RW 01/2011</span>
+0107 
+0108 
+0109 <span class="keyword">if</span> (t &lt; tf)
+0110   disp(<span class="string">'Singularity likely.'</span>)
+0111   t
+0112 <span class="keyword">end</span>
+0113 
+0114 <span class="comment">% Well, well, well... Let's try it !</span>
+0115</pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

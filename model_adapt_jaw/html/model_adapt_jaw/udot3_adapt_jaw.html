@@ -1,0 +1,703 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of udot3_adapt_jaw</title>
+  <meta name="keywords" content="udot3_adapt_jaw">
+  <meta name="description" content="CV - 03/03/99">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; udot3_adapt_jaw.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>udot3_adapt_jaw
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>CV - 03/03/99</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Udot = udot3_adapt_jaw(t,U) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CV - 03/03/99
+ Modifications :
+    - Optimisation des boucles et des calculs
+    - Ajout d'une phase d'initialisation
+    - Cacul prealable des nodes d'attache des muscles
+    - Calcul de l'effet de chaque muscle dans une fonction separee</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="Comlambda_adapt_jaw.html" class="code" title="function LAMBDA=Comlambda_adapt_jaw(t)">Comlambda_adapt_jaw</a>	Modified PP 9 May 2011 - Introduction of variable delta_lambda_tot_GGP, delta_lambda_tot_GGA, delta_lambda_tot_Hyo</li><li><a href="GGA.html" class="code" title="function GGA(U);">GGA</a>	GGA.m</li><li><a href="GGP.html" class="code" title="function GGP(U);">GGP</a>	GGP.m</li><li><a href="HYO.html" class="code" title="function HYO(U);">HYO</a>	HYO.m</li><li><a href="IL.html" class="code" title="function IL(U);">IL</a>	IL.m</li><li><a href="SL.html" class="code" title="function SL(U);">SL</a>	SL.m</li><li><a href="STYLO.html" class="code" title="function STYLO(U);">STYLO</a>	STYLO.m</li><li><a href="VERT.html" class="code" title="function VERT(U);">VERT</a>	VERT.m</li><li><a href="elast2.html" class="code" title="function elast2 = elast2(activGGA, activGGP, activHyo, activStylo,activSL, activVert, ncontact)">elast2</a>	Calcule la matrice d'elasticite A0 en fonction des activites des</li><li><a href="jaw_trans.html" class="code" title="function [new_X0, new_Y0]=jaw_trans(t);">jaw_trans</a>	Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Udot = udot3_adapt_jaw(t,U)</a>
+0002 <span class="comment">% CV - 03/03/99</span>
+0003 <span class="comment">% Modifications :</span>
+0004 <span class="comment">%    - Optimisation des boucles et des calculs</span>
+0005 <span class="comment">%    - Ajout d'une phase d'initialisation</span>
+0006 <span class="comment">%    - Cacul prealable des nodes d'attache des muscles</span>
+0007 <span class="comment">%    - Calcul de l'effet de chaque muscle dans une fonction separee</span>
+0008 
+0009 <span class="comment">% Modifications :</span>
+0010 <span class="comment">%    - Modification de l'algorithme de detection du contact</span>
+0011 <span class="comment">%      langue/palais : le contact peut maintenant se faire sur 2</span>
+0012 <span class="comment">%      segments non consecutifs</span>
+0013 <span class="comment">%    - Nouvel algorithme de detection de collision pour le contact</span>
+0014 <span class="comment">%    langue/dents inferieures : modifications des variables liees aux</span>
+0015 <span class="comment">%    dents inferieures</span>
+0016 <span class="comment">%    - Calcul du temps de calcul restant</span>
+0017 <span class="comment">%    - Calcul des rho_#muscles# dans Simulation4</span>
+0018 <span class="comment">%    - Erreur dans la variable 'l' du Vert</span>
+0019 <span class="comment">%    - Remplacement dans le calcul des forces de 'activ1&gt;=0' par</span>
+0020 <span class="comment">%      'activ&gt;0'</span>
+0021 <span class="comment">%    - Changement du calcul des forces du SL</span>
+0022 <span class="comment">%    - Recalcul a chaque instant de la matrice d'elasticite, en</span>
+0023 <span class="comment">%      appelant la fonction elast.m</span>
+0024 <span class="comment">%    - deux fois plus de fibres (si fact=2) pour le GGP, le GGA et le</span>
+0025 <span class="comment">%      Vert</span>
+0026 <span class="comment">%    - Modification de l'algorithme de collision</span>
+0027 
+0028 
+0029 <span class="comment">% Plus de modifications :</span>
+0030 <span class="comment">%    - On va travailler avec comlambda.m (plus general) au lieu de COMLAMBDA.m</span>
+0031 
+0032 <span class="comment">% Modifications apportees :</span>
+0033 <span class="comment">%    - ajout de commentaires</span>
+0034 <span class="comment">%    - Le calcul de l'inverse de la matrice de masse s'effectue dans</span>
+0035 <span class="comment">%      le fichier SIMULATION2.m : on utilise ici la matrice invMass</span>
+0036 <span class="comment">%    - Formalisation des indices dans le calcul des forces : on peut</span>
+0037 <span class="comment">%      ainsi modifier le nombre d'elements en modifiant uniquement NN et MM</span>
+0038 <span class="comment">%    - Etude du contact langue / palais pour un seul point de contact</span>
+0039 <span class="comment">%      On calcule l'intersection des droites, des segments, la surface</span>
+0040 <span class="comment">%      de contact et la profondeur</span>
+0041 <span class="comment">%</span>
+0042 <span class="comment">%    - Le calcul de la force de pesanteur se fait avec les valeurs</span>
+0043 <span class="comment">%    'exactes' de masse de chaque noeud calculees dans Simulation4.m</span>
+0044 
+0045 
+0046 <span class="comment">% Le temps t intervient pour le calcul des LAMBDA via le programme</span>
+0047 <span class="comment">% matlab COMLAMBDA.m</span>
+0048 <span class="comment">% Creation de l'equation differentielle :</span>
+0049 <span class="comment">% M.U'' + f.U' +K(U,U',lambda).U = F(U,U',lambda) + P</span>
+0050 <span class="comment">% qui est resolue par la commande ODE45 de MATLAB</span>
+0051 
+0052 
+0053 <span class="keyword">global</span> A0;
+0054 <span class="keyword">global</span> X0;
+0055 <span class="keyword">global</span> Y0;
+0056 <span class="keyword">global</span> X0Y0;
+0057 <span class="keyword">global</span> NN;
+0058 <span class="keyword">global</span> MM;
+0059 <span class="keyword">global</span> fact;
+0060 <span class="keyword">global</span> lambda;
+0061 <span class="keyword">global</span> mu;
+0062 <span class="keyword">global</span> X;
+0063 <span class="keyword">global</span> Y;
+0064 <span class="keyword">global</span> XY;
+0065 <span class="keyword">global</span> FXY;
+0066 <span class="keyword">global</span> H;
+0067 <span class="keyword">global</span> G;
+0068 <span class="keyword">global</span> XS;
+0069 <span class="keyword">global</span> YS;
+0070 <span class="keyword">global</span> X1;
+0071 <span class="keyword">global</span> Y1;
+0072 <span class="keyword">global</span> X2;
+0073 <span class="keyword">global</span> Y2;
+0074 <span class="keyword">global</span> X3;
+0075 <span class="keyword">global</span> Y3;
+0076 <span class="keyword">global</span> tf;
+0077 <span class="keyword">global</span> nb_transitions;
+0078 <span class="keyword">global</span> tfin_closion;
+0079 <span class="keyword">global</span> contact;               <span class="comment">% Variable indiquant si le contact a deja</span>
+0080 <span class="comment">% eu lieu (initialisée à 0 dans udot3init.m et utilisée</span>
+0081 <span class="comment">% dans press.m uniquement) (PP Mars 2000)</span>
+0082 
+0083 
+0084 <span class="comment">% Longueurs au repos des muscles</span>
+0085 <span class="keyword">global</span> longrepos_GGP;
+0086 <span class="keyword">global</span> longrepos_GGA;
+0087 <span class="keyword">global</span> longrepos_Hyo;
+0088 <span class="keyword">global</span> longrepos_Stylo;
+0089 <span class="keyword">global</span> longrepos_SL;
+0090 <span class="keyword">global</span> longrepos_IL;
+0091 <span class="keyword">global</span> longrepos_Vert;
+0092 
+0093 <span class="keyword">global</span> longrepos_GGA_max longrepos_GGP_max longrepos_Hyo_max longrepos_IL_max longrepos_SL_max longrepos_Stylo_max longrepos_Vert_max <span class="comment">%PP Nov 06</span>
+0094 
+0095 <span class="comment">% Variables de sections des muscles</span>
+0096 <span class="keyword">global</span> rho_GG;
+0097 <span class="keyword">global</span> rho_Hyo;
+0098 <span class="keyword">global</span> rho_Stylo;
+0099 <span class="keyword">global</span> rho_SL;
+0100 <span class="keyword">global</span> rho_IL;
+0101 <span class="keyword">global</span> rho_Vert;
+0102 
+0103 <span class="comment">% Variables concernant le contact</span>
+0104 <span class="keyword">global</span> Point_dent;
+0105 <span class="keyword">global</span> pente_D;
+0106 <span class="keyword">global</span> org_D;
+0107 <span class="keyword">global</span> Point_P;
+0108 <span class="keyword">global</span> pente_P;
+0109 <span class="keyword">global</span> nbpdent;
+0110 <span class="keyword">global</span> nbpalais;
+0111 <span class="keyword">global</span> org_P;
+0112 <span class="keyword">global</span> pente_L;
+0113 <span class="keyword">global</span> org_L;
+0114 <span class="keyword">global</span> angle_reaction;
+0115 
+0116 <span class="comment">% Variables concernant le poids</span>
+0117 <span class="keyword">global</span> Mass;
+0118 <span class="keyword">global</span> invMass;
+0119 
+0120 <span class="comment">% Variables contenant les lambdas des fibres</span>
+0121 <span class="keyword">global</span> LAMBDA_GGP;
+0122 <span class="keyword">global</span> LAMBDA_GGA;
+0123 <span class="keyword">global</span> LAMBDA_Stylo1;
+0124 <span class="keyword">global</span> LAMBDA_Stylo2;
+0125 <span class="keyword">global</span> LAMBDA_Hyo1;
+0126 <span class="keyword">global</span> LAMBDA_Hyo2;
+0127 <span class="keyword">global</span> LAMBDA_Hyo3;
+0128 <span class="keyword">global</span> LAMBDA_SL;
+0129 <span class="keyword">global</span> LAMBDA_IL;
+0130 <span class="keyword">global</span> LAMBDA_Vert;
+0131 
+0132 <span class="comment">% Variables recevant les forces de chaque muscle</span>
+0133 <span class="keyword">global</span> ForceGGA;
+0134 <span class="keyword">global</span> ForceGGP;
+0135 <span class="keyword">global</span> ForceHyo;
+0136 <span class="keyword">global</span> ForceStylo1 ForceStylo2;
+0137 <span class="keyword">global</span> ForceSL;
+0138 <span class="keyword">global</span> ForceIL;
+0139 <span class="keyword">global</span> ForceVert;
+0140 
+0141 <span class="comment">% Variables definissant les points d'attache des muscles</span>
+0142 <span class="keyword">global</span> Att_GGP;
+0143 <span class="keyword">global</span> Att_GGA;
+0144 <span class="keyword">global</span> Att_Hyo;
+0145 <span class="keyword">global</span> Att_Stylo;
+0146 <span class="keyword">global</span> Att_SL;
+0147 <span class="keyword">global</span> Att_IL;
+0148 <span class="keyword">global</span> Att_Vert;
+0149 
+0150 <span class="comment">% Semaphore pour le calcul de la pression</span>
+0151 <span class="keyword">global</span> DoPress;
+0152 
+0153 <span class="comment">% Variables globales temporaires</span>
+0154 <span class="keyword">global</span> aff_fin;
+0155 <span class="keyword">global</span> t_affiche;
+0156 <span class="keyword">global</span> t_verbose;
+0157 <span class="keyword">global</span> nb_contact;
+0158 <span class="keyword">global</span> S_enr;
+0159 <span class="keyword">global</span> X_enr;
+0160 <span class="keyword">global</span> Yn_enr;
+0161 <span class="keyword">global</span> Yp_enr;
+0162 <span class="keyword">global</span> F_enr;
+0163 <span class="keyword">global</span> P_enr;
+0164 <span class="keyword">global</span> V_enr;
+0165 <span class="keyword">global</span> nc;
+0166 <span class="keyword">global</span> pc;
+0167 <span class="keyword">global</span> t_jaw;
+0168 
+0169 
+0170 <span class="comment">% Variables pre-initialisees</span>
+0171 <span class="keyword">global</span> NNxMM NNx2 MMx2 NNxMMx2; <span class="comment">% Des multiplications...</span>
+0172 <span class="keyword">global</span> f1 f2 f3 f4 f5;          <span class="comment">% Coefficients p. le calcul des forces</span>
+0173 <span class="keyword">global</span> MU c;                    <span class="comment">% Idem</span>
+0174 <span class="keyword">global</span> f F;                     <span class="comment">% Constante et matrice de frottement</span>
+0175 <span class="keyword">global</span> PXY;                     <span class="comment">% Poids</span>
+0176 <span class="keyword">global</span> v1 v2 v3;                <span class="comment">% Variables temporaires</span>
+0177 
+0178 
+0179 <span class="keyword">global</span> first_contact;                <span class="comment">%modified by Yohan &amp; Majid; Nov 30, 99</span>
+0180 <span class="keyword">global</span> kkk t_initial t_transition t_final theta theta_ll dist_lip hyoid_movment dist_hyoid Hyoid_corps lar_ar_mri tongue_lar_mri pharynx_mri
+0181 <span class="keyword">global</span> dents_inf lar_ar lowlip palate pharynx tongue_lar upperlip velum U_dents_inf U_lowlip U_upperlip hyoid_i_abs
+0182 <span class="keyword">global</span> U_lar_ar_mri U_tongue_lar_mri U_pharynx_mri
+0183 
+0184 <span class="keyword">global</span> t_i ttout length_ttout X0_seq Y0_seq X_origin Y_origin U_X_origin U_Y_origin old_t;
+0185 <span class="comment">% ----------------------------------------------------------------------</span>
+0186 <span class="comment">% Initialisations cycliques</span>
+0187 <span class="keyword">if</span> kkk==0    <span class="comment">%modified by Yohan &amp; Majid; Nov 30, 99</span>
+0188     first_contact = 0;
+0189     t_jaw=0;
+0190     U_lowlip=[];
+0191     U_upperlip=[];
+0192     U_lar_ar_mri = [];
+0193     U_tongue_lar_mri = [];
+0194     U_pharynx_mri = [];
+0195     U_dents_inf=[];
+0196     length_ttout=0;
+0197     X0_seq=[];
+0198     Y0_seq=[];
+0199     old_t=t_initial;
+0200 <span class="keyword">end</span>
+0201 
+0202 kkk=kkk+1;
+0203 t_i=round(1000*t)+1;
+0204 FXY = PXY;
+0205 
+0206 <span class="comment">% Calculate the rotation and translation of the jaw -- MZ 12/27/99</span>
+0207 <span class="keyword">if</span> t-t_jaw&gt;=0.001 &amp;&amp; t&lt;=t_final &amp;&amp; (theta~=0 || theta_ll~=0 || dist_lip~=0 || dist_hyoid~=0) <span class="comment">% GB MARS 2011</span>
+0208     [new_X0, new_Y0]=<a href="jaw_trans.html" class="code" title="function [new_X0, new_Y0]=jaw_trans(t);">jaw_trans</a>(t);
+0209     t_jaw=t;
+0210     <span class="keyword">if</span> theta~=0
+0211         X0=new_X0;
+0212         Y0=new_Y0;
+0213         <span class="keyword">for</span> i=1:MM
+0214             <span class="keyword">for</span> j=1:NN
+0215                 X0Y0((i-1)*NNx2+2*j-1,1)=X0(i,j);
+0216                 X0Y0((i-1)*NNx2+2*j,1)=Y0(i,j);
+0217             <span class="keyword">end</span>
+0218         <span class="keyword">end</span>
+0219     <span class="keyword">end</span>
+0220 <span class="keyword">end</span>
+0221 <span class="keyword">if</span> length(ttout)&gt;length_ttout
+0222     length_ttout=length_ttout+1;
+0223     U_X_origin(length_ttout)=X_origin;
+0224     U_Y_origin(length_ttout)=Y_origin;
+0225     U_lowlip(length_ttout,:)=[lowlip(1,:) lowlip(2,:)];
+0226     U_upperlip(length_ttout,:)=[upperlip(1,:) upperlip(2,:)];
+0227     U_dents_inf(length_ttout,:)=[dents_inf(1,:) dents_inf(2,:)];
+0228     U_lar_ar_mri(length_ttout,:)=[lar_ar_mri(1,:) lar_ar_mri(2,:)];
+0229     U_tongue_lar_mri(length_ttout,:)=[tongue_lar_mri(1,:) tongue_lar_mri(2,:)];
+0230     U_pharynx_mri(length_ttout,:)=[pharynx_mri(1,:) pharynx_mri(2,:)];
+0231     X0_t = X0'; <span class="comment">% PP GB Avril 2011</span>
+0232     Y0_t = Y0'; <span class="comment">% PP GB Avril 2011</span>
+0233     X0_seq(length_ttout,:)=X0_t(:)';  <span class="comment">% On renverse la matrice pour obtenir la bonne configuration</span>
+0234     Y0_seq(length_ttout,:)=Y0_t(:)';
+0235 <span class="keyword">end</span>
+0236 <span class="comment">% ---------------------------------------------------------------------</span>
+0237 <span class="comment">% Calcul des nouvelles positions des noeuds :</span>
+0238 <span class="comment">% XY est calcule a partir des X0 et Y0 initiaux et du deplacement U.</span>
+0239 
+0240 u=U(1:NNxMMx2,1);
+0241 <span class="keyword">for</span> i=1:MM
+0242     <span class="keyword">for</span> j=1:NN
+0243         v1=(i-1)*NNx2+2*j;
+0244         X(i,j)=X0(i,j)+u(v1-1);
+0245         Y(i,j)=Y0(i,j)+u(v1);
+0246         XY(v1-1,1)=X(i,j);
+0247         XY(v1,1)=Y(i,j);
+0248     <span class="keyword">end</span>
+0249 <span class="keyword">end</span>
+0250 
+0251 
+0252 <span class="comment">% ---------------------------------------------------------------</span>
+0253 <span class="comment">% Calcul de lambda a l'instant t grace a la fonction COMLAMBDA</span>
+0254 LAMBDA = sparse(<a href="Comlambda_adapt_jaw.html" class="code" title="function LAMBDA=Comlambda_adapt_jaw(t)">Comlambda_adapt_jaw</a>(t));    <span class="comment">% Plusieurs transitions (pas d'influence</span>
+0255 <span class="comment">%            des muscles dont les lambdas ont la valeur de repos)</span>
+0256 <span class="comment">% Attribution de chaque lambda aux muscles</span>
+0257 <span class="keyword">for</span> i=1:1+3*fact
+0258     LAMBDA_GGP(i)=LAMBDA(i);
+0259 <span class="keyword">end</span>
+0260 <span class="keyword">for</span> i=2+3*fact:1+6*fact <span class="comment">% 6 fibres dans le cas a 221 noeuds et 3 a 63 noeuds</span>
+0261     LAMBDA_GGA(i-3*fact-1)=LAMBDA(i);
+0262 <span class="keyword">end</span>
+0263 i=1+6*fact;
+0264 LAMBDA_Stylo1=LAMBDA(i+1);
+0265 LAMBDA_Stylo2=LAMBDA(i+2);
+0266 LAMBDA_Hyo1=LAMBDA(i+3);
+0267 LAMBDA_Hyo2=LAMBDA(i+4);
+0268 LAMBDA_Hyo3=LAMBDA(i+5);
+0269 LAMBDA_SL=LAMBDA(i+6);
+0270 LAMBDA_IL=LAMBDA(i+7);
+0271 j=i+8;
+0272 <span class="keyword">for</span> i=j:j+3*fact-1 <span class="comment">% Modifs Dec 99 YP-PP</span>
+0273     LAMBDA_Vert(i-j+1)=LAMBDA(i);
+0274 <span class="keyword">end</span>
+0275 clear LAMBDA;
+0276 <span class="comment">% ---------------------------------------------------------------</span>
+0277 <span class="comment">% Calcul pour chaque muscle de la force FXY qui s'applique en XY</span>
+0278 <a href="GGP.html" class="code" title="function GGP(U);">GGP</a>(U);
+0279 <a href="GGA.html" class="code" title="function GGA(U);">GGA</a>(U);
+0280 <a href="STYLO.html" class="code" title="function STYLO(U);">STYLO</a>(U);
+0281 <a href="HYO.html" class="code" title="function HYO(U);">HYO</a>(U);
+0282 <a href="SL.html" class="code" title="function SL(U);">SL</a>(U);
+0283 <a href="IL.html" class="code" title="function IL(U);">IL</a>(U);
+0284 <a href="VERT.html" class="code" title="function VERT(U);">VERT</a>(U);
+0285 <span class="keyword">if</span> DoPress
+0286     PRESS(t);
+0287 <span class="keyword">end</span>
+0288 <span class="comment">% Genio-Hyoidien : resistance a la racine de la langue</span>
+0289 <span class="keyword">for</span> i=2:NN-1
+0290     FXY(2*i-1)=(X0(1,i)-XY(2*i-1))*2;
+0291     FXY(2*i)=(Y0(1,i)-XY(2*i))*2;
+0292 <span class="keyword">end</span>
+0293 
+0294 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0295 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0296 
+0297 <span class="comment">% CONTACT AVEC LES DENTS (FACON 1)</span>
+0298 
+0299 <span class="comment">% ----------------------------------------------------------------------------</span>
+0300 <span class="comment">% Calcul du contact avec les dents</span>
+0301 <span class="comment">% L'equation de droite des dents est calculee dans Simulation4.m</span>
+0302 <span class="comment">% On calcule les segments de droite de la langue qui pourraient</span>
+0303 <span class="comment">% entrer en collision avec les dents</span>
+0304 <span class="comment">% Pour l'explication des algorithmes, voir &quot;contact langue palais&quot;</span>
+0305 <span class="keyword">global</span> Point_dents;
+0306 <span class="keyword">global</span> Vect_dents;
+0307 <span class="keyword">for</span> i=8*fact*NN+1+4*fact:-1:8*fact*NN+1+2*fact <span class="comment">% Modif. Dec 99 pour descendre plus bas sur les contacts des dents</span>
+0308     Vect_tongue=[XY(2*i-1)-Point_dents(1) XY(2*i)-Point_dents(2)];
+0309     psi=Vect_tongue(1)*Vect_dents(2)-Vect_tongue(2)*Vect_dents(1);
+0310     <span class="keyword">if</span> (psi&lt;0)
+0311         FXY(2*i-1)=FXY(2*i-1)-psi*0.6;
+0312         FXY(2*i)=FXY(2*i)-psi*0.3;
+0313     <span class="keyword">end</span>
+0314 <span class="keyword">end</span>
+0315 imin=8*fact*NN+1+3*fact;
+0316 imax=8*fact*NN+1+5*fact;
+0317 <span class="keyword">for</span> i=imin:imax
+0318     pente_L(i)=(XY(2*i)-XY(2*i+2))/(XY(2*i-1)-XY(2*i+1));
+0319     org_L(i)=XY(2*i)-pente_L(i)*XY(2*i-1);
+0320     Xcontact(i)=0;
+0321     Ycontact(i)=0;
+0322 <span class="keyword">end</span>
+0323 <span class="comment">% FIN CONTACT AVEC LES DENTS (FACON 1)</span>
+0324 
+0325 <span class="comment">% ----------------------------------------------------------------------------</span>
+0326 <span class="comment">% Calcul du contact avec le palais</span>
+0327 <span class="comment">% Les equations des segments du palais sont calculees dans SIMULATION4.m</span>
+0328 <span class="comment">% On verifie ici que les noeuds superieurs de la langue n'entrent pas</span>
+0329 <span class="comment">% en contact avec le palais en testant des intersections de segments.</span>
+0330 <span class="comment">% Si il y a contact, on cree une force s'ajoutant a FXY qui s'oppose au</span>
+0331 <span class="comment">% mouvement (reaction du palais)</span>
+0332 <span class="comment">% Il y a 2 cas possibles :</span>
+0333 <span class="comment">% 1er cas :</span>
+0334 <span class="comment">% il y a 2 contacts sur le meme segment du palais</span>
+0335 <span class="comment">%</span>
+0336 <span class="comment">%                   XY(2*i)</span>
+0337 <span class="comment">%                      /\</span>
+0338 <span class="comment">%       Xcontact(i) -&gt;/  \&lt;- Xcontact(i-NN)</span>
+0339 <span class="comment">%           O~~~~~~~~/~~~~\~~~~~~~O</span>
+0340 <span class="comment">%                   /      \</span>
+0341 <span class="comment">%                  /        \</span>
+0342 <span class="comment">%         --------/          \--------</span>
+0343 <span class="comment">%                        XY(2*i-2*NN)</span>
+0344 <span class="comment">%</span>
+0345 <span class="comment">% 2e cas :</span>
+0346 <span class="comment">% il y a contact sur un segment de palais precedent et sur celui-ci</span>
+0347 <span class="comment">%</span>
+0348 <span class="comment">%                   XY(2*i)</span>
+0349 <span class="comment">%                       /\</span>
+0350 <span class="comment">%                      /  \</span>
+0351 <span class="comment">%       Xcontact(i) -&gt;/    \&lt;- Xcontact(oldi) oldi=i-NN ou i-2NN ou i-3NN</span>
+0352 <span class="comment">%          O~~~~~~~~~/~~~O__\_______O</span>
+0353 <span class="comment">%                   /    |   \</span>
+0354 <span class="comment">%                  /  Point_P \</span>
+0355 <span class="comment">%                 /            \-------------</span>
+0356 <span class="comment">%          ------/         XY(2*i-2*NN)</span>
+0357 <span class="comment">%</span>
+0358 <span class="comment">%</span>
+0359 <span class="comment">% Calcul des equations de droite entre chaque noeuds superieurs de la</span>
+0360 <span class="comment">% langue.</span>
+0361 <span class="comment">% Ces equations sont de la forme :</span>
+0362 <span class="comment">% Y = pente_L(i) * X + org_L(i)</span>
+0363 imin=3*fact*NN+1+6*fact;
+0364 <span class="comment">%imax=7*fact*NN+1+6*fact;</span>
+0365 imax=208; <span class="comment">% PP Avril 04 - Pour prendre en compte aussi les contacts</span>
+0366 <span class="comment">% au niveau de la pointe de la langue</span>
+0367 <span class="keyword">for</span> i=imin:NN:imax
+0368     pente_L(i)=(XY(2*i)-XY(2*i+2*NN))/(XY(2*i-1)-XY(2*i-1+2*NN));
+0369     org_L(i)=XY(2*i)-pente_L(i)*XY(2*i-1);
+0370     <span class="comment">% Xcontact contient les coordonnees du point d'intersection</span>
+0371     Xcontact(i)=0;
+0372     Ycontact(i)=0;
+0373 <span class="keyword">end</span>
+0374 
+0375 neucontact=0;       <span class="comment">% tableau des indices des noeuds qui entrent en contact</span>
+0376 
+0377 <span class="comment">% Detection de la collision</span>
+0378 <span class="keyword">for</span> j=nbpalais-1:-1:1           <span class="comment">% boucle sur les segments du palais et du velum</span>
+0379     <span class="keyword">for</span> i=imin:NN:imax            <span class="comment">% boucle sur les noeuds de la langue</span>
+0380         <span class="keyword">if</span> pente_L(i)~=pente_P(j)
+0381             X_c=(org_L(i)-org_P(j))/(pente_P(j)-pente_L(i));
+0382             <span class="comment">% Verification que le contact est bien sur les segments</span>
+0383             <span class="comment">% Position X correcte ?</span>
+0384             <span class="keyword">if</span> (X_c&lt;=XY(2*i-1))&amp;&amp;(X_c&gt;=XY(2*i-1+2*NN))&amp;&amp;(X_c&lt;=Point_P(2*j+1))&amp;&amp;(X_c&gt;=Point_P(2*j-1))
+0385                 Y_c=pente_L(i)*X_c+org_L(i);
+0386                 <span class="comment">% Position Y correcte ?</span>
+0387                 <span class="keyword">if</span> (Y_c&lt;=max(Point_P(2*j+2),Point_P(2*j)))&amp;&amp;(Y_c&gt;=min(Point_P(2*j+2),Point_P(2*j)))
+0388                     Xcontact(i)=X_c;
+0389                     Ycontact(i)=Y_c;
+0390                     <span class="comment">% Y a-t-il eu contact precedemment ?</span>
+0391                     oldi=i-NN;
+0392                     <span class="keyword">while</span> (Xcontact(oldi)==0)&amp;&amp;(oldi&gt;=imin)
+0393                         oldi=oldi-NN;
+0394                     <span class="keyword">end</span>
+0395                     <span class="comment">% Creation de la force de collision</span>
+0396                     <span class="keyword">if</span> oldi~=imin-NN
+0397                         <span class="keyword">if</span> nb_contact==0
+0398                             fprintf(<span class="string">'Premier contact au noeud %d sur le segment %d a %d %%\n'</span>,2*i-1,j,round(100*t/tf));
+0399                             nc=2*i;
+0400                             pc=j;
+0401                             first_contact=1;
+0402                             <span class="keyword">if</span> fact==2
+0403                                 nc=nc+2*NN; <span class="comment">% car on veut memoriser le noeud precedent</span>
+0404                                 pc=pc-1;
+0405                             <span class="keyword">end</span>
+0406                         <span class="keyword">end</span>
+0407                         <span class="comment">% Module de cette force</span>
+0408                         <span class="comment">% On applique la methode de penalite :</span>
+0409                         <span class="comment">%           F = -(lambda*d + mu*d')</span>
+0410                         <span class="comment">% avec d : profondeur du contact</span>
+0411                         <span class="comment">%      d' : vitesse du noeud par rapport a sa projection</span>
+0412                         <span class="comment">%           sur le palais</span>
+0413                         <span class="comment">%      lambda : rigidite de la collision</span>
+0414                         <span class="comment">%      mu : viscosite de la collision</span>
+0415                         <span class="comment">% On peut aussi utiliser la formule :</span>
+0416                         <span class="comment">%           F = -(lambda*d^n + mu*d'*d^n)</span>
+0417                         <span class="comment">% avec n proche de 1</span>
+0418                         <span class="comment">% et   mu=3/2*alpha*lambda</span>
+0419                         <span class="comment">% On supprime ainsi la discontinuite de la force de</span>
+0420                         <span class="comment">% collision et le coefficient de restitution vaut :</span>
+0421                         <span class="comment">%   e = 1 - alpha*x'</span>
+0422                         surface_c=sqrt((Xcontact(i)-Xcontact(oldi))^2+(Ycontact(i)-Ycontact(oldi))^2);
+0423                         pa=(Ycontact(oldi)-Ycontact(i))/(Xcontact(oldi)-Xcontact(i));
+0424                         Xortho=(XY(2*i)+XY(2*i-1)/pa-Ycontact(oldi)+pa*Xcontact(oldi))/(pa+1/pa);
+0425                         Yortho=pa*(Xortho-Xcontact(oldi))+Ycontact(oldi);
+0426                         distance=sqrt((XY(2*i-1)-Xortho)^2+(XY(2*i)-Yortho)^2);
+0427                         angle_reaction=atan((Xortho-XY(2*i-1))/(XY(2*i)-Yortho));
+0428                         <span class="keyword">if</span> (U(2*NNxMM+2*i)/sqrt(U(2*NNxMM+2*i)*U(2*NNxMM+2*i-1)))&gt;sin(angle_reaction)
+0429                             vitesse_contact=U(2*NNxMM+2*i)*cos(angle_reaction)+U(2*NNxMM+2*i-1)*abs(sin(angle_reaction));
+0430                         <span class="keyword">else</span>
+0431                             vitesse_contact=U(2*NNxMM+2*i)*cos(angle_reaction)-U(2*NNxMM+2*i-1)*abs(sin(angle_reaction));
+0432                         <span class="keyword">end</span>
+0433                         force_reaction=(60+0.5*vitesse_contact)*(surface_c*distance)^0.8;
+0434                         <span class="comment">% Direction de cette force</span>
+0435                         <span class="comment">% Elle est dirigee suivant la plus courte distance entre le</span>
+0436                         <span class="comment">% noeud qui depasse et le palais : elle est donc</span>
+0437                         <span class="comment">% perpendiculaire aux 2 points de contact</span>
+0438                         FXY(2*i-1)=FXY(2*i-1)+force_reaction*sin(angle_reaction);
+0439                         FXY(2*i)=FXY(2*i)-force_reaction*cos(angle_reaction);
+0440                         Xcontact(i)=0;
+0441                         Ycontact(i)=0;
+0442                         Xcontact(oldi)=0;
+0443                         Ycontact(oldi)=0;
+0444                         nb_contact=nb_contact+1;
+0445                         F_enr(t_i)=sqrt(FXY(2*i-1)^2+FXY(2*i)^2);
+0446                         S_enr(t_i)=surface_c;
+0447                         P_enr(t_i)=distance;
+0448                         neucontact(size(neucontact,2)+1)=i;
+0449                     <span class="keyword">end</span>
+0450                 <span class="keyword">end</span>
+0451             <span class="keyword">elseif</span> (aff_fin==0)&amp;&amp;(pc==j)&amp;&amp;(nc==2*i)&amp;&amp;(nb_contact~=0)&amp;&amp;(t&gt;=tf/2)
+0452                 fprintf(<span class="string">'Fin du contact a %d %%\n'</span>,round(100*t/tf));
+0453                 aff_fin=1;
+0454             <span class="keyword">end</span>
+0455         <span class="keyword">end</span>          <span class="comment">% fin du non parallele</span>
+0456     <span class="keyword">end</span>            <span class="comment">% fin du for i</span>
+0457 <span class="keyword">end</span>              <span class="comment">% fin du for j</span>
+0458 <span class="comment">% ------------------------------------------------------------------------</span>
+0459 <span class="comment">% Affichage du contour de la langue et calcul de certaines donnees</span>
+0460 
+0461 <span class="comment">% Affichage du contour de la langue tous les 0.02 s</span>
+0462 <span class="keyword">global</span> TEMPS_FINAL_CUM;                 <span class="comment">%      |</span>
+0463 <span class="keyword">global</span> couleurs;                        <span class="comment">%      |</span>
+0464 <span class="keyword">if</span> t&gt;=t_affiche                         <span class="comment">%      |</span>
+0465     fprintf(<span class="string">'Affichage...\n'</span>);            <span class="comment">%      |</span>
+0466     t_affiche=t_affiche+0.005;<span class="comment">% &lt;-----------------/</span>
+0467     interval = min(find(TEMPS_FINAL_CUM &gt;= t));
+0468     index_coul = rem(interval, length(couleurs)) + 1;
+0469     
+0470     figure(1);
+0471     plot(X(1:MM,NN),Y(1:MM,NN),[<span class="string">'-'</span> couleurs(index_coul)]);
+0472     plot(X(MM,1:NN),Y(MM,1:NN),[<span class="string">'-'</span> couleurs(index_coul)]);
+0473     plot(dents_inf(1,:),dents_inf(2,:),[<span class="string">'-'</span> couleurs(index_coul)]);
+0474     plot(lowlip(1,:),lowlip(2,:),[<span class="string">'-'</span> couleurs(index_coul)]);
+0475     plot(upperlip(1,:),upperlip(2,:),[<span class="string">'-'</span> couleurs(index_coul)]);
+0476     plot(X(1:MM,NN),Y(1:MM,NN),<span class="string">'r+'</span>);
+0477     plot(X(MM,1:NN),Y(MM,1:NN),<span class="string">'r+'</span>);
+0478     plot(lar_ar_mri(1,:),lar_ar_mri(2,:),[<span class="string">'-'</span> couleurs(index_coul)])
+0479     plot(pharynx_mri(1,1:end),pharynx_mri(2,1:end),<span class="string">'k-'</span>)
+0480     plot([pharynx_mri(1,end) lar_ar_mri(1,1)], [pharynx_mri(2,end) lar_ar_mri(2,1)],<span class="keyword">...</span>
+0481         [<span class="string">'-'</span> couleurs(index_coul)])
+0482     plot([X(1,NN) tongue_lar_mri(1,1)],[Y(1,NN) tongue_lar_mri(2,1)],<span class="string">'r'</span>)
+0483     plot(tongue_lar_mri(1,:),tongue_lar_mri(2,:),[<span class="string">'-'</span> couleurs(index_coul)])
+0484     plot(X_origin,Y_origin,<span class="string">'r*'</span>);
+0485     plot(X_origin,Y_origin,<span class="string">'ro'</span>);
+0486     axis(<span class="string">'equal'</span>)
+0487     pause(0.001);
+0488 <span class="keyword">end</span>
+0489 <span class="keyword">if</span> t&gt;=t_verbose
+0490     t_verbose = t_verbose+0.005;
+0491     t_calcul=round(toc*(TEMPS_FINAL_CUM(length(TEMPS_FINAL_CUM)) / t - 1));
+0492     heure=floor(t_calcul/3600);
+0493     minute=floor((t_calcul-3600*heure)/60);
+0494     seconde=t_calcul-3600*heure-60*minute;
+0495     fprintf(<span class="string">'%d %%\n'</span>,round(100*t/tf));
+0496     fprintf(<span class="string">'Temps restant : %d h %d min %d s\n\n'</span>,heure,minute,seconde);
+0497 <span class="keyword">end</span>
+0498 
+0499 
+0500 <span class="comment">% On calcule ici les coordonnees du premier noeud qui entre en contact pour</span>
+0501 <span class="comment">% pouvoir l'enregistrer</span>
+0502 <span class="comment">%if nb_contact~=0</span>
+0503 <span class="keyword">if</span> first_contact==1  <span class="comment">%modified by Yophan &amp; Majid  Nov30, 99</span>
+0504     
+0505     X_enr(t_i)=XY(nc-1);
+0506     Yn_enr(t_i)=XY(nc);
+0507     Yp_enr(t_i)=pente_P(pc)*X_enr(t_i)+org_P(pc);
+0508     <span class="keyword">if</span> (U(2*NNxMM+nc)/sqrt(U(2*NNxMM+nc)*U(2*NNxMM+nc-1)))&gt;sin(angle_reaction)
+0509         V_enr(t_i)=U(2*NNxMM+nc)*cos(angle_reaction)+U(2*NNxMM+nc-1)*abs(sin(angle_reaction));
+0510     <span class="keyword">else</span>
+0511         V_enr(t_i)=U(2*NNxMM+nc)*cos(angle_reaction)-U(2*NNxMM+nc-1)*abs(sin(angle_reaction));
+0512     <span class="keyword">end</span>
+0513     first_contact=0;
+0514 <span class="keyword">end</span>
+0515 
+0516 
+0517 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0518 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0519 
+0520 <span class="comment">% CONTACT AVEC LES DENTS (FACON 2)</span>
+0521 
+0522 
+0523 <span class="comment">% ----------------------------------------------------------------------------</span>
+0524 <span class="comment">% Calcul du contact avec les dents</span>
+0525 <span class="comment">% L'equation de droite des dents est calculee dans Simulation4.m</span>
+0526 <span class="comment">% On calcule les segments de droite de la langue qui pourraient</span>
+0527 <span class="comment">% entrer en collision avec les dents</span>
+0528 <span class="comment">% Pour l'explication des algorithmes, voir &quot;contact langue palais&quot;</span>
+0529 
+0530 <span class="comment">% imin=8*fact*NN+1+fact;</span>
+0531 <span class="comment">% imax=8*fact*NN+1+5*fact;</span>
+0532 <span class="comment">% for i=imin:imax</span>
+0533 <span class="comment">%   if XY(2*i-1)~=XY(2*i+1)  % evite l'affichage de 'division par zero'</span>
+0534 <span class="comment">%     pente_L(i)=(XY(2*i)-XY(2*i+2))/(XY(2*i-1)-XY(2*i+1));</span>
+0535 <span class="comment">%   else</span>
+0536 <span class="comment">%     pente_L(i)=1e9;</span>
+0537 <span class="comment">%   end</span>
+0538 <span class="comment">%   org_L(i)=XY(2*i)-pente_L(i)*XY(2*i-1);</span>
+0539 <span class="comment">%   Xcontactd(i)=0;</span>
+0540 <span class="comment">%   Ycontactd(i)=0;</span>
+0541 <span class="comment">% end</span>
+0542 
+0543 <span class="comment">% for j=1:nbpdent-1</span>
+0544 <span class="comment">%   for i=imin:imax</span>
+0545 <span class="comment">%     if pente_L(i)~=pente_D(j)</span>
+0546 <span class="comment">%       X_c=(org_L(i)-org_D(j))/(pente_D(j)-pente_L(i));</span>
+0547 <span class="comment">%       if (X_c&lt;=max(XY(2*i+1),XY(2*i-1)))&amp;(X_c&gt;=min(XY(2*i-1),XY(2*i+1)))&amp;(X_c&gt;=Point_dent(1,j+1))&amp;(X_c&lt;=Point_dent(1,j))</span>
+0548 <span class="comment">%     Y_c=org_L(i)+pente_L(i)*X_c;</span>
+0549 <span class="comment">%     if (Y_c&lt;=Point_dent(2,j+1))&amp;(Y_c&gt;=Point_dent(2,j))&amp;(Y_c&lt;=XY(2*i+2))&amp;(Y_c&gt;=XY(2*i))</span>
+0550 <span class="comment">%       Xcontactd(i)=X_c;</span>
+0551 <span class="comment">%       Ycontactd(i)=Y_c;</span>
+0552 <span class="comment">%           oldi=i-1;</span>
+0553 <span class="comment">%       while (Xcontactd(oldi)==0)&amp;(oldi&gt;=imin)</span>
+0554 <span class="comment">%         oldi=oldi-1;</span>
+0555 <span class="comment">%       end</span>
+0556 <span class="comment">%       if oldi~=imin-1</span>
+0557 <span class="comment">%         pa=(Ycontactd(oldi)-Ycontactd(i))/(Xcontactd(oldi)-Xcontactd(i));</span>
+0558 <span class="comment">%         surface_c=sqrt((Xcontactd(i)-Xcontactd(oldi))^2+(Ycontactd(i)-Ycontactd(oldi))^2);</span>
+0559 <span class="comment">%         somme_dist=0;</span>
+0560 <span class="comment">%         for nbn=oldi+1:i  % Si plusieurs noeuds depassent</span>
+0561 <span class="comment">%           Xortho=(XY(2*nbn)+XY(2*nbn-1)/pa-Ycontactd(oldi)+pa*Xcontactd(oldi))/(pa+1/pa);</span>
+0562 <span class="comment">%           Yortho=pa*(Xortho-Xcontactd(oldi))+Ycontactd(oldi);</span>
+0563 <span class="comment">%           distance(nbn)=sqrt((XY(2*nbn-1)-Xortho)^2+(XY(2*nbn)-Yortho)^2);</span>
+0564 <span class="comment">%           somme_dist=somme_dist+distance(nbn);</span>
+0565 <span class="comment">%           angle_reaction(nbn)=-atan((Xortho-XY(2*nbn-1))/(XY(2*nbn)-Yortho));</span>
+0566 <span class="comment">%         end</span>
+0567 <span class="comment">%         for nbn=oldi+1:i</span>
+0568 <span class="comment">%           force_reaction=30*surface_c*distance(nbn)*distance(nbn)/somme_dist;</span>
+0569 <span class="comment">%           if force_reaction&gt;40</span>
+0570 <span class="comment">%         force_reaction=40;</span>
+0571 <span class="comment">%           end</span>
+0572 <span class="comment">%           FXY(2*i-1)=FXY(2*i-1)+force_reaction*sin(angle_reaction(nbn));</span>
+0573 <span class="comment">%           FXY(2*i)=FXY(2*i)+force_reaction*cos(angle_reaction(nbn));</span>
+0574 <span class="comment">%         end</span>
+0575 <span class="comment">%         Xcontactd(i)=0;</span>
+0576 <span class="comment">%         Ycontactd(i)=0;</span>
+0577 <span class="comment">%         Xcontactd(oldi)=0;</span>
+0578 <span class="comment">%         Ycontactd(oldi)=0;</span>
+0579 <span class="comment">%       end</span>
+0580 <span class="comment">%     end</span>
+0581 <span class="comment">%       end</span>
+0582 <span class="comment">%     end</span>
+0583 <span class="comment">%   end</span>
+0584 <span class="comment">% end</span>
+0585 
+0586 <span class="comment">% FINAL CONTACT AVEC LES DENTS (FACON 2)</span>
+0587 
+0588 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0589 <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0590 
+0591 <span class="comment">% -----------------------------------------------------------------------</span>
+0592 <span class="comment">% Calcule la nouvelle matrice d'elasticite en fonction des muscles qui</span>
+0593 <span class="comment">% se contractent</span>
+0594 <span class="keyword">global</span> CALC_ELA;
+0595 <span class="comment">% fprintf('Facteur CAlC_ELA = %i\n',CALC_ELA)</span>
+0596 <span class="keyword">if</span> CALC_ELA
+0597     <span class="comment">% disp ('elast')</span>
+0598     A0=<a href="elast2.html" class="code" title="function elast2 = elast2(activGGA, activGGP, activHyo, activStylo,activSL, activVert, ncontact)">elast2</a>(sum(ForceGGA)/(3*fact),sum(ForceGGP)/(1+3*fact),sum(ForceHyo)/3,(ForceStylo1+ForceStylo2)/2,ForceSL,sum(ForceVert)/(3*fact),neucontact);
+0599 <span class="keyword">end</span>
+0600 <span class="comment">% Pour GGA  1+3*fact remplace par 3*fact (6 fibres) Nov 99</span>
+0601 <span class="comment">% Pour Vert 4 remplace par 3*fact</span>
+0602 
+0603 <span class="comment">% -----------------------------------------------------------------------------</span>
+0604 <span class="comment">% Calcul de UDOT :</span>
+0605 
+0606 U(NNx2-1,1)=0;
+0607 U(NNx2,1)=0;
+0608 <span class="keyword">for</span> j=1:NN:1+8*fact*NN
+0609     U(2*j-1,1)=0;
+0610     U(2*j,1)=0;
+0611 <span class="keyword">end</span>
+0612 
+0613 U(NNx2-1+NNxMMx2,1)=0;
+0614 U(2*(NN-1)+2 + 2*NNxMM,1)=0;
+0615 <span class="keyword">for</span> j=1:NN:1+8*fact*NN
+0616     U(2*j-1 + 2*NNxMM,1)=0;
+0617     U(2*j + 2*NNxMM,1)=0;
+0618 <span class="keyword">end</span>
+0619 
+0620 Udot=[U(2*NNxMM+1:4*NNxMM,1);invMass*(FXY-A0*U(1:2*NNxMM,1)-F*U(2*NNxMM+1:4*NNxMM,1))];
+0621 
+0622 <span class="keyword">for</span> j=1:NN:1+8*fact*NN
+0623     Udot(2*j-1 + 2*NNxMM,1)=0;
+0624     Udot(2*j + 2*NNxMM,1)=0;
+0625 <span class="keyword">end</span>
+0626 Udot(2*(NN-1)+1 + 2*NNxMM,1)=0;
+0627 Udot(2*(NN-1)+2 + 2*NNxMM,1)=0;
+0628 
+0629 <span class="keyword">for</span> j=1:NN:1+8*fact*NN
+0630     Udot(2*j-1,1)=0;
+0631     Udot(2*j,1)=0;
+0632 <span class="keyword">end</span>
+0633 Udot(2*(NN-1)+1,1)=0;
+0634 Udot(2*(NN-1)+2,1)=0;
+0635 
+0636 <span class="keyword">global</span> TEMPS;
+0637 <span class="keyword">global</span> FXY_T;
+0638 <span class="keyword">global</span> ACCL_T;
+0639 
+0640 
+0641 <span class="comment">% Calcul de la matrice globale pour la trajectoire de la force-temps,</span>
+0642 <span class="comment">% transforme a Simulation4.m et utilise en force_gr.m</span>
+0643 
+0644 TEMPS(t_i) = t;
+0645 FXY_T(t_i, :) = FXY.';
+0646 
+0647 <span class="comment">% Calcul de la matrice global pour la trajectoire de la acceleration-temps,</span>
+0648 <span class="comment">% transforme a Simulation4.m et utilise en accl_gr.m %</span>
+0649 <span class="comment">% ACCL_T(:,t_i+1) = invMass*(FXY-A0*U(1:2*NN*MM,1)-F*U(2*NN*MMUDOT2.m+1:4*NN*MM,1));</span>
+0650 ACCL_T(t_i, :) = Udot(2*NNxMM+1:4*NNxMM).';
+0651</pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

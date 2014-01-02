@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of jaw_trans</title>
+  <meta name="keywords" content="jaw_trans">
+  <meta name="description" content="Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; jaw_trans.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>jaw_trans
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [new_X0, new_Y0]=jaw_trans(t); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99
+Also included the lowerlip rotation relative to the jaw, and lip (lower and upper) protrusion -- mz 1/21/2000</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="udot3_adapt_jaw.html" class="code" title="function Udot = udot3_adapt_jaw(t,U)">udot3_adapt_jaw</a>	CV - 03/03/99</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [new_X0, new_Y0]=jaw_trans(t);</a>
+0002 <span class="comment">%Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99</span>
+0003 <span class="comment">%Also included the lowerlip rotation relative to the jaw, and lip (lower and upper) protrusion -- mz 1/21/2000</span>
+0004 
+0005 <span class="keyword">global</span> X0_rest_pos Y0_rest_pos t_initial t_transition t_final theta alpha_rest_pos dist_rest_pos X_origin Y_origin theta_start hyoid_start hyoid_i_abs;
+0006 <span class="keyword">global</span> dents_inf lowlip Vect_dents Point_dents pente_D org_D alpha_rest_pos_dents_inf dist_rest_pos_dents_inf alpha_rest_pos_lowlip dist_rest_pos_lowlip;
+0007 <span class="comment">% global alpha_rest_pos_mandibule dist_rest_pos_mandibule alpha_rest_pos_machoire dist_rest_pos_machoire Mandibule Machoire</span>
+0008 <span class="keyword">global</span> theta_ll dist_lip upperlip old_t X0 Y0 X_origin_ll Y_origin_ll lowlip_initial X_origin_initial Y_origin_initial dist_hyoid lar_ar_mri tongue_lar_mri pharynx_mri lar_ar_mri_initial tongue_lar_mri_initial pharynx_mri_initial
+0009 <span class="comment">%</span>
+0010 theta_i=0.5*(1-cos(pi*(t-t_initial)/(t_final-t_initial)))*theta;<span class="comment">%jaw angle at each transition+hold time step</span>
+0011 <span class="comment">%theta_ll_i=sin(pi*(t-old_t)/(t_final-t_initial))*theta_ll;%lower lip angle realtive to the jaw at each transition+hold time step</span>
+0012 <span class="comment">%theta_ll_i=(cos(pi*(t-t_initial)/(t_final-t_initial))-sin(pi*(old_t-t_initial)/(t_final-t_initial)))*theta_ll;</span>
+0013 theta_ll_i=0.5*(cos(pi*(old_t-t_initial)/(t_final-t_initial))-cos(pi*(t-t_initial)/(t_final-t_initial)))*theta_ll;
+0014 <span class="comment">%dist_lip_i=sin(pi*(t-old_t)/(t_final-t_initial))*dist_lip;%lip protrusion realtive to the jaw at each transition+hold time step</span>
+0015 <span class="comment">%dist_lip_i=(sin(pi*(t-t_initial)/(t_final-t_initial))-sin(pi*(old_t-t_initial)/(t_final-t_initial)))*dist_lip;</span>
+0016 dist_lip_i=0.5*(cos(pi*(old_t-t_initial)/(t_final-t_initial))-cos(pi*(t-t_initial)/(t_final-t_initial)))*dist_lip;
+0017 theta_i_abs=theta_i+theta_start;
+0018 
+0019 <span class="comment">%% GB MARS 2011 - Corrected PP Juli 2011</span>
+0020 dist_hyoid_i=0.5*(1-cos(pi*(t-t_initial)/(t_final-t_initial)))*dist_hyoid;
+0021 hyoid_i_abs=dist_hyoid_i+hyoid_start;
+0022 <span class="comment">%%</span>
+0023 <span class="comment">% figure(1000) % Pour illustrer le profil de vitesse du larynx % GB Mars 2011</span>
+0024 <span class="comment">% plot(t,dist_hyoid_i,'y*')</span>
+0025 <span class="comment">% hold on</span>
+0026 
+0027 
+0028 
+0029 <span class="comment">%Calculating the location of condyle. It is assumed that the condyle's total amplitude is 10mm in X direction</span>
+0030 <span class="comment">% and 3mm in Y direction (see Vatikiotis-Bateson &amp; Ostry, 1995.  An analysis of the dimensionality of jaw motion</span>
+0031 <span class="comment">% in speech. J. Phonetics, 23, pp. 101-117).  Also the jaw rotates between -3(deg) to +12(deg) from the rest</span>
+0032 <span class="comment">% position; for the total of 15(deg)=0.2618(rad) (see the same reference). Note that the location of condyle is linearly</span>
+0033 <span class="comment">% related to the amount of abosulte rotation of the jaw.</span>
+0034 <span class="comment">% For this subject (PB), the condyle's movement is 6mm (X-dir), and 2mm(Y-dir)</span>
+0035 X_origin=X_origin_initial-6*(theta_i_abs)/0.2618;
+0036 Y_origin=Y_origin_initial-2*(theta_i_abs)/0.2618;
+0037 
+0038 <span class="keyword">if</span> theta_ll~=0
+0039    
+0040 <span class="comment">% add the lower lip rotation relative the jaw; lowlip(:,end) is the point connected to the jaw, therefore it assumed fixed</span>
+0041 <span class="comment">% reltive to jaw</span>
+0042     tan_angle=(lowlip_initial(2,end)-lowlip_initial(2,1:(end-1)))./(lowlip_initial(1,end)-lowlip_initial(1,1:(end-1)));<span class="comment">%PP</span>
+0043    <span class="keyword">for</span> indice=1:length(lowlip_initial(1,:))-1
+0044    lowlip_initial(1,indice)=lowlip_initial(1,end)+(lowlip_initial(1,indice)-lowlip_initial(1,end)).*(cos(theta_ll_i)-sin(theta_ll_i).*tan_angle(indice)); 
+0045           <span class="keyword">if</span> tan_angle(indice)~=0
+0046    lowlip_initial(2,indice)=lowlip_initial(2,end)+ (lowlip_initial(2,indice)-lowlip_initial(2,end)).*(cos(theta_ll_i)+sin(theta_ll_i)./tan_angle(indice));
+0047           <span class="keyword">else</span>
+0048               disp(<span class="string">'la'</span>)
+0049                  lowlip_initial(2,indice)=lowlip_initial(2,end)+ (lowlip_initial(1,indice)-lowlip_initial(1,end)).*sin(theta_ll_i);
+0050           <span class="keyword">end</span>
+0051    <span class="keyword">end</span>
+0052    
+0053 <span class="comment">% add the upper lip rotation relative to the jaw;</span>
+0054    tan_angle=(upperlip(2,end)-upperlip(2,1:(end-1)))./(upperlip(1,end)-upperlip(1,1:(end-1)));<span class="comment">% GB Mars 2011</span>
+0055    <span class="keyword">for</span> indice=1:length(upperlip(1,:))-1
+0056    upperlip(1,indice)=upperlip(1,end)+(upperlip(1,indice)-upperlip(1,end)).*(cos(theta_ll_i)-sin(theta_ll_i).*-tan_angle(indice)); 
+0057           <span class="keyword">if</span> tan_angle(indice)~=0
+0058    upperlip(2,indice)=upperlip(2,end)+(upperlip(2,indice)-upperlip(2,end)).*(cos(theta_ll_i)+sin(theta_ll_i)./-tan_angle(indice));
+0059           <span class="keyword">else</span>
+0060               disp(<span class="string">'la'</span>)
+0061                  upperlip(2,indice)=upperlip(2,end)+ (upperlip(1,indice)-upperlip(1,end)).*sin(theta_ll_i);
+0062           <span class="keyword">end</span>
+0063    <span class="keyword">end</span>
+0064    
+0065 <span class="keyword">end</span>
+0066 
+0067 <span class="keyword">if</span> dist_lip~=0
+0068     
+0069         <span class="comment">% PP Juli 2011</span>
+0070     ilowerlipmin=7;
+0071     ilowerlipmax=11;
+0072     longlowerlip=length(lowlip_initial);
+0073         lowlip_initial(1,1:3)=lowlip_initial(1,1:3);
+0074    <span class="keyword">for</span> ilip=4:ilowerlipmin
+0075        lowlip_initial(1,ilip)=lowlip_initial(1,ilip)-(1-(ilowerlipmin-ilip)/(ilowerlipmin-4))*dist_lip_i;
+0076    <span class="keyword">end</span>
+0077    lowlip_initial(1,ilowerlipmin+1:ilowerlipmax-1)=lowlip_initial(1,ilowerlipmin+1:ilowerlipmax-1)-dist_lip_i;
+0078    <span class="keyword">for</span> ilip=ilowerlipmax:longlowerlip
+0079        lowlip_initial(1,ilip)=lowlip_initial(1,ilip)-(1-(ilip-ilowerlipmax)/(longlowerlip-ilowerlipmax))*dist_lip_i;
+0080    <span class="keyword">end</span>
+0081    
+0082     <span class="comment">% PP Juli 2011</span>
+0083     iupperlipmin=6;
+0084     iupperlipmax=13;
+0085     longupperlip=length(upperlip);
+0086    <span class="keyword">for</span> ilip=1:iupperlipmin
+0087        upperlip(1,ilip)=upperlip(1,ilip)-(1-(iupperlipmin-ilip)/(iupperlipmin-1))*dist_lip_i;
+0088    <span class="keyword">end</span>
+0089    upperlip(1,iupperlipmin+1:iupperlipmax-1)=upperlip(1,iupperlipmin+1:iupperlipmax-1)-dist_lip_i;
+0090    <span class="keyword">for</span> ilip=iupperlipmax:longupperlip
+0091        upperlip(1,ilip)=upperlip(1,ilip)-(1-(ilip-iupperlipmax)/(longupperlip-iupperlipmax))*dist_lip_i;
+0092    <span class="keyword">end</span>
+0093 
+0094 <span class="keyword">end</span>
+0095 
+0096 <span class="comment">%% GB MARS 2011</span>
+0097 <span class="keyword">if</span> dist_hyoid~=0
+0098    <span class="comment">%% PP Juli 2011 Correction of GUillaume's proposal</span>
+0099     lar_ar_mri(1,:)=lar_ar_mri_initial(1,:)-1/5*hyoid_i_abs;
+0100     lar_ar_mri(2,:)=lar_ar_mri_initial(2,:)-hyoid_i_abs;
+0101     tongue_lar_mri(1,2:end)=tongue_lar_mri_initial(1,2:end)-1/5*hyoid_i_abs;
+0102     tongue_lar_mri(2,2:end)=tongue_lar_mri_initial(2,2:end)-hyoid_i_abs;    
+0103 <span class="keyword">end</span>
+0104 <span class="comment">%%</span>
+0105 
+0106 <span class="keyword">if</span> (theta_ll~=0 || dist_lip~=0) &amp;&amp; theta~=0
+0107     alpha_rest_pos_lowlip=atan2((X_origin_ll-lowlip_initial(1,:)), (Y_origin_ll-lowlip_initial(2,:)));<span class="comment">%update the initial angle alpha of the lower lip</span>
+0108     dist_rest_pos_lowlip=sqrt((lowlip_initial(2,:)-Y_origin_ll).^2+(lowlip_initial(1,:)-X_origin_ll).^2);<span class="comment">%update the initial distance of the lower lip</span>
+0109     
+0110 <span class="keyword">end</span>
+0111 
+0112 <span class="keyword">if</span> theta~=0
+0113 
+0114 <span class="comment">% the new location of nodes of the tongue</span>
+0115     new_X0=X_origin-dist_rest_pos.*sin(alpha_rest_pos-theta_i);<span class="comment">% the new location of nodes of the tongue</span>
+0116     new_Y0=Y_origin-dist_rest_pos.*cos(alpha_rest_pos-theta_i);
+0117 
+0118 <span class="comment">% the new location of the lower incisor</span>
+0119     dents_inf(1,:)=X_origin-dist_rest_pos_dents_inf.*sin(alpha_rest_pos_dents_inf-theta_i);
+0120     dents_inf(2,:)=Y_origin-dist_rest_pos_dents_inf.*cos(alpha_rest_pos_dents_inf-theta_i);
+0121 Vect_dents=[dents_inf(1,11)-dents_inf(1,13)-1 dents_inf(2,11)-dents_inf(2,13)]; 
+0122 Point_dents=[dents_inf(1,13)+1 dents_inf(2,13)];
+0123 pente_D=(dents_inf(2,11)-dents_inf(2,13))/(dents_inf(1,11)-dents_inf(1,13));
+0124 org_D=dents_inf(2,11)-pente_D*dents_inf(1,11);
+0125 
+0126 <span class="comment">% the new location of the mandibule</span>
+0127 
+0128 <span class="comment">%    Mandibule(1,:)=X_origin-dist_rest_pos_mandibule.*sin(alpha_rest_pos_mandibule-theta_i);</span>
+0129 <span class="comment">%    Mandibule(2,:)=Y_origin-dist_rest_pos_mandibule.*cos(alpha_rest_pos_mandibule-theta_i);</span>
+0130 <span class="comment">%    Machoire(1,:)=X_origin-dist_rest_pos_machoire.*sin(alpha_rest_pos_machoire-theta_i);</span>
+0131 <span class="comment">%    Machoire(2,:)=Y_origin-dist_rest_pos_machoire.*cos(alpha_rest_pos_machoire-theta_i);</span>
+0132 
+0133 <span class="comment">% the new location of the lower lip</span>
+0134    lowlip(1,:)=X_origin-dist_rest_pos_lowlip.*sin(alpha_rest_pos_lowlip-theta_i);
+0135    lowlip(2,:)=Y_origin-dist_rest_pos_lowlip.*cos(alpha_rest_pos_lowlip-theta_i);
+0136 <span class="keyword">else</span>
+0137     lowlip(1,:)=lowlip_initial(1,:);
+0138     lowlip(2,:)=lowlip_initial(2,:);
+0139    new_X0=X0;<span class="comment">% do not change the X0 and Y0 if there is no jaw rotation</span>
+0140    new_Y0=Y0;
+0141 <span class="keyword">end</span>
+0142 
+0143 old_t=t;</pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

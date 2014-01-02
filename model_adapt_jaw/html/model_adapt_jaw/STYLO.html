@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of STYLO</title>
+  <meta name="keywords" content="STYLO">
+  <meta name="description" content="STYLO.m">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; STYLO.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>STYLO
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>STYLO.m</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function STYLO(U); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> STYLO.m
+ Calculs des forces exercees par le Styloglossus (Stylo)
+ Il y a 2 fibres</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="udot3_adapt_jaw.html" class="code" title="function Udot = udot3_adapt_jaw(t,U)">udot3_adapt_jaw</a>	CV - 03/03/99</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function STYLO(U);</a>
+0002 <span class="comment">% STYLO.m</span>
+0003 <span class="comment">% Calculs des forces exercees par le Styloglossus (Stylo)</span>
+0004 <span class="comment">% Il y a 2 fibres</span>
+0005 
+0006 <span class="comment">% Cree le     11/03/99 - CV</span>
+0007 <span class="comment">% Modifie le  11/03/99 - CV</span>
+0008 
+0009 <span class="comment">% -------------------------------------------------------------------+</span>
+0010 <span class="comment">% Variables globales d'entree                                        |</span>
+0011 <span class="keyword">global</span> NNxMMx2;                 <span class="comment">% Offset de U' dans U                |</span>
+0012 <span class="keyword">global</span> fact;                    <span class="comment">% Resolution du modele               |</span>
+0013 <span class="keyword">global</span> Att_Stylo;               <span class="comment">% Points d'attache du Stylo          |</span>
+0014 <span class="keyword">global</span> XS YS;                   <span class="comment">% Idem, hors langue                  |</span>
+0015 <span class="keyword">global</span> XY;                      <span class="comment">% Position des noeuds                |</span>
+0016 <span class="keyword">global</span> LAMBDA_Stylo1 MU;        <span class="comment">% Pour calculer l'activation du Stylo|</span>
+0017 <span class="keyword">global</span> LAMBDA_Stylo2;           <span class="comment">% Idem                               |</span>
+0018 <span class="keyword">global</span> rho_Stylo c              <span class="comment">% Pour calculer la force du Stylo    |</span>
+0019 <span class="keyword">global</span> f1 f2 f3 f4 f5;          <span class="comment">% Idem                               |</span>
+0020 <span class="keyword">global</span> longrepos_Stylo;         <span class="comment">% Idem                               |</span>
+0021 <span class="keyword">global</span> t_i;                     <span class="comment">% 'Temps entier' pout ACTIV_T        |</span>
+0022 <span class="comment">% -------------------------------------------------------------------+</span>
+0023 <span class="comment">% Variables globales d'entree/sortie                                 |</span>
+0024 <span class="keyword">global</span> FXY;                     <span class="comment">% Force exercee en chaque noeud      |</span>
+0025 <span class="keyword">global</span> ACTIV_T;                 <span class="comment">% Activation des muscles             |</span>
+0026 <span class="comment">% -------------------------------------------------------------------+</span>
+0027 <span class="comment">% Variables globales de sortie                                       |</span>
+0028 <span class="keyword">global</span> ForceStylo1 ForceStylo2; <span class="comment">% Force exercee par chaque fibre     |</span>
+0029 <span class="comment">% -------------------------------------------------------------------+</span>
+0030 
+0031 <span class="comment">% Premiere fibre Stylo</span>
+0032   long=sqrt((XY(Att_Stylo(1,2)-1)-XS)^2+(XY(Att_Stylo(1,2))-YS)^2);
+0033   LongdotStylo1=((XY(Att_Stylo(1,2)-1)-XS)*U(NNxMMx2+Att_Stylo(1,2)-1)+(XY(Att_Stylo(1,2))-YS)*U(NNxMMx2+Att_Stylo(1,2)))/long;
+0034   Activ1=(long-LAMBDA_Stylo1+MU*LongdotStylo1);
+0035   <span class="keyword">if</span> Activ1&gt;0
+0036     ForceStylo1=rho_Stylo*(exp(c*Activ1)-1);
+0037     ForceStylo1=ForceStylo1*(f1+f2*atan(f3+f4*LongdotStylo1/longrepos_Stylo(1))+f5*LongdotStylo1/longrepos_Stylo(1));
+0038     <span class="keyword">if</span> ForceStylo1&gt;20
+0039       ForceStylo1=20;
+0040     <span class="keyword">end</span>
+0041     FXY(Att_Stylo(1,2)-1)=FXY(Att_Stylo(1,2)-1)-(XY(Att_Stylo(1,2)-1)-XS)/long*ForceStylo1;
+0042     FXY(Att_Stylo(1,2))=FXY(Att_Stylo(1,2))-(XY(Att_Stylo(1,2))-YS)/long*ForceStylo1;
+0043   <span class="keyword">else</span>
+0044     ForceStylo1=0;
+0045   <span class="keyword">end</span>
+0046 ACTIV_T(t_i, 3) = Activ1;
+0047   
+0048   <span class="comment">% Seconde fibre Stylo</span>
+0049   long1=sqrt((XY(Att_Stylo(2,2)-1)-XY(Att_Stylo(3,2)-1))^2+(XY(Att_Stylo(2,2))-XY(Att_Stylo(3,2)))^2);
+0050   long2=sqrt((XY(Att_Stylo(3,2)-1)-XS)^2+(XY(Att_Stylo(3,2))-YS)^2);
+0051   long=long1+long2;
+0052   LongdotStylo2=((XY(Att_Stylo(2,2)-1)-XS)*U(NNxMMx2+Att_Stylo(2,2)-1)+(XY(Att_Stylo(2,2))-YS)*U(NNxMMx2+Att_Stylo(2,2)))/long;
+0053   Activ1=(long-LAMBDA_Stylo2+MU*LongdotStylo2);
+0054   <span class="keyword">if</span> Activ1&gt;0
+0055     ForceStylo2=rho_Stylo*(exp(c*Activ1)-1);
+0056     ForceStylo2=ForceStylo2*(f1+f2*atan(f3+f4*LongdotStylo2/longrepos_Stylo(2))+f5*LongdotStylo2/longrepos_Stylo(2));
+0057     <span class="keyword">if</span> ForceStylo2&gt;20
+0058       ForceStylo2=20;   
+0059     <span class="keyword">end</span>
+0060     FXY(Att_Stylo(2,2)-1)=FXY(Att_Stylo(2,2)-1)-(XY(Att_Stylo(2,2)-1)-XY(Att_Stylo(3,2)-1))/long1*ForceStylo2;
+0061     FXY(Att_Stylo(2,2))=FXY(Att_Stylo(2,2))-(XY(Att_Stylo(2,2))-XY(Att_Stylo(3,2)))/long1*ForceStylo2;
+0062     
+0063     FXY(Att_Stylo(3,2)-1)=FXY(Att_Stylo(3,2)-1)-(XY(Att_Stylo(3,2)-1)-XY(Att_Stylo(2,2)-1))/long1*ForceStylo2;
+0064     FXY(Att_Stylo(3,2))=FXY(Att_Stylo(3,2))-(XY(Att_Stylo(3,2))-XY(Att_Stylo(2,2)))/long1*ForceStylo2;
+0065     
+0066     FXY(Att_Stylo(3,2)-1)=FXY(Att_Stylo(3,2)-1)-(XY(Att_Stylo(3,2)-1)-XS)/long2*ForceStylo2;
+0067     FXY(Att_Stylo(3,2))=FXY(Att_Stylo(3,2))-(XY(Att_Stylo(3,2))-YS)/long2*ForceStylo2;
+0068   <span class="keyword">else</span> 
+0069     ForceStylo2=0;
+0070   <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

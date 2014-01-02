@@ -64,7 +64,6 @@ global XY;
 global FXY;
 global l;
 global L;
-global A0;
 global X0;
 global Y0;
 global H;
@@ -376,10 +375,10 @@ tongue_lar_mri = tongue_lar(:, ideptongue_lar:end); % PP Juli 2011
 %%% LB: I think it's X on odd and y on even indeces...
 
 XY=zeros((MM-1)*2*NN+2*NN,1);
-for i=1:MM
-    for j=1:NN
-        XY((i-1)*2*NN+2*j-1,1)=X0(i,j);
-        XY((i-1)*2*NN+2*j,1)=Y0(i,j);
+for i = 1:MM
+    for j = 1:NN
+        XY((i-1)*2*NN+2*j-1,1) = X0(i,j);
+        XY((i-1)*2*NN+2*j,1) = Y0(i,j);
     end
 end
 
@@ -544,8 +543,6 @@ longrepos_Vert=longrepos_Vert';
 
 
 % --------------------------------------------------------
-% Variables d'indexation utilisees pour le calcul de la matrice
-% d'elasticite A0
 % Indexing variables used for the calculation of the elasticity matrix A0
 
 global IA;
@@ -573,30 +570,25 @@ IE=[5*ones(1,8),1*ones(1,8),6*ones(1,8),2*ones(1,8),7*ones(1,8),3*ones(1,8),8*on
 
 
 % --------------------------------------------------------
-% Variables de Gauss utilisees pour la quadrature de A0
-% On remplace ainsi le calcul de l'integrale par le calcul
-% d'une somme : SOMME(Hi*f(Gi))
 % Gaussian variables used for squaring A0
 % In this way, calculating the integral is replaced by a sum: SUM(Hi*f(Gi))
 
 global ordre
-global H
-global G
 
-ordre=2;
-H(1,1)=2.;
-H(2,1)=1.;
-H(2,2)=1.;
-H(3,1)=0.555556;
-H(3,2)=0.888889;
-H(3,3)=0.555556;
+ordre = 2;
+H(1,1) = 2.;
+H(2,1) = 1.;
+H(2,2) = 1.;
+H(3,1) = 0.555556;
+H(3,2) = 0.888889;
+H(3,3) = 0.555556;
 
-G(1,1)=0.;
-G(2,1)=-0.577350;
-G(2,2)=0.577350;
-G(3,1)=-0.774597;
-G(3,2)=0.;
-G(3,3)=0.774597;
+G(1,1) = 0.;
+G(2,1) = -0.577350;
+G(2,2) = 0.577350;
+G(3,1) = -0.774597;
+G(3,2) = 0.;
+G(3,3) = 0.774597;
 
 
 % --------------------------------------------------------
@@ -682,11 +674,10 @@ end
 % Pour accelerer les calculs, on prend tout de suite l'inverse de
 % cette matrice :
 % To accelerate computation, get the inverse of this matrix :
-invMass=inv(Mass);
+invMass = inv(Mass);
 
-% Calcul de la matrice d'elasticite initiale
 % Compute the elasticity matrix
-A0=elast_init(0,0,0,0,0,0,0);
+A0 = elast_init(XY, lambda, mu, ordre, H, G, MM, NN);
 
 % initialisation de la position de repos apres le premiere voyelle
 % dans le sequence

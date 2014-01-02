@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of udot3init_adapt</title>
+  <meta name="keywords" content="udot3init_adapt">
+  <meta name="description" content="udot3init_adapt.m">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; udot3init_adapt.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>udot3init_adapt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>udot3init_adapt.m</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> udot3init_adapt.m
+ Pre-calculs necessaires a l'execution de udot3</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="simul_tongue_adapt_jaw.html" class="code" title="function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, delta_lambda_ggp, delta_lambda_gga, delta_lambda_hyo, delta_lambda_sty, delta_lambda_ver, delta_lambda_sl, delta_lambda_il, t_trans, t_hold, jaw_rot, lip_prot, ll_rot, hyoid_mov, light)">simul_tongue_adapt_jaw</a>	Modèle Payan & Perrier /Zandipour Tongue Jaw</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% udot3init_adapt.m</span>
+0002 <span class="comment">% Pre-calculs necessaires a l'execution de udot3</span>
+0003 
+0004 <span class="comment">% Cree le     11/03/99 - CV</span>
+0005 <span class="comment">% Modifie le  11/03/99 - CV</span>
+0006 
+0007 <span class="comment">% --------------------------------------------------------------------</span>
+0008 <span class="comment">% Variables globales d'entree</span>
+0009 <span class="keyword">global</span> MM NN;                   <span class="comment">% Taille du modele</span>
+0010 <span class="keyword">global</span> fact;                    <span class="comment">% Resolution du modele</span>
+0011 <span class="keyword">global</span> Mass;                    <span class="comment">% Masse des noeuds</span>
+0012 <span class="comment">% --------------------------------------------------------------------</span>
+0013 <span class="comment">% Variables globales de sortie</span>
+0014 <span class="keyword">global</span> NNxMM NNx2 MMx2 NNxMMx2; <span class="comment">% Des multiplications...</span>
+0015 <span class="keyword">global</span> f1 f2 f3 f4 f5;          <span class="comment">% Coefficients p. le calcul des forces</span>
+0016 <span class="keyword">global</span> MU c;                    <span class="comment">% Idem</span>
+0017 <span class="keyword">global</span> f F;                     <span class="comment">% Constante et matrice de frottement</span>
+0018 <span class="keyword">global</span> PXY;                     <span class="comment">% Poids</span>
+0019 <span class="keyword">global</span> nc pc aff_fin;           <span class="comment">% Indices pour le contact</span>
+0020 <span class="keyword">global</span> Att_GGP Att_GGA Att_Hyo; <span class="comment">% Points d'attache des muscles</span>
+0021 <span class="keyword">global</span> Att_Stylo Att_SL Att_IL; <span class="comment">% Idem</span>
+0022 <span class="keyword">global</span> Att_Vert;                <span class="comment">% Idem</span>
+0023 <span class="keyword">global</span> x xx y yy;               <span class="comment">% La grille saggitale</span>
+0024 <span class="keyword">global</span> Xe Ye;                   <span class="comment">% Le contour exterieur</span>
+0025 <span class="keyword">global</span> Xi Yi;                   <span class="comment">% Parties fixes du contour interieur</span>
+0026 <span class="keyword">global</span> Cl Cs;                   <span class="comment">% Constantes pour le passage a l'aire</span>
+0027 <span class="keyword">global</span> Pref DoPress;            <span class="comment">% La pression de reference</span>
+0028 <span class="keyword">global</span> PRESS_FLAG;              <span class="comment">% semaphore pour l'affichage (temp)</span>
+0029 <span class="keyword">global</span> PressDebug;              <span class="comment">% Semaphore de debuggage</span>
+0030 
+0031 <span class="keyword">global</span> contact;               <span class="comment">% Variable indiquant si le contact a deja</span>
+0032                               <span class="comment">% eu lieu (pour press.m uniquement) (PP Mars 2000)</span>
+0033 
+0034 <span class="keyword">global</span> X0 Y0 X0Y0                      <span class="comment">% Modified by Yohan &amp; Majid; Nov 30, 99</span>
+0035 <span class="comment">% --------------------------------------------------------------------</span>
+0036 <span class="comment">% Initialisations generales</span>
+0037 NNxMM = MM*NN;
+0038 NNx2=NN*2;
+0039 MMx2=MM*2;
+0040 NNxMMx2=2*NNxMM;
+0041 
+0042 <span class="comment">% --------------------------------------------------------------------</span>
+0043 <span class="comment">% Valeurs des constantes</span>
+0044 <span class="comment">% On sait que : F = M.(f1+f2.atan(f3+f4.l'/longrepos)+f5.l'/longrepos)</span>
+0045 <span class="comment">% Valeur des f#</span>
+0046 f1=0.80;
+0047 f2=0.5;
+0048 f3=0.43;
+0049 f4=0.8/1.5;
+0050 f5=0.023/0.7;
+0051 MU=0.01;   <span class="comment">% en s</span>
+0052 c=0.112;   <span class="comment">% en mm-1</span>
+0053 nc=0;
+0054 pc=0;
+0055 aff_fin=0;
+0056 
+0057 <span class="comment">% Variable de détection de contact pour le programme press.m uniquement</span>
+0058 contact=0;
+0059 
+0060 
+0061 
+0062 <span class="comment">% --------------------------------------------------------------------</span>
+0063 <span class="comment">% Calcul du f de l'equa diff</span>
+0064 <span class="keyword">if</span> fact==1
+0065   f=0.005/2;
+0066 <span class="keyword">else</span>
+0067    f=0.005/3.5079/2;  <span class="comment">% car le nombre de noeuds est multiplie par 3.5</span>
+0068 <span class="keyword">end</span> <span class="comment">% selon fact</span>
+0069 F=f*eye(NNxMMx2);
+0070 
+0071 <span class="comment">% --------------------------------------------------------------------</span>
+0072 <span class="comment">% On met la pesanteur sur les composantes Y</span>
+0073 PXY=zeros(NNxMMx2,1);
+0074 <span class="keyword">for</span> i=2:NNxMMx2
+0075   PXY(i)=-9.81*Mass(i,i);
+0076 <span class="keyword">end</span> <span class="comment">% boucle sur tous les noeuds</span>
+0077 
+0078 <span class="comment">% --------------------------------------------------------------------</span>
+0079 <span class="comment">% On calcule les points d'attache des muscles</span>
+0080 
+0081 <span class="comment">% GGP</span>
+0082 <span class="keyword">for</span> i=1:3*fact+1
+0083   Att_GGP(i,1)=NN*(fact+i-1)+1;
+0084 <span class="keyword">end</span>
+0085 Att_GGP(:,2)=Att_GGP(:,1)+NN-fact;
+0086 Att_GGP(:,3)=Att_GGP(:,1)*2;
+0087 Att_GGP(:,4)=Att_GGP(:,2)*2;
+0088 
+0089 <span class="comment">% GGA</span>
+0090 <span class="keyword">for</span> i=1:3*fact <span class="comment">% Nov 99</span>
+0091   Att_GGA(i,1)=NN*(4*fact+i)+1;
+0092 <span class="keyword">end</span>
+0093 Att_GGA(:,2)=Att_GGA(:,1)+NN-fact;
+0094 Att_GGA(:,3)=Att_GGA(:,1)*2;
+0095 Att_GGA(:,4)=Att_GGA(:,2)*2;
+0096 
+0097 <span class="comment">% Stylo</span>
+0098 Att_Stylo(1,1)=3*fact*NN+1+4*fact;
+0099 <span class="comment">% Att_Stylo(2,1)=(8*fact-1)*NN+4*fact; % Modifs YP-PP Nov 99</span>
+0100 Att_Stylo(2,1)=7*fact*NN+4*fact; <span class="comment">% Modifs PP 1/03/2000</span>
+0101 Att_Stylo(3,1)=4*fact*NN+1+4*fact;
+0102 Att_Stylo(:,2)=Att_Stylo(:,1)*2;
+0103 
+0104 <span class="comment">% Hyo</span>
+0105 Att_Hyo(1,1)=(5*fact-1)*NN+1+3*fact;<span class="comment">% Modifs YP-PP Dec 99</span>
+0106 Att_Hyo(2,1)=6*fact*NN+1+4*fact;<span class="comment">% Modifs YP-PP Dec 99</span>
+0107 Att_Hyo(3,1)=4*fact*NN+1+4*fact;<span class="comment">% Modifs YP-PP Dec 99</span>
+0108 Att_Hyo(4,1)=3*fact*NN+1+5*fact;
+0109 Att_Hyo(:,2)=Att_Hyo(:,1)*2;
+0110 
+0111 <span class="comment">% SL</span>
+0112 Att_SL(1,1)=fact*(2*NN+6)+1;       <span class="comment">% Modifs YP-PP Dec 99</span>
+0113 Att_SL(1,2)=NNxMM;      <span class="comment">% Modifs YP-PP Dec 99</span>
+0114 Att_SL(2,1)=fact*(2*NN+6);         <span class="comment">% Modifs YP-PP Dec 99</span>
+0115 Att_SL(2,2)=NNxMM-1;      <span class="comment">% Modifs YP-PP Dec 9</span>
+0116 Att_SL(:,3)=Att_SL(:,1)*2;      <span class="comment">% Modifs YP-PP Dec 99</span>
+0117 Att_SL(:,4)=Att_SL(:,2)*2;      <span class="comment">% Modifs YP-PP Dec 99</span>
+0118 
+0119 <span class="comment">% IL</span>
+0120 Att_IL(1,1)=4*fact*NN+2*fact+1;     <span class="comment">% i=31 (109 pour le modele a 221);</span>
+0121 Att_IL(2,1)=7*fact*NN+3*fact+1;     <span class="comment">% j=53; (189) pour le modele a 221);</span>
+0122 <span class="keyword">if</span> fact==1
+0123   Att_IL(3,1)=61;
+0124 <span class="keyword">else</span>
+0125 <span class="comment">%  Att_IL(3,1)=149; % ERREUR LA FIBRE FAIR UN ALLER RETOUR ET NE VA PAS DANS L'APEX</span>
+0126    Att_IL(3,1)=221-4; <span class="comment">% CORRECTION APPORTEE PAR PASCAL LE 4 MAI 1999 POUR CORRIGER</span>
+0127 <span class="keyword">end</span>
+0128 Att_IL(:,2)=Att_IL(:,1)*2;
+0129 
+0130 <span class="comment">% Vert</span>
+0131 <span class="keyword">for</span> i=1:3*fact <span class="comment">% Modifs Dec 99 YP-PP</span>
+0132   Att_Vert(i,1)=(i-1)*NN+fact*(5*NN+3)+1; <span class="comment">% Modif Dec 99 YP-PP</span>
+0133   Att_Vert(i,2)=(i-1)*NN+fact*(5*NN+6); <span class="comment">% Modif Dec 99 YP-PP</span>
+0134 <span class="keyword">end</span>
+0135 Att_Vert(:,3)=Att_Vert(:,1)*2;
+0136 Att_Vert(:,4)=Att_Vert(:,2)*2;
+0137 
+0138 <span class="comment">% % --------------------------------------------------------------------</span>
+0139 <span class="comment">% % On charge la grille pour le calcul des forces de pression,</span>
+0140 <span class="comment">% load XY_grille ;</span>
+0141 <span class="comment">%</span>
+0142 <span class="comment">% % --------------------------------------------------------------------</span>
+0143 <span class="comment">% % On calcule les intersections fixes</span>
+0144 <span class="comment">% % Contour exterieur</span>
+0145 <span class="comment">% % Larynx</span>
+0146 <span class="comment">% for i=3:-1:1</span>
+0147 <span class="comment">%   [Xe(i),Ye(i)]=intersection(x(i),y(i),xx(i),yy(i),lar_ar(1,9-i),lar_ar(2,9-i),lar_ar(1,10-i),lar_ar(2,10-i));</span>
+0148 <span class="comment">% end</span>
+0149 <span class="comment">% % Pharynx</span>
+0150 <span class="comment">% ind_pha=[6 7 , 11 10 , 12 14 , 15 16 , 18 19 , 19 20 , 22 20 , 22 24 , 26 24 , 24 26 , 25 26];</span>
+0151 <span class="comment">% for i=14:-1:4</span>
+0152 <span class="comment">%   [Xe(i),Ye(i)]=intersection(x(i),y(i),xx(i),yy(i),pharynx(1,ind_pha(29-2*i)),pharynx(2,ind_pha(29-2*i)),pharynx(1,ind_pha(30-2*i)),pharynx(2,ind_pha(30-2*i)));</span>
+0153 <span class="comment">% end</span>
+0154 <span class="comment">% % Velum</span>
+0155 <span class="comment">% ind_vel=[2 5 , 5 8 , 10 8 , 12 14 , 17 19 , 21 23];</span>
+0156 <span class="comment">% for i=20:-1:15</span>
+0157 <span class="comment">%   [Xe(i),Ye(i)]=intersection(x(i),y(i),xx(i),yy(i),velum(1,ind_vel(41-2*i)),velum(2,ind_vel(41-2*i)),velum(1,ind_vel(42-2*i)),velum(2,ind_vel(42-2*i)));</span>
+0158 <span class="comment">% end</span>
+0159 <span class="comment">% % Palate</span>
+0160 <span class="comment">% ind_pal=[8 7 , 8 7 , 8 9 , 10 9 , 10 11 , 12 11 , 12 13 , 14 15];</span>
+0161 <span class="comment">% for i=28:-1:21</span>
+0162 <span class="comment">%   [Xe(i),Ye(i)]=intersection(x(i),y(i),xx(i),yy(i),palate(1,ind_pal(57-2*i)),palate(2,ind_pal(57-2*i)),palate(1,ind_pal(58-2*i)),palate(2,ind_pal(58-2*i)));</span>
+0163 <span class="comment">% end</span>
+0164 <span class="comment">% % Dents</span>
+0165 <span class="comment">% Xe(29)=palate(1,5);</span>
+0166 <span class="comment">% Ye(29)=palate(2,5);</span>
+0167 <span class="comment">% % Levres</span>
+0168 <span class="comment">% Xe(30)=upperlip(1,16);</span>
+0169 <span class="comment">% Ye(30)=upperlip(2,16);</span>
+0170 <span class="comment">%</span>
+0171 <span class="comment">% % Contour interieur (sous reserve de modif par la langue)</span>
+0172 <span class="comment">% % Larynx</span>
+0173 <span class="comment">% Xi(6)=x(6)+(xx(6)-x(6))/550*140;</span>
+0174 <span class="comment">% Yi(6)=y(6)+(yy(6)-y(6))/550*140;</span>
+0175 <span class="comment">% Xi(5)=x(5)+(xx(5)-x(5))/550*170;</span>
+0176 <span class="comment">% Yi(5)=y(5)+(yy(5)-y(5))/550*170;</span>
+0177 <span class="comment">% Xi(4)=x(4)+(xx(4)-x(4))/550*200;</span>
+0178 <span class="comment">% Yi(4)=y(4)+(yy(4)-y(4))/550*200;</span>
+0179 <span class="comment">% Xi(3)=x(3)+(xx(3)-x(3))/550*145;</span>
+0180 <span class="comment">% Yi(3)=y(3)+(yy(3)-y(3))/550*145;</span>
+0181 <span class="comment">% Xi(2)=x(2)+(xx(2)-x(2))/550*105;</span>
+0182 <span class="comment">% Yi(2)=y(2)+(yy(2)-y(2))/550*105;</span>
+0183 <span class="comment">% Xi(1)=x(1)+(xx(1)-x(1))/550*70;</span>
+0184 <span class="comment">% Yi(1)=y(1)+(yy(1)-y(1))/550*70;</span>
+0185 <span class="comment">% % Dents</span>
+0186 <span class="comment">% Xi(29)=dents_inf(1,9);</span>
+0187 <span class="comment">% Yi(29)=dents_inf(2,9);</span>
+0188 <span class="comment">% % Levres</span>
+0189 <span class="comment">% Xi(30)=lowlip(1,12);</span>
+0190 <span class="comment">% Yi(30)=lowlip(2,12);</span>
+0191 <span class="comment">%</span>
+0192 <span class="comment">% Cs = [1.36 2.57 1.05 1.16 1.45 1.60 1.25];</span>
+0193 <span class="comment">% Cl = [1.36 2.74 3.04 2.37 2.89 2.91 2.12];</span>
+0194 <span class="comment">% % Coefficients pour le passage a l'aire</span>
+0195 <span class="comment">% Cs(1) = 1.36;</span>
+0196 <span class="comment">% Cs(2) = 2.57;</span>
+0197 <span class="comment">% Cs(3) = 1.05;</span>
+0198 <span class="comment">% Cs(4) = 1.16;</span>
+0199 <span class="comment">% Cs(5) = 1.45;</span>
+0200 <span class="comment">% Cs(6) = 1.60;</span>
+0201 <span class="comment">% Cs(7) = 1.25;</span>
+0202 <span class="comment">% Cl(1) = 1.36;</span>
+0203 <span class="comment">% Cl(2) = 2.74;</span>
+0204 <span class="comment">% Cl(3) = 3.04;</span>
+0205 <span class="comment">% Cl(4) = 2.37;</span>
+0206 <span class="comment">% Cl(5) = 2.89;</span>
+0207 <span class="comment">% Cl(6) = 2.91;</span>
+0208 <span class="comment">% Cl(7) = 2.12;</span>
+0209 <span class="comment">%</span>
+0210 <span class="comment">% Choix de la pression de reference</span>
+0211 <span class="keyword">if</span> (Pref==0)
+0212   DoPress = 0;
+0213 <span class="keyword">else</span>
+0214   DoPress = 1;
+0215 <span class="keyword">end</span>
+0216 
+0217 <span class="comment">% Initialisation dusemaphore de 1er passage</span>
+0218 PRESS_FLAG = 0;
+0219 PressDebug = 0;
+0220 
+0221 <span class="comment">% Added by Yohan &amp; Majid; Nov 30, 99</span>
+0222 <span class="keyword">for</span> i=1:MM
+0223    <span class="keyword">for</span> j=1:NN
+0224      v1=(i-1)*NNx2+2*j;
+0225      X0Y0(v1-1,1)=X0(i,j);
+0226      X0Y0(v1,1)=Y0(i,j);
+0227    <span class="keyword">end</span>
+0228 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
