@@ -7,7 +7,7 @@
 clear *
 close all
 
-spkStr = 'pp_FF1';
+spkStr = 'cs';
 
 path_model = ['spec_' spkStr '/'];
 
