@@ -26,7 +26,7 @@ function K = calculate_K(r, s, XY, lambda2, mu2, pfix)
         IDfix = ID;
         
     elseif pfix == 1
-        
+
         IAfix = [9*ones(1,16), IA(17:32), 9*ones(1,16), IA(49:64)];
         IDfix = [9*ones(1,16), ID(17:32), 9*ones(1,16), ID(49:64)];
     
@@ -35,15 +35,6 @@ function K = calculate_K(r, s, XY, lambda2, mu2, pfix)
         IAfix = [IA(1:16), 9*ones(1,16), IA(33:64)];
         IDfix = [ID(1:16), 9*ones(1,16), ID(33:64)];
     
-    elseif pfix == 3
-    
-        IAfix = [IA(1:32), 9*ones(1,16), IA(48:64)];
-        IDfix = [ID(1:32), 9*ones(1,16), ID(48:64)];
-
-    elseif pfix == 4
-        IAfix = [IA(1:48), 9*ones(1,16)];
-        IDfix = [ID(1:48), 9*ones(1,16)];
-
     end
 
     A = dpsi(IAfix);
@@ -53,4 +44,5 @@ function K = calculate_K(r, s, XY, lambda2, mu2, pfix)
     E = dpsi(IE);
 
     K = (1/abs(detJ))*(A.*(lambda2*B+2*mu2*C)+mu2*D.*E);
+    
 end
