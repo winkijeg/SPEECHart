@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Comlambda_adapt_jaw</title>
+  <meta name="keywords" content="Comlambda_adapt_jaw">
+  <meta name="description" content="Modified PP 9 May 2011 - Introduction of variable delta_lambda_tot_GGP, delta_lambda_tot_GGA, delta_lambda_tot_Hyo">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; Comlambda_adapt_jaw.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Comlambda_adapt_jaw
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Modified PP 9 May 2011 - Introduction of variable delta_lambda_tot_GGP, delta_lambda_tot_GGA, delta_lambda_tot_Hyo</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function LAMBDA=Comlambda_adapt_jaw(t) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Modified PP 9 May 2011 - Introduction of variable delta_lambda_tot_GGP, delta_lambda_tot_GGA, delta_lambda_tot_Hyo
+ ..... delta_lambda_tot_Stylo, delta_lambda_tot_SL, delta_lambda_tot_IL, delta_lambda_tot_Vert;</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="udot3_adapt_jaw.html" class="code" title="function Udot = udot3_adapt_jaw(t,U)">udot3_adapt_jaw</a>	CV - 03/03/99</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function LAMBDA=Comlambda_adapt_jaw(t)</a>
+0002 <span class="comment">% Modified PP 9 May 2011 - Introduction of variable delta_lambda_tot_GGP, delta_lambda_tot_GGA, delta_lambda_tot_Hyo</span>
+0003 <span class="comment">% ..... delta_lambda_tot_Stylo, delta_lambda_tot_SL, delta_lambda_tot_IL, delta_lambda_tot_Vert;</span>
+0004 
+0005 
+0006 <span class="keyword">global</span> TEMPS_FINAL;
+0007 <span class="keyword">global</span> TEMPS_FINAL_CUM;
+0008 <span class="keyword">global</span> TEMPS_ACTIVATION;
+0009 <span class="keyword">global</span> fact;
+0010 
+0011 <span class="keyword">global</span> MATRICE_LAMBDA;
+0012 
+0013 <span class="comment">% Longueur minimale pour chaque fibre de chaque muscle (calculees dans</span>
+0014 <span class="comment">% Simulation4.m</span>
+0015 
+0016 <span class="keyword">global</span> longmin_GGP;
+0017 <span class="keyword">global</span> longmin_GGA;
+0018 <span class="keyword">global</span> longmin_Hyo;
+0019 <span class="keyword">global</span> longmin_Stylo;
+0020 <span class="keyword">global</span> longmin_SL;
+0021 <span class="keyword">global</span> longmin_IL;
+0022 <span class="keyword">global</span> longmin_Vert;
+0023 <span class="keyword">global</span> longrepos_GGA_max longrepos_GGP_max longrepos_Hyo_max longrepos_IL_max longrepos_SL_max longrepos_Stylo_max longrepos_Vert_max <span class="comment">%PP Nov 06</span>
+0024 
+0025 <span class="comment">% On va calculer la valeur de lambda pour chaque muscle (lam_musc) et</span>
+0026 <span class="comment">% apres (pour calculer la valeur pour chaque fibre) on va interpoler</span>
+0027 <span class="comment">% entre la longueur de repos et la longueur minimal pour les fibres</span>
+0028     
+0029 <span class="comment">% Il faut connaitre l'interval ou nous sommes</span>
+0030 interval = min(find(TEMPS_FINAL_CUM &gt;= t));
+0031 
+0032 t_cum = [0, TEMPS_FINAL_CUM];
+0033 t = t - t_cum(interval);
+0034 <span class="comment">% round(t  * 1000)</span>
+0035 
+0036 <span class="keyword">if</span> length(interval)
+0037   <span class="keyword">if</span> (t &lt;= TEMPS_ACTIVATION(interval))
+0038 
+0039     lam_GGP = MATRICE_LAMBDA(1, interval) + (MATRICE_LAMBDA(1, interval + 1) - MATRICE_LAMBDA(1, interval)) * t  / TEMPS_ACTIVATION(interval);
+0040     
+0041     lam_GGA = MATRICE_LAMBDA(2, interval) + (MATRICE_LAMBDA(2, interval + 1) - MATRICE_LAMBDA(2, interval)) * t  / TEMPS_ACTIVATION(interval);
+0042     
+0043     lam_Hyo = MATRICE_LAMBDA(3, interval) + (MATRICE_LAMBDA(3, interval + 1) - MATRICE_LAMBDA(3, interval)) * t  / TEMPS_ACTIVATION(interval);
+0044     
+0045     lam_Stylo = MATRICE_LAMBDA(4, interval) + (MATRICE_LAMBDA(4, interval + 1) - MATRICE_LAMBDA(4, interval)) * t  / TEMPS_ACTIVATION(interval);
+0046 
+0047     lam_Vert = MATRICE_LAMBDA(5, interval) + (MATRICE_LAMBDA(5, interval + 1) - MATRICE_LAMBDA(5, interval)) * t  / TEMPS_ACTIVATION(interval);
+0048 
+0049     lam_SL = MATRICE_LAMBDA(6, interval) + (MATRICE_LAMBDA(6, interval + 1) - MATRICE_LAMBDA(6, interval)) * t  / TEMPS_ACTIVATION(interval);
+0050 
+0051     lam_IL = MATRICE_LAMBDA(7, interval) + (MATRICE_LAMBDA(7, interval + 1) - MATRICE_LAMBDA(7, interval)) * t  / TEMPS_ACTIVATION(interval);
+0052 
+0053   <span class="keyword">else</span>
+0054     lam_GGP = MATRICE_LAMBDA(1, interval + 1);
+0055 
+0056     lam_GGA = MATRICE_LAMBDA(2, interval + 1);
+0057     
+0058     lam_Hyo = MATRICE_LAMBDA(3, interval + 1);
+0059     
+0060     lam_Stylo = MATRICE_LAMBDA(4, interval + 1);
+0061     
+0062     lam_Vert = MATRICE_LAMBDA(5, interval + 1);
+0063     
+0064     lam_SL = MATRICE_LAMBDA(6, interval + 1);
+0065     
+0066     lam_IL = MATRICE_LAMBDA(7, interval + 1);
+0067     
+0068   <span class="keyword">end</span>
+0069   
+0070 <span class="keyword">else</span>     <span class="comment">% Si le temps simulation est fini</span>
+0071     
+0072   ind = size(MATRICE_LAMBDA, 2);
+0073     
+0074   lam_GGP = MATRICE_LAMBDA(1, ind);
+0075       
+0076   lam_GGA = MATRICE_LAMBDA(2, ind);
+0077       
+0078   lam_Hyo = MATRICE_LAMBDA(3, ind);
+0079       
+0080   lam_Stylo = MATRICE_LAMBDA(4, ind);
+0081   
+0082   lam_Vert = MATRICE_LAMBDA(5, ind);
+0083       
+0084   lam_SL = MATRICE_LAMBDA(6, ind);
+0085       
+0086   lam_IL = MATRICE_LAMBDA(7, ind);
+0087     
+0088 <span class="keyword">end</span>  
+0089 
+0090 <span class="comment">% Variable des valeurs de lambda (evolution temporaire)</span>
+0091 <span class="keyword">global</span> LAMBDA_T;
+0092 <span class="keyword">global</span> t_i;
+0093 
+0094 LAMBDA_T( t_i, 1 ) = lam_GGP;
+0095 LAMBDA_T( t_i, 2 ) = lam_GGA;
+0096 LAMBDA_T( t_i, 3 ) = lam_Stylo;
+0097 LAMBDA_T( t_i, 4 ) = lam_Hyo;
+0098 LAMBDA_T( t_i, 5 ) = lam_SL;
+0099 LAMBDA_T( t_i, 6 ) = lam_IL;
+0100 LAMBDA_T( t_i, 7 ) = lam_Vert;
+0101 
+0102 <span class="comment">% Facteur de proportionnalite entre les lambda des fibres d'un meme</span>
+0103 <span class="comment">% muscle</span>
+0104 <span class="keyword">global</span> fac_GGP;
+0105 <span class="keyword">global</span> fac_GGA;
+0106 <span class="keyword">global</span> fac_Hyo;
+0107 <span class="keyword">global</span> fac_Stylo;
+0108 <span class="keyword">global</span> fac_SL;
+0109 <span class="keyword">global</span> fac_IL;
+0110 <span class="keyword">global</span> fac_Vert; 
+0111 
+0112 <span class="keyword">global</span> longrepos_GGA_max longrepos_GGP_max longrepos_Hyo_max longrepos_IL_max longrepos_SL_max longrepos_Stylo_max longrepos_Vert_max <span class="comment">%PP Nov 06</span>
+0113 
+0114 <span class="comment">% Amplitude des variations min max prévues pour les lambdas %  PP - 9 May 2011</span>
+0115 <span class="keyword">global</span> delta_lambda_tot_GGP;
+0116 <span class="keyword">global</span> delta_lambda_tot_GGA;
+0117 <span class="keyword">global</span> delta_lambda_tot_Hyo;
+0118 <span class="keyword">global</span> delta_lambda_tot_Stylo;
+0119 <span class="keyword">global</span> delta_lambda_tot_SL;
+0120 <span class="keyword">global</span> delta_lambda_tot_IL;
+0121 <span class="keyword">global</span> delta_lambda_tot_Vert;
+0122 
+0123 l_repos_GGP = (longrepos_GGP_max+delta_lambda_tot_GGP/2) * fac_GGP; <span class="comment">%  PP - 9 May 2011</span>
+0124 LAMBDA(1:1+3*fact) =  longmin_GGP + (l_repos_GGP - longmin_GGP) * <span class="keyword">...</span>
+0125       (lam_GGP - (longrepos_GGP_max-delta_lambda_tot_GGP/2)) / delta_lambda_tot_GGP; <span class="comment">%  PP - 9 May 2011</span>
+0126 
+0127 l_repos_GGA = (longrepos_GGA_max+delta_lambda_tot_GGA/2) * fac_GGA; <span class="comment">%  PP - 9 May 2011</span>
+0128  LAMBDA(2+3*fact:1+6*fact) =  longmin_GGA + (l_repos_GGA - <span class="keyword">...</span>
+0129       longmin_GGA) * (lam_GGA - (longrepos_GGA_max-delta_lambda_tot_GGA/2)) / delta_lambda_tot_GGA; <span class="comment">%  PP - 9 May 2011</span>
+0130 
+0131 i=1+6*fact+1;
+0132 l_repos_Stylo = (longrepos_Stylo_max+delta_lambda_tot_Stylo/2) * fac_Stylo;  <span class="comment">%  PP - 9 May 2011</span>
+0133 LAMBDA(i:i+1) =  longmin_Stylo + (l_repos_Stylo - longmin_Stylo) <span class="keyword">...</span>
+0134       * (lam_Stylo - (longrepos_Stylo_max-delta_lambda_tot_Stylo/2)) / delta_lambda_tot_Stylo; <span class="comment">%  PP - 9 May 2011</span>
+0135 
+0136 
+0137 l_repos_Hyo = (longrepos_Hyo_max+delta_lambda_tot_Hyo/2) * fac_Hyo;  <span class="comment">%  PP - 9 May 2011</span>
+0138 LAMBDA(i+2:i+4) =  longmin_Hyo + (l_repos_Hyo - longmin_Hyo) * <span class="keyword">...</span>
+0139       (lam_Hyo - (longrepos_Hyo_max-delta_lambda_tot_Hyo/2)) / delta_lambda_tot_Hyo; <span class="comment">%  PP - 9 May 2011</span>
+0140 
+0141 
+0142 l_repos_SL = (longrepos_SL_max+delta_lambda_tot_SL/2) * fac_SL;   <span class="comment">%  PP - 9 May 2011</span>
+0143 LAMBDA(i+5) =  longmin_SL + (l_repos_SL - longmin_SL) * (lam_SL - (longrepos_SL_max-delta_lambda_tot_SL/2)) / delta_lambda_tot_SL; <span class="comment">%  PP - 9 May 2011</span>
+0144 
+0145 l_repos_IL = (longrepos_IL_max+delta_lambda_tot_IL/2) * fac_IL;   <span class="comment">%  PP - 9 May 2011</span>
+0146 LAMBDA(i+6) =  longmin_IL + (l_repos_IL - longmin_IL) * (lam_IL - <span class="keyword">...</span>
+0147     (longrepos_IL_max-delta_lambda_tot_IL/2)) / delta_lambda_tot_IL; <span class="comment">%  PP - 9 May 2011</span>
+0148 
+0149 i=i+7;            
+0150 l_repos_Vert = (longrepos_Vert_max+delta_lambda_tot_Vert/2) * fac_Vert; <span class="comment">%  PP - 9 May 2011</span>
+0151 LAMBDA(i:i+3*fact-1) =  longmin_Vert + (l_repos_Vert - <span class="keyword">...</span>
+0152    longmin_Vert) * (lam_Vert - (longrepos_Vert_max-delta_lambda_tot_Vert/2)) / delta_lambda_tot_Vert; <span class="comment">%  PP - 9 May 2011</span>
+0153</pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of elast2</title>
+  <meta name="keywords" content="elast2">
+  <meta name="description" content="Calcule la matrice d'elasticite A0 en fonction des activites des">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; elast2.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>elast2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Calcule la matrice d'elasticite A0 en fonction des activites des</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function elast2 = elast2(activGGA, activGGP, activHyo, activStylo,activSL, activVert, ncontact) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calcule la matrice d'elasticite A0 en fonction des activites des
+ differents muscles : E vaut 15 kPa pour un element au repos et 250
+ kPa pour un element contracte au maximum.
+ Ceci correspond a multiplier lambda et mu jusqu'a 16 fois leurs
+ valeurs initiales.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="elast2.html" class="code" title="function elast2 = elast2(activGGA, activGGP, activHyo, activStylo,activSL, activVert, ncontact)">elast2</a>	Calcule la matrice d'elasticite A0 en fonction des activites des</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="elast2.html" class="code" title="function elast2 = elast2(activGGA, activGGP, activHyo, activStylo,activSL, activVert, ncontact)">elast2</a>	Calcule la matrice d'elasticite A0 en fonction des activites des</li><li><a href="udot3_adapt_jaw.html" class="code" title="function Udot = udot3_adapt_jaw(t,U)">udot3_adapt_jaw</a>	CV - 03/03/99</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function elast2 = elast2(activGGA, activGGP, activHyo, activStylo, </a><span class="keyword">...</span>
+0002     activSL, activVert, ncontact)
+0003 <span class="comment">% Calcule la matrice d'elasticite A0 en fonction des activites des</span>
+0004 <span class="comment">% differents muscles : E vaut 15 kPa pour un element au repos et 250</span>
+0005 <span class="comment">% kPa pour un element contracte au maximum.</span>
+0006 <span class="comment">% Ceci correspond a multiplier lambda et mu jusqu'a 16 fois leurs</span>
+0007 <span class="comment">% valeurs initiales.</span>
+0008 
+0009 <span class="comment">% Parametres d'entree :</span>
+0010 <span class="comment">% -  Les activation des muscles</span>
+0011 <span class="comment">% -  ncontact qui est un vecteur contenant 0 et les indices des noeuds qui</span>
+0012 <span class="comment">%    entrent en contact avec le palais : les coefficients de la</span>
+0013 <span class="comment">%    matrice d'elasticite dependent en effet des points fixes de</span>
+0014 <span class="comment">%    l'element considere.</span>
+0015 
+0016     <span class="keyword">global</span> X0Y0
+0017     <span class="keyword">global</span> NN
+0018     <span class="keyword">global</span> MM
+0019     <span class="keyword">global</span> fact
+0020     <span class="keyword">global</span> lambda
+0021     <span class="keyword">global</span> mu
+0022     <span class="keyword">global</span> ordre
+0023     <span class="keyword">global</span> IA
+0024     <span class="keyword">global</span> IB
+0025     <span class="keyword">global</span> IC
+0026     <span class="keyword">global</span> ID
+0027     <span class="keyword">global</span> IE
+0028 
+0029     AA = zeros(1,(2*NN*MM)^2);
+0030 
+0031     activtot = [activGGA, activGGP, activHyo, activStylo, activSL, activVert];
+0032     AA = elast_c(NN, MM, fact, ordre, lambda, mu, IA, IB, IC, ID, IE, <span class="keyword">...</span>
+0033         activtot, X0Y0, ncontact);
+0034     
+0035     <a href="elast2.html" class="code" title="function elast2 = elast2(activGGA, activGGP, activHyo, activStylo,activSL, activVert, ncontact)">elast2</a> = reshape(AA, 2*NN*MM, 2*NN*MM);
+0036     
+0037 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

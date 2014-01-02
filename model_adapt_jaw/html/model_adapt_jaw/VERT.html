@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of VERT</title>
+  <meta name="keywords" content="VERT">
+  <meta name="description" content="VERT.m">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; VERT.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>VERT
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>VERT.m</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function VERT(U); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> VERT.m
+ Calculs des forces exercees par le Verticalis (Vert)
+ Il y a (1+3*fact) fibres</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="udot3_adapt_jaw.html" class="code" title="function Udot = udot3_adapt_jaw(t,U)">udot3_adapt_jaw</a>	CV - 03/03/99</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function VERT(U);</a>
+0002 <span class="comment">% VERT.m</span>
+0003 <span class="comment">% Calculs des forces exercees par le Verticalis (Vert)</span>
+0004 <span class="comment">% Il y a (1+3*fact) fibres</span>
+0005 
+0006 <span class="comment">% Cree le     11/03/99 - CV</span>
+0007 <span class="comment">% Modifie le  11/03/99 - CV</span>
+0008 
+0009 <span class="comment">% -------------------------------------------------------------------+</span>
+0010 <span class="comment">% Variables globales d'entree                                        |</span>
+0011 <span class="keyword">global</span> NN;                      <span class="comment">% Largeur du modele                  |</span>
+0012 <span class="keyword">global</span> NNxMMx2;                 <span class="comment">% Offset de U' dans U                |</span>
+0013 <span class="keyword">global</span> fact;                    <span class="comment">% Resolution du modele               |</span>
+0014 <span class="keyword">global</span> Att_Vert;                <span class="comment">% Points d'attache du Vert           |</span>
+0015 <span class="keyword">global</span> XY;                      <span class="comment">% Position des noeuds                |</span>
+0016 <span class="keyword">global</span> LAMBDA_Vert MU;          <span class="comment">% Pour calculer l'activation du Vert |</span>
+0017 <span class="keyword">global</span> rho_Vert c;              <span class="comment">% Pour calculer la force du Vert     |</span>
+0018 <span class="keyword">global</span> f1 f2 f3 f4 f5;          <span class="comment">% Idem                               |</span>
+0019 <span class="keyword">global</span> longrepos_Vert;          <span class="comment">% Idem                               |</span>
+0020 <span class="keyword">global</span> t_i;                     <span class="comment">% 'Temps entier' pout ACTIV_T        |</span>
+0021 <span class="comment">% -------------------------------------------------------------------+</span>
+0022 <span class="comment">% Variables globales d'entree/sortie                                 |</span>
+0023 <span class="keyword">global</span> FXY;                     <span class="comment">% Force exercee en chaque noeud      |</span>
+0024 <span class="keyword">global</span> ACTIV_T;                 <span class="comment">% Activation des muscles             |</span>
+0025 <span class="comment">% -------------------------------------------------------------------+</span>
+0026 <span class="comment">% Variables globales de sortie                                       |</span>
+0027 <span class="keyword">global</span> ForceVert;                <span class="comment">% Force exercee par chaque fibre    |</span>
+0028 <span class="comment">% -------------------------------------------------------------------+</span>
+0029 <span class="keyword">global</span> fac_Vert;
+0030 
+0031 <span class="keyword">for</span> k=1:3*fact     <span class="comment">% boucle sur le nombre de fibres</span>
+0032                    <span class="comment">% Modif Nov 99 YP-PP</span>
+0033   longtot=0;
+0034   <span class="keyword">for</span> j=Att_Vert(k,2):-1:Att_Vert(k,1)+1
+0035     v1=2*j; <span class="comment">% %%</span>
+0036     long(j)=sqrt((XY(v1-1)-XY(v1-3))^2+(XY(v1)-XY(v1-2))^2);
+0037     longtot=longtot+long(j);
+0038   <span class="keyword">end</span>
+0039   LongdotVert(k)=((XY(Att_Vert(k,4)-1)-XY(Att_Vert(k,3)-1))*U(NNxMMx2+Att_Vert(k,4)-1)+(XY(Att_Vert(k,4))-XY(Att_Vert(k,3)))*U(NNxMMx2+Att_Vert(k,4)))/longtot;
+0040   Activ1=(longtot-LAMBDA_Vert(k)+MU*LongdotVert(k));
+0041   <span class="keyword">if</span> Activ1&gt;0
+0042     ForceVert(k)=rho_Vert*(exp(c*Activ1)-1);
+0043     ForceVert(k)=ForceVert(k)*(f1+f2*atan(f3+f4*LongdotVert(k)/longrepos_Vert(k))+f5*LongdotVert(k)/longrepos_Vert(k));
+0044     ForceVert(k)=ForceVert(k)/fac_Vert(k);
+0045     <span class="keyword">if</span> ForceVert(k)&gt;20
+0046       ForceVert(k)=20;
+0047     <span class="keyword">end</span>
+0048     FXY(Att_Vert(k,4)-1)=FXY(Att_Vert(k,4)-1)-(XY(Att_Vert(k,4)-1)-XY(Att_Vert(k,4)-3))/long(Att_Vert(k,2))*ForceVert(k);
+0049     FXY(Att_Vert(k,4))=FXY(Att_Vert(k,4))-(XY(Att_Vert(k,4))-XY(Att_Vert(k,4)-2))/long(Att_Vert(k,2))*ForceVert(k);
+0050     FXY(Att_Vert(k,3)-1)=FXY(Att_Vert(k,3)-1)-(XY(Att_Vert(k,3)-1)-XY(Att_Vert(k,3)+1))/long(Att_Vert(k,1)+1)*ForceVert(k);
+0051     FXY(Att_Vert(k,3))=FXY(Att_Vert(k,3))-(XY(Att_Vert(k,3))-XY(Att_Vert(k,3)+2))/long(Att_Vert(k,1)+1)*ForceVert(k);
+0052     <span class="keyword">for</span> j=Att_Vert(k,2)-1:-1:Att_Vert(k,1)+1
+0053       v1=2*j; <span class="comment">% %%</span>
+0054       FXY(v1-1)=FXY(v1-1)-(XY(v1-1)-XY(v1+1))/long(j+1)*ForceVert(k);
+0055       FXY(v1)=FXY(v1)-(XY(v1)-XY(v1+2))/long(j+1)*ForceVert(k);
+0056       FXY(v1-1)=FXY(v1-1)-(XY(v1-1)-XY(v1-3))/long(j)*ForceVert(k);
+0057       FXY(v1)=FXY(v1)-(XY(v1)-XY(v1-2))/long(j)*ForceVert(k);
+0058     <span class="keyword">end</span>
+0059   <span class="keyword">else</span> 
+0060     ForceVert(k)=0;
+0061   <span class="keyword">end</span>
+0062 <span class="keyword">end</span>
+0063 
+0064 ACTIV_T(t_i, 7) = Activ1;
+0065</pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

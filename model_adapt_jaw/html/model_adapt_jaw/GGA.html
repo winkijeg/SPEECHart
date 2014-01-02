@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of GGA</title>
+  <meta name="keywords" content="GGA">
+  <meta name="description" content="GGA.m">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">model_adapt_jaw</a> &gt; GGA.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for model_adapt_jaw&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>GGA
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GGA.m</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function GGA(U); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GGA.m
+ Calculs des forces exercees par le Ant. Genoiglossus (GGA)
+ Il y a (1+2*fact) fibres</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="udot3_adapt_jaw.html" class="code" title="function Udot = udot3_adapt_jaw(t,U)">udot3_adapt_jaw</a>	CV - 03/03/99</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function GGA(U);</a>
+0002 <span class="comment">% GGA.m</span>
+0003 <span class="comment">% Calculs des forces exercees par le Ant. Genoiglossus (GGA)</span>
+0004 <span class="comment">% Il y a (1+2*fact) fibres</span>
+0005 
+0006 <span class="comment">% Cree le     11/03/99 - CV</span>
+0007 <span class="comment">% Modifie le  11/03/99 - CV</span>
+0008 
+0009 <span class="comment">% -------------------------------------------------------------------+</span>
+0010 <span class="comment">% Variables globales d'entree                                        |</span>
+0011 <span class="keyword">global</span> NNxMMx2;                 <span class="comment">% Offset de U' dans U                |</span>
+0012 <span class="keyword">global</span> fact;                    <span class="comment">% Resolution du modele               |</span>
+0013 <span class="keyword">global</span> Att_GGA;                 <span class="comment">% Points d'attache du GGA            |</span>
+0014 <span class="keyword">global</span> XY;                      <span class="comment">% Position des noeuds                |</span>
+0015 <span class="keyword">global</span> LAMBDA_GGA MU;           <span class="comment">% Pour calculer l'activation du GGA  |</span>
+0016 <span class="keyword">global</span> rho_GG c f1 f2 f3 f4 f5; <span class="comment">% Pour calculer la force du GGA      |</span>
+0017 <span class="keyword">global</span> longrepos_GGA;           <span class="comment">% Idem                               |</span>
+0018 <span class="keyword">global</span> t_i;                     <span class="comment">% 'Temps entier' pout ACTIV_T        |</span>
+0019 <span class="comment">% -------------------------------------------------------------------+</span>
+0020 <span class="comment">% Variables globales d'entree/sortie                                 |</span>
+0021 <span class="keyword">global</span> FXY;                     <span class="comment">% Force exercee en chaque noeud      |</span>
+0022 <span class="keyword">global</span> ACTIV_T;                 <span class="comment">% Activation des muscles             |</span>
+0023 <span class="comment">% -------------------------------------------------------------------+</span>
+0024 <span class="comment">% Variables globales de sortie                                       |</span>
+0025 <span class="keyword">global</span> ForceGGA;                <span class="comment">% Force exercee par chaque fibre     |</span>
+0026 <span class="comment">% -------------------------------------------------------------------+</span>
+0027 
+0028 
+0029 <span class="keyword">for</span> k=1:3*fact          <span class="comment">% boucle sur le nombre de fibres Modif Nov 99 3*fact</span>
+0030   longtot=0;
+0031   <span class="keyword">for</span> j=Att_GGA(k,2):-1:Att_GGA(k,1)+1
+0032     v1=2*j; <span class="comment">% %%</span>
+0033     long(j)=sqrt((XY(v1-1)-XY(v1-3))^2+(XY(v1)-XY(v1-2))^2);
+0034     longtot=longtot+long(j);
+0035   <span class="keyword">end</span>
+0036   LongdotGGA(k)=((XY(Att_GGA(k,4)-1)-XY(Att_GGA(k,3)-1))*U(NNxMMx2+Att_GGA(k,4)-1)+(XY(Att_GGA(k,4))-XY(Att_GGA(k,3)))*U(NNxMMx2+Att_GGA(k,4)))/longtot;
+0037   <span class="comment">% Calcul de l'activite musculaire</span>
+0038   Activ1=(longtot-LAMBDA_GGA(k)+MU*LongdotGGA(k));
+0039   <span class="comment">% Calcul de la force F de l'equa diff</span>
+0040   <span class="keyword">if</span> Activ1&gt;0
+0041     ForceGGA(k)=rho_GG*(exp(c*Activ1)-1);
+0042     ForceGGA(k)=ForceGGA(k)*(f1+f2*atan(f3+f4*LongdotGGA(k)/longrepos_GGA(k))+f5*LongdotGGA(k)/longrepos_GGA(k));
+0043     <span class="comment">% Saturation de la force</span>
+0044     <span class="keyword">if</span> ForceGGA(k)&gt;20
+0045       ForceGGA(k)=20;
+0046    <span class="keyword">end</span>
+0047    <span class="keyword">if</span> (k == 1)
+0048       ForceGGA(k)= ForceGGA(k)/2;
+0049    <span class="keyword">end</span>
+0050    
+0051     <span class="comment">% Calcul de la force FXY appliquee aux noeuds</span>
+0052     FXY(Att_GGA(k,4)-1)=FXY(Att_GGA(k,4)-1)-(XY(Att_GGA(k,4)-1)-XY(Att_GGA(k,4)-3))/long(Att_GGA(k,2))*ForceGGA(k);
+0053     FXY(Att_GGA(k,4))=FXY(Att_GGA(k,4))-(XY(Att_GGA(k,4))-XY(Att_GGA(k,4)-2))/long(Att_GGA(k,2))*ForceGGA(k);
+0054     <span class="keyword">for</span> j=Att_GGA(k,2)-1:-1:Att_GGA(k,1)+1
+0055       v1=2*j; <span class="comment">% %%</span>
+0056       FXY(v1-1)=FXY(v1-1)-(XY(v1-1)-XY(v1+1))/long(j+1)*ForceGGA(k);
+0057       FXY(v1)=FXY(v1)-(XY(v1)-XY(v1+2))/long(j+1)*ForceGGA(k);
+0058       FXY(v1-1)=FXY(v1-1)-(XY(v1-1)-XY(v1-3))/long(j)*ForceGGA(k);
+0059       FXY(v1)=FXY(v1)-(XY(v1)-XY(v1-2))/long(j)*ForceGGA(k);
+0060       <span class="comment">% Il serait bien vu de faire un  regroupement des 2 lignes...</span>
+0061     <span class="keyword">end</span>
+0062   <span class="keyword">else</span> 
+0063     ForceGGA(k)=0;
+0064   <span class="keyword">end</span>
+0065 <span class="keyword">end</span>
+0066 ACTIV_T(t_i, 2) = Activ1;
+0067 
+0068</pre></div>
+<hr><address>Generated on Thu 02-Jan-2014 21:04:46 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
