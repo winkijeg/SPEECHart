@@ -4,8 +4,6 @@ classdef spkConfig < handle
 properties
 	source;
 	configs;
-	confnom;
-	files;
 end
 
 methods
