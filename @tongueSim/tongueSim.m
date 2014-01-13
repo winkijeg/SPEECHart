@@ -124,6 +124,7 @@ classdef tongueSim < handle
         FXY_T;
         ACCL_T;
         ACTIV_T; % Will be a matrix with the activation as a function of time for a fiber of each muscle
+        t_i; % full time for AVTIV_T
         LAMBDA_T; % will be a matrix with lambda values as a function of time for a fiber of each muscle
         
         UU = uClass; % REVISIT BECAUSE OF NO UNDERSTAND...
@@ -210,6 +211,7 @@ classdef tongueSim < handle
         
         [tout, yout] = ode45plus(TSObj, ypfun, t0, tf, y0, tol, storestep);
         Udot = udot3_adapt_jaw(TSObj, t, U);
+        LAMBDA = comLambda_adapt_jaw(TSObj, t);
         
         function plot(TSObj)
             figure('Units','normal','Position',[0.4 0.41 0.5 0.5]);
