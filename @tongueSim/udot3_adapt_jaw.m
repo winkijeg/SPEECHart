@@ -21,7 +21,7 @@ function Udot = udot3_adapt_jaw(TSObj, t,U)
 %    - Changement du calcul des forces du SL
 %    - Recalcul a chaque instant de la matrice d'elasticite, en
 %      appelant la fonction elast.m
-%    - deux fois plus de fibres (si fact=2) pour le GGP, le GGA et le
+%    - deux fois plus de fibres (si TSObj.fact=2) pour le GGP, le GGA et le
 %      Vert
 %    - Modification de l'algorithme de collision
 
@@ -56,7 +56,7 @@ function Udot = udot3_adapt_jaw(TSObj, t,U)
 % global X0Y0;
 % global NN;
 % global MM;
-% global fact;
+% global TSObj.fact;
 % global lambda;
 % global mu;
 % global X;
@@ -164,7 +164,7 @@ Att = tongueMuscles();
 %% global theta theta_ll dist_lip hyoid_movment dist_hyoid Hyoid_corps lar_ar_mri tongue_lar_mri pharynx_mri
 %% global lowerteeth lar_ar lowerlip palate pharynx tongue_lar upperlip velum hyoid_i_abs
 
-%% global t_i ttout length_ttout X0_seq Y0_seq X_origin Y_origin old_t;
+%% global TSObj.t_i ttout length_ttout X0_seq Y0_seq X_origin Y_origin old_t;
 % ----------------------------------------------------------------------
 % Initialisations cycliques
 if TSObj.kkk==0	%modified by Yohan & Majid; Nov 30, 99
@@ -183,7 +183,7 @@ if TSObj.kkk==0	%modified by Yohan & Majid; Nov 30, 99
 end
 
 TSObj.kkk=TSObj.kkk+1;
-t_i=round(1000*t)+1;
+TSObj.t_i=round(1000*t)+1;
 FXY = TSObj.PXY;
 
 % Calculate the rotation and translation of the jaw -- MZ 12/27/99
@@ -211,8 +211,8 @@ if length(TSObj.ttout)>length_ttout
     TSObj.UU.lar_ar_mri(length_ttout,:)=[TSObj.cont.lar_ar(1,:) TSObj.cont.lar_ar(2,:)];
     TSObj.UU.tongue_lar_mri(length_ttout,:)=[TSObj.cont.tongue_lar(1,:) TSObj.cont.tongue_lar(2,:)];
     TSObj.UU.pharynx_mri(length_ttout,:)=[TSObj.cont.pharynx(1,:) TSObj.cont.pharynx(2,:)];
-    X0_t = TSObj.X0'; % PP GB Avril 2011
-    Y0_t = TSObj.Y0'; % PP GB Avril 2011
+    X0_t = TSObj.restpos.X0'; % PP GB Avril 2011
+    Y0_t = TSObj.restpos.Y0'; % PP GB Avril 2011
     X0_seq(length_ttout,:)=X0_t(:)';  % On renverse la matrice pour obtenir la bonne configuration
     Y0_seq(length_ttout,:)=Y0_t(:)';
 end
@@ -223,27 +223,28 @@ end
 u=U(1:TSObj.NNxMMx2,1);
 for i=1:TSObj.MM
     for j=1:TSObj.NN
+        
         TSObj.v1=(i-1)*TSObj.NNx2+2*j;
-        TSObj.X(i,j)=TSObj.X0(i,j)+u(TSObj.v1-1);
-        TSObj.Y(i,j)=TSObj.Y0(i,j)+u(TSObj.v1);
-        TSObj.XY(TSObj.v1-1,1)=TSObj.X(i,j);
-        TSObj.XY(TSObj.v1,1)=TSObj.Y(i,j);
+        X(i,j)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
+        Y(i,j)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
+        TSObj.XY(TSObj.v1-1,1)=X(i,j);
+        TSObj.XY(TSObj.v1,1)=Y(i,j);
     end
 end
 
 
 % ---------------------------------------------------------------
 % Calcul de lambda a l'instant t grace a la fonction COMLAMBDA
-LAMBDA = sparse(comLambda_adapt_jaw(t));    % Plusieurs transitions (pas d'influence
+LAMBDA = sparse(TSObj.comLambda_adapt_jaw(t));    % Plusieurs transitions (pas d'influence
 %            des muscles dont les lambdas ont la valeur de repos)
 % Attribution de chaque lambda aux muscles
-for i=1:1+3*fact
+for i=1:1+3*TSObj.fact
     LAMBDA_GGP(i)=LAMBDA(i);
 end
-for i=2+3*fact:1+6*fact % 6 fibres dans le cas a 221 noeuds et 3 a 63 noeuds
-    LAMBDA_GGA(i-3*fact-1)=LAMBDA(i);
+for i=2+3*TSObj.fact:1+6*TSObj.fact % 6 fibres dans le cas a 221 noeuds et 3 a 63 noeuds
+    LAMBDA_GGA(i-3*TSObj.fact-1)=LAMBDA(i);
 end
-i=1+6*fact;
+i=1+6*TSObj.fact;
 LAMBDA_Stylo1=LAMBDA(i+1);
 LAMBDA_Stylo2=LAMBDA(i+2);
 LAMBDA_Hyo1=LAMBDA(i+3);
@@ -252,7 +253,7 @@ LAMBDA_Hyo3=LAMBDA(i+5);
 LAMBDA_SL=LAMBDA(i+6);
 LAMBDA_IL=LAMBDA(i+7);
 j=i+8;
-for i=j:j+3*fact-1 % Modifs Dec 99 YP-PP
+for i=j:j+3*TSObj.fact-1 % Modifs Dec 99 YP-PP
     LAMBDA_Vert(i-j+1)=LAMBDA(i);
 end
 clear LAMBDA;
@@ -287,7 +288,7 @@ end
 % Pour l'explication des algorithmes, voir "contact langue palais"
 global Point_dents;
 global Vect_dents;
-for i=8*fact*NN+1+4*fact:-1:8*fact*NN+1+2*fact % Modif. Dec 99 pour descendre plus bas sur les contacts des dents
+for i=8*TSObj.fact*NN+1+4*TSObj.fact:-1:8*TSObj.fact*NN+1+2*TSObj.fact % Modif. Dec 99 pour descendre plus bas sur les contacts des dents
     Vect_tongue=[XY(2*i-1)-Point_dents(1) XY(2*i)-Point_dents(2)];
     psi=Vect_tongue(1)*Vect_dents(2)-Vect_tongue(2)*Vect_dents(1);
     if (psi<0)
@@ -295,8 +296,8 @@ for i=8*fact*NN+1+4*fact:-1:8*fact*NN+1+2*fact % Modif. Dec 99 pour descendre pl
         FXY(2*i)=FXY(2*i)-psi*0.3;
     end
 end
-imin=8*fact*NN+1+3*fact;
-imax=8*fact*NN+1+5*fact;
+imin=8*TSObj.fact*NN+1+3*TSObj.fact;
+imax=8*TSObj.fact*NN+1+5*TSObj.fact;
 for i=imin:imax
     pente_L(i)=(XY(2*i)-XY(2*i+2))/(XY(2*i-1)-XY(2*i+1));
     org_L(i)=XY(2*i)-pente_L(i)*XY(2*i-1);
@@ -343,8 +344,8 @@ end
 % langue.
 % Ces equations sont de la forme :
 % Y = pente_L(i) * X + org_L(i)
-imin=3*fact*NN+1+6*fact;
-%imax=7*fact*NN+1+6*fact;
+imin=3*TSObj.fact*NN+1+6*TSObj.fact;
+%imax=7*TSObj.fact*NN+1+6*TSObj.fact;
 imax=208; % PP Avril 04 - Pour prendre en compte aussi les contacts
 % au niveau de la pointe de la langue
 for i=imin:NN:imax
@@ -382,7 +383,7 @@ for j=nbpalais-1:-1:1           % boucle sur les segments du palais et du velum
                             nc=2*i;
                             pc=j;
                             first_contact=1;
-                            if fact==2
+                            if TSObj.fact==2
                                 nc=nc+2*NN; % car on veut memoriser le noeud precedent
                                 pc=pc-1;
                             end
@@ -425,9 +426,9 @@ for j=nbpalais-1:-1:1           % boucle sur les segments du palais et du velum
                         Xcontact(oldi)=0;
                         Ycontact(oldi)=0;
                         nb_contact=nb_contact+1;
-                        F_enr(t_i)=sqrt(FXY(2*i-1)^2+FXY(2*i)^2);
-                        S_enr(t_i)=surface_c;
-                        P_enr(t_i)=distance;
+                        F_enr(TSObj.t_i)=sqrt(FXY(2*i-1)^2+FXY(2*i)^2);
+                        S_enr(TSObj.t_i)=surface_c;
+                        P_enr(TSObj.t_i)=distance;
                         neucontact(size(neucontact,2)+1)=i;
                     end
                 end
@@ -485,13 +486,13 @@ end
 %if nb_contact~=0
 if first_contact==1  %modified by Yophan & Majid  Nov30, 99
     
-    X_enr(t_i)=XY(nc-1);
-    Yn_enr(t_i)=XY(nc);
-    Yp_enr(t_i)=pente_P(pc)*X_enr(t_i)+org_P(pc);
+    X_enr(TSObj.t_i)=XY(nc-1);
+    Yn_enr(TSObj.t_i)=XY(nc);
+    Yp_enr(TSObj.t_i)=pente_P(pc)*X_enr(TSObj.t_i)+org_P(pc);
     if (U(2*NNxMM+nc)/sqrt(U(2*NNxMM+nc)*U(2*NNxMM+nc-1)))>sin(angle_reaction)
-        V_enr(t_i)=U(2*NNxMM+nc)*cos(angle_reaction)+U(2*NNxMM+nc-1)*abs(sin(angle_reaction));
+        V_enr(TSObj.t_i)=U(2*NNxMM+nc)*cos(angle_reaction)+U(2*NNxMM+nc-1)*abs(sin(angle_reaction));
     else
-        V_enr(t_i)=U(2*NNxMM+nc)*cos(angle_reaction)-U(2*NNxMM+nc-1)*abs(sin(angle_reaction));
+        V_enr(TSObj.t_i)=U(2*NNxMM+nc)*cos(angle_reaction)-U(2*NNxMM+nc-1)*abs(sin(angle_reaction));
     end
     first_contact=0;
 end
@@ -510,8 +511,8 @@ end
 % entrer en collision avec les dents
 % Pour l'explication des algorithmes, voir "contact langue palais"
 
-% imin=8*fact*NN+1+fact;
-% imax=8*fact*NN+1+5*fact;
+% imin=8*TSObj.fact*NN+1+TSObj.fact;
+% imax=8*TSObj.fact*NN+1+5*TSObj.fact;
 % for i=imin:imax
 %   if XY(2*i-1)~=XY(2*i+1)  % evite l'affichage de 'division par zero'
 %     pente_L(i)=(XY(2*i)-XY(2*i+2))/(XY(2*i-1)-XY(2*i+1));
@@ -578,38 +579,38 @@ global CALC_ELA;
 % fprintf('Facteur CAlC_ELA = %i\n',CALC_ELA)
 if CALC_ELA
     % disp ('elast')
-    A0=elast2(sum(ForceGGA)/(3*fact),sum(ForceGGP)/(1+3*fact),sum(ForceHyo)/3,(ForceStylo1+ForceStylo2)/2,ForceSL,sum(ForceVert)/(3*fact),neucontact);
+    A0=elast2(sum(ForceGGA)/(3*TSObj.fact),sum(ForceGGP)/(1+3*TSObj.fact),sum(ForceHyo)/3,(ForceStylo1+ForceStylo2)/2,ForceSL,sum(ForceVert)/(3*TSObj.fact),neucontact);
 end
-% Pour GGA  1+3*fact remplace par 3*fact (6 fibres) Nov 99
-% Pour Vert 4 remplace par 3*fact
+% Pour GGA  1+3*TSObj.fact remplace par 3*TSObj.fact (6 fibres) Nov 99
+% Pour Vert 4 remplace par 3*TSObj.fact
 
 % -----------------------------------------------------------------------------
 % Calcul de UDOT :
 
 U(NNx2-1,1)=0;
 U(NNx2,1)=0;
-for j=1:NN:1+8*fact*NN
+for j=1:NN:1+8*TSObj.fact*NN
     U(2*j-1,1)=0;
     U(2*j,1)=0;
 end
 
 U(NNx2-1+NNxMMx2,1)=0;
 U(2*(NN-1)+2 + 2*NNxMM,1)=0;
-for j=1:NN:1+8*fact*NN
+for j=1:NN:1+8*TSObj.fact*NN
     U(2*j-1 + 2*NNxMM,1)=0;
     U(2*j + 2*NNxMM,1)=0;
 end
 
 Udot=[U(2*NNxMM+1:4*NNxMM,1);invMass*(FXY-A0*U(1:2*NNxMM,1)-F*U(2*NNxMM+1:4*NNxMM,1))];
 
-for j=1:NN:1+8*fact*NN
+for j=1:NN:1+8*TSObj.fact*NN
     Udot(2*j-1 + 2*NNxMM,1)=0;
     Udot(2*j + 2*NNxMM,1)=0;
 end
 Udot(2*(NN-1)+1 + 2*NNxMM,1)=0;
 Udot(2*(NN-1)+2 + 2*NNxMM,1)=0;
 
-for j=1:NN:1+8*fact*NN
+for j=1:NN:1+8*TSObj.fact*NN
     Udot(2*j-1,1)=0;
     Udot(2*j,1)=0;
 end
@@ -624,11 +625,11 @@ global ACCL_T;
 % Calcul de la matrice globale pour la trajectoire de la force-temps,
 % transforme a Simulation4.m et utilise en force_gr.m
 
-TEMPS(t_i) = t;
-FXY_T(t_i, :) = FXY.';
+TEMPS(TSObj.t_i) = t;
+FXY_T(TSObj.t_i, :) = FXY.';
 
 % Calcul de la matrice global pour la trajectoire de la acceleration-temps,
 % transforme a Simulation4.m et utilise en accl_gr.m %
-% ACCL_T(:,t_i+1) = invMass*(FXY-A0*U(1:2*NN*MM,1)-F*U(2*NN*MMUDOT2.m+1:4*NN*MM,1));
-ACCL_T(t_i, :) = Udot(2*NNxMM+1:4*NNxMM).';
+% ACCL_T(:,TSObj.t_i+1) = invMass*(FXY-A0*U(1:2*NN*MM,1)-F*U(2*NN*MMUDOT2.m+1:4*NN*MM,1));
+ACCL_T(TSObj.t_i, :) = Udot(2*NNxMM+1:4*NNxMM).';
 
