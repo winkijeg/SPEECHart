@@ -25,20 +25,20 @@ dpsidy=(dpsidr*x)*dpsids-(dpsids*x)*dpsidr;
 dpsi=[dpsidx,dpsidy,0];
 
 if pfix==0
-  IAfix=TSObj.IA;
-  IDfix=TSObj.ID;
+    
+    IAfix=TSObj.IA;
+    IDfix=TSObj.ID;
+    
 elseif pfix==1
-  IAfix=[9*ones(1,16),TSObj.IA(17:32),9*ones(1,16),TSObj.IA(49:64)];
-  IDfix=[9*ones(1,16),TSObj.ID(17:32),9*ones(1,16),TSObj.ID(49:64)];
+    
+    IAfix=[9*ones(1,16),TSObj.IA(17:32),9*ones(1,16),TSObj.IA(49:64)];
+    IDfix=[9*ones(1,16),TSObj.ID(17:32),9*ones(1,16),TSObj.ID(49:64)];
+    
 elseif pfix==2
-  IAfix=[TSObj.IA(1:16),9*ones(1,16),TSObj.IA(33:64)];
-  IDfix=[TSObj.ID(1:16),9*ones(1,16),TSObj.ID(33:64)];
-elseif pfix==3
-  IAfix=[TSObj.IA(1:32),9*ones(1,16),TSObj.IA(48:64)];
-  IDfix=[TSObj.ID(1:32),9*ones(1,16),TSObj.ID(48:64)];
-elseif pfix==4
-  IAfix=[TSObj.IA(1:48),9*ones(1,16)];
-  IDfix=[TSObj.ID(1:48),9*ones(1,16)];
+    
+    IAfix=[TSObj.IA(1:16),9*ones(1,16),TSObj.IA(33:64)];
+    IDfix=[TSObj.ID(1:16),9*ones(1,16),TSObj.ID(33:64)];
+    
 end
 
 A=dpsi(IAfix);
@@ -48,3 +48,5 @@ D=dpsi(IDfix);
 E=dpsi(TSObj.IE);
 
 K=(1/abs(detJ))*(A.*(lambda2*B+2*mu2*C)+mu2*D.*E);
+
+end
