@@ -199,7 +199,7 @@ classdef tongueSim < handle
         % Signatures of methods defined in separate files
         A0 = elast_init(TSObj,activGGA,activGGP,activHyo,activStylo,activSL,...
             activVert,ncontact);
-        K = K(TSObj, r, s, XY, lambda2, mu2, pfix);
+        K = calculate_K(TSObj, r, s, XY, lambda2, mu2, pfix);
         udot3_init(TSObj);
         initMass(TSObj);
         initSequence(TSObj, seq);
