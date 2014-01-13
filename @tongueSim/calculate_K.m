@@ -1,5 +1,5 @@
-function K=K(TSObj, r, s, XY, lambda2, mu2, pfix)
-% K A function that does stuff
+function K = calculate_K(TSObj, r, s, XY, lambda2, mu2, pfix)
+% K A function that does stuff, but there is no clue what happpens
 % Modifications:
 %   - Passage par parametre de lambda2 et mu2 valeur de lambda et de
 %     mu pour l'element considere
