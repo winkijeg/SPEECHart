@@ -128,7 +128,6 @@ function Udot = udot3_adapt_jaw(TSObj, t,U)
 % global LAMBDA_SL;
 % global LAMBDA_IL;
 % global LAMBDA_Vert;
-Lambda = tongueMuscles();
 
 % Variables recevant les forces de chaque muscle
 % global ForceGGA;
@@ -138,7 +137,7 @@ Lambda = tongueMuscles();
 % global ForceSL;
 % global ForceIL;
 % global ForceVert;
-Force = tongueMuscles;
+
 
 % Variables definissant les points d'attache des muscles
 % global Att_GGP;
@@ -148,7 +147,6 @@ Force = tongueMuscles;
 % global Att_SL;
 % global Att_IL;
 % global Att_Vert;
-Att = tongueMuscles();
 
 
 
@@ -239,38 +237,39 @@ LAMBDA = sparse(TSObj.comLambda_adapt_jaw(t));    % Plusieurs transitions (pas d
 %            des muscles dont les lambdas ont la valeur de repos)
 % Attribution de chaque lambda aux muscles
 for i=1:1+3*TSObj.fact
-    LAMBDA_GGP(i)=LAMBDA(i);
+    TSObj.Lambda.GGP(i)=LAMBDA(i);
 end
 for i=2+3*TSObj.fact:1+6*TSObj.fact % 6 fibres dans le cas a 221 noeuds et 3 a 63 noeuds
-    LAMBDA_GGA(i-3*TSObj.fact-1)=LAMBDA(i);
+    TSObj.Lambda.GGA(i-3*TSObj.fact-1)=LAMBDA(i);
 end
 i=1+6*TSObj.fact;
-LAMBDA_Stylo1=LAMBDA(i+1);
-LAMBDA_Stylo2=LAMBDA(i+2);
-LAMBDA_Hyo1=LAMBDA(i+3);
-LAMBDA_Hyo2=LAMBDA(i+4);
-LAMBDA_Hyo3=LAMBDA(i+5);
-LAMBDA_SL=LAMBDA(i+6);
-LAMBDA_IL=LAMBDA(i+7);
+TSObj.Lambda.Stylo1=LAMBDA(i+1);
+TSObj.Lambda.Stylo2=LAMBDA(i+2);
+TSObj.Lambda.Hyo1=LAMBDA(i+3);
+TSObj.Lambda.Hyo2=LAMBDA(i+4);
+TSObj.Lambda.Hyo3=LAMBDA(i+5);
+TSObj.Lambda.SL=LAMBDA(i+6);
+TSObj.Lambda.IL=LAMBDA(i+7);
 j=i+8;
 for i=j:j+3*TSObj.fact-1 % Modifs Dec 99 YP-PP
-    LAMBDA_Vert(i-j+1)=LAMBDA(i);
+    TSObj.Lambda.Vert(i-j+1)=LAMBDA(i);
 end
 clear LAMBDA;
 % ---------------------------------------------------------------
-% Calcul pour chaque muscle de la force FXY qui s'applique en XY
-GGP(U);
-GGA(U);
-STYLO(U);
-HYO(U);
-SL(U);
-IL(U);
-VERT(U);
-if DoPress
+% Calculate for every muscle de la force FXY qui s'applique en XY
+TSObj.GGP(U);
+TSObj.GGA(U);
+TSObj.STYLO(U);
+TSObj.HYO(U);
+TSObj.SL(U);
+TSObj.IL(U);
+TSObj.VERT(U);
+
+if TSObj.DoPress % doesn't ever seem to be true
     PRESS(t);
 end
 % Genio-Hyoidien : resistance a la racine de la langue
-for i=2:NN-1
+for i=2:TSObj.NN-1
     FXY(2*i-1)=(X0(1,i)-XY(2*i-1))*2;
     FXY(2*i)=(Y0(1,i)-XY(2*i))*2;
 end
@@ -288,7 +287,7 @@ end
 % Pour l'explication des algorithmes, voir "contact langue palais"
 global Point_dents;
 global Vect_dents;
-for i=8*TSObj.fact*NN+1+4*TSObj.fact:-1:8*TSObj.fact*NN+1+2*TSObj.fact % Modif. Dec 99 pour descendre plus bas sur les contacts des dents
+for i=8*TSObj.fact*TSObj.NN+1+4*TSObj.fact:-1:8*TSObj.fact*TSObj.NN+1+2*TSObj.fact % Modif. Dec 99 pour descendre plus bas sur les contacts des dents
     Vect_tongue=[XY(2*i-1)-Point_dents(1) XY(2*i)-Point_dents(2)];
     psi=Vect_tongue(1)*Vect_dents(2)-Vect_tongue(2)*Vect_dents(1);
     if (psi<0)
@@ -296,8 +295,8 @@ for i=8*TSObj.fact*NN+1+4*TSObj.fact:-1:8*TSObj.fact*NN+1+2*TSObj.fact % Modif. 
         FXY(2*i)=FXY(2*i)-psi*0.3;
     end
 end
-imin=8*TSObj.fact*NN+1+3*TSObj.fact;
-imax=8*TSObj.fact*NN+1+5*TSObj.fact;
+imin=8*TSObj.fact*TSObj.NN+1+3*TSObj.fact;
+imax=8*TSObj.fact*TSObj.NN+1+5*TSObj.fact;
 for i=imin:imax
     pente_L(i)=(XY(2*i)-XY(2*i+2))/(XY(2*i-1)-XY(2*i+1));
     org_L(i)=XY(2*i)-pente_L(i)*XY(2*i-1);
