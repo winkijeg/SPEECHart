@@ -86,9 +86,12 @@ classdef tongueSim < handle
         
         % -----
         % Muscle attachment points
-        Att_GGP; Att_GGA; Att_Hyo;
-        Att_Stylo; Att_SL; Att_IL;
-        Att_Vert;
+        % Att_GGP; Att_GGA; Att_Hyo;
+        % Att_Stylo; Att_SL; Att_IL;
+        % Att_Vert;
+        Att = tongueMuscles();
+        Lambda = tongueMuscles();
+        Force = tongueMuscles();
         
         % -----
         % Muscle forces
@@ -212,6 +215,9 @@ classdef tongueSim < handle
         [tout, yout] = ode45plus(TSObj, ypfun, t0, tf, y0, tol, storestep);
         Udot = udot3_adapt_jaw(TSObj, t, U);
         LAMBDA = comLambda_adapt_jaw(TSObj, t);
+
+        %the muscle methods
+        GGP(TSObj, U);
         
         function plot(TSObj)
             figure('Units','normal','Position',[0.4 0.41 0.5 0.5]);
