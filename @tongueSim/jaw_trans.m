@@ -8,11 +8,7 @@ function [new_X0, new_Y0]=jaw_trans(TSObj, t);
 %global theta_ll dist_lip upperlip old_t X0 Y0 X_origin_ll Y_origin_ll lowlip_initial X_origin_initial Y_origin_initial dist_hyoid lar_ar_mri tongue_lar_mri pharynx_mri lar_ar_mri_initial tongue_lar_mri_initial pharynx_mri_initial
 %
 theta_i=0.5*(1-cos(pi*(t-t_initial)/(t_final-t_initial)))*theta;%jaw angle at each transition+hold time step
-%theta_ll_i=sin(pi*(t-old_t)/(t_final-t_initial))*theta_ll;%lower lip angle realtive to the jaw at each transition+hold time step
-%theta_ll_i=(cos(pi*(t-t_initial)/(t_final-t_initial))-sin(pi*(old_t-t_initial)/(t_final-t_initial)))*theta_ll;
 theta_ll_i=0.5*(cos(pi*(old_t-t_initial)/(t_final-t_initial))-cos(pi*(t-t_initial)/(t_final-t_initial)))*theta_ll;
-%dist_lip_i=sin(pi*(t-old_t)/(t_final-t_initial))*dist_lip;%lip protrusion realtive to the jaw at each transition+hold time step
-%dist_lip_i=(sin(pi*(t-t_initial)/(t_final-t_initial))-sin(pi*(old_t-t_initial)/(t_final-t_initial)))*dist_lip;
 dist_lip_i=0.5*(cos(pi*(old_t-t_initial)/(t_final-t_initial))-cos(pi*(t-t_initial)/(t_final-t_initial)))*dist_lip;
 theta_i_abs=theta_i+theta_start;
 
