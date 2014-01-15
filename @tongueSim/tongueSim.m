@@ -218,6 +218,12 @@ classdef tongueSim < handle
 
         %the muscle methods
         GGP(TSObj, U);
+        GGA(TSObj, U);
+        STYLO(TSObj, U);
+        HYO(TSObj, U);
+        SL(TSObj, U);
+        IL(TSObj, U);
+        VERT(TSObj, U);
         
         function plot(TSObj)
             figure('Units','normal','Position',[0.4 0.41 0.5 0.5]);
