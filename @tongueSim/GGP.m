@@ -51,10 +51,10 @@ for k=1:1+3*TSObj.fact        % boucle sur le nombre de fibres
     % Saturation de la force
     if TSObj.Force.GGP(k)>20
       TSObj.Force.GGP(k)=20;
-   end
-      if (k == (1+3*TSObj.fact))
+    end
+    if (k == (1+3*TSObj.fact))
       TSObj.Force.GGP(k)= TSObj.Force.GGP(k)/2;
-   end
+    end
 
     % Calcul de la force TSObj.FXY appliquee aux noeuds
     TSObj.FXY(TSObj.Att.GGP(k,4)-1)=TSObj.FXY(TSObj.Att.GGP(k,4)-1)-(TSObj.XY(TSObj.Att.GGP(k,4)-1)-TSObj.XY(TSObj.Att.GGP(k,4)-3))/long(TSObj.Att.GGP(k,2))*TSObj.Force.GGP(k);

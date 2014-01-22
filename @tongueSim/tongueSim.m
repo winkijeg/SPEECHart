@@ -70,19 +70,29 @@ classdef tongueSim < handle
         t_initial;
         t_transition;
         t_final;
+        t_calcul;
         t_verbose = 0.001;
         n_contact = 0;
         n_instant = 0;
         S_enr;
         X_enr;
-        Yn_enr;
-        Yp_enr;
+        n_enr;
+        p_enr;
         F_enr;
         P_enr;
         V_enr;
         nc;
         pc;
         t_jaw;
+        old_t;
+        tf;
+
+        theta;
+        theta_ll;
+        theta_start;
+
+        dist_lip;
+        dist_hyoid;
         
         % -----
         % Muscle attachment points
@@ -121,6 +131,7 @@ classdef tongueSim < handle
         MATRICE_LAMBDA;
         ttout; % WHATSTHIS
         length_ttout = 0;
+        first_contact;
         
         % WHATSTHIS
         TEMPS;
@@ -131,6 +142,33 @@ classdef tongueSim < handle
         LAMBDA_T; % will be a matrix with lambda values as a function of time for a fiber of each muscle
         
         UU = uClass; % REVISIT BECAUSE OF NO UNDERSTAND...
+        colors = 'rkbygcmr';
+
+        %% A number of properties that are only used for jaw translation as it seems. maybe find a better place for them...
+        lowerlip_initial;
+        X_origin_initial;
+        Y_origin_initial;
+        lar_ar_initial;
+        tongue_lar_initial;
+        
+        alpha_rest_pos;
+        alpha_rest_pos_dents_inf;
+        alpha_rest_pos_lowlip;
+
+        dist_rest_pos;
+        dist_rest_pos_dents_inf;
+        dist_rest_pos_lowlip;
+
+        X_origin;
+        X_origin_ll;
+        Y_origin;
+        Y_origin_ll;
+
+        hyoid_start;
+
+        X0_seq;
+        Y0_seq;
+
     end
     
     properties (Access = private)
@@ -203,6 +241,8 @@ classdef tongueSim < handle
         % Signatures of methods defined in separate files
         A0 = elast_init(TSObj,activGGA,activGGP,activHyo,activStylo,activSL,...
             activVert,ncontact);
+        elast2 = elast2(TSObj, activGGA, activGGP, activHyo, activStylo, ...
+            activSL, activVert, ncontact);
         K = calculate_K(TSObj, r, s, XY, lambda2, mu2, pfix);
         udot3_init(TSObj);
         initMass(TSObj);
@@ -224,7 +264,7 @@ classdef tongueSim < handle
         SL(TSObj, U);
         IL(TSObj, U);
         VERT(TSObj, U);
-        
+
         function plot(TSObj)
             figure('Units','normal','Position',[0.4 0.41 0.5 0.5]);
             % Pour eviter un core dump on met un point en 0,0
@@ -237,7 +277,7 @@ classdef tongueSim < handle
             % set(gca,'Visible','off');
             % zoom on
             TSObj.cont.plot();
-            TSObj.restpos.plot();
+            %TSObj.restpos.plot();
         end
     end
     
