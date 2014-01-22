@@ -6,7 +6,7 @@ function [tout, yout] = ode45plus(TSObj, ypfun, t0, tf, y0, tol, storestep)
 %          INPUT:
 %          ypfun     - String containing the name of the problem definition
 %          t0        - Initial value of t
-%          tf        - Final value of t
+%          tf        - Final value of t (not to be confused with TSObj's tf property)
 %          y0        - Initial value column-vector
 %          tol       - The desired accuracy
 %          storestep - The storage timestep
@@ -95,7 +95,7 @@ while (t < tf) && (t + h > t) && (~contactRW) && (~kkk_max_flag) % The main loop
         end
     end
     
-    kkk_max_flag = (kkk >= kkk_max); % RW 01/2011
+    kkk_max_flag = (TSObj.kkk >= kkk_max); % RW 01/2011
     
 end % end main loop % RW 01/2011
 

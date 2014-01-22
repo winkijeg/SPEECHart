@@ -7,7 +7,10 @@
 clear *
 close all
 
-spkStr = 'cs';
+spkStr = 'pp_FF1';
+% spkStr = 'cs';
+
+op=addpath(genpath('./elast'));
 
 path_model = ['spec_' spkStr '/'];
 

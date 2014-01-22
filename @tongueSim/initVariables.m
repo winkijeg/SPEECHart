@@ -77,3 +77,8 @@ function initVariables( TSObj )
 	TSObj.ACTIV_T = 0;
 	TSObj.LAMBDA_T = 0;
 
+
+	TSObj.Pref = 0; % Do not account for pressure PP Sept08
+
+	TSObj.X_origin_initial = TSObj.cont.X_condyle;
+	TSObj.Y_origin_initial = TSObj.cont.Y_condyle;

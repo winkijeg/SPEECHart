@@ -40,19 +40,19 @@ for j=i+1:i+size(P_velum,2)
     cnt.Point_P(2*j-1)=cnt.velum(1,P_velum(j-i));
     cnt.Point_P(2*j)=cnt.velum(2,P_velum(j-i));
 end
-nbpalais=size(P_palais,2)+size(P_velum,2);
+cnt.nbpalais=size(P_palais,2)+size(P_velum,2);
 
 % Calcul des equations de chaque segment du palais
 % Calculate the equations of every segment of the palate
-cnt.slope_P=zeros(nbpalais-1,1);
-cnt.org_P=zeros(nbpalais-1,1);
-for i=1:nbpalais-1
+cnt.slope_P=zeros(cnt.nbpalais-1,1);
+cnt.org_P=zeros(cnt.nbpalais-1,1);
+for i=1:cnt.nbpalais-1
     cnt.slope_P(i)=(cnt.Point_P(2*i)-cnt.Point_P(2*i+2))/(cnt.Point_P(2*i-1)-cnt.Point_P(2*i+1));
     cnt.org_P(i)=cnt.Point_P(2*i)-cnt.slope_P(i)*cnt.Point_P(2*i-1);
 end
 
 %PP Juli 2011
-for i=2:nbpalais-1
+for i=2:cnt.nbpalais-1
     for j=i-1:-1:1
         if cnt.slope_P(i)<=cnt.slope_P(j)+0.001 && cnt.slope_P(i)>=cnt.slope_P(j)-0.001
             fprintf('Slight displacement (1/4mm) of palate point %i for better contact detection\n',i)

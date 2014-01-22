@@ -37,13 +37,12 @@ else
 end % selon fact (in fact?)
 TSObj.F=TSObj.f*eye(TSObj.NNxMMx2);
 
-% not sure this is needed!!!! LB 11/22/13
 % --------------------------------------------------------------------
 % Put the weights on the componenents of Y
-% TSObj.PXY=zeros(TSObj.NNxMMx2,1);
-% for i=2:TSObj.NNxMMx2 % loop over all the nodes
-%   TSObj.PXY(i)=-9.81*TSObj.Mass(i,i);
-% end %    
+TSObj.PXY=zeros(TSObj.NNxMMx2,1);
+for i=2:TSObj.NNxMMx2 % loop over all the nodes
+  TSObj.PXY(i)=-9.81*TSObj.Mass(i,i);
+end %    
 
 % --------------------------------------------------------------------
 %  Calculate the muscle attachment points
