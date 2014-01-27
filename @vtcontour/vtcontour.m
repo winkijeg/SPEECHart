@@ -1,4 +1,4 @@
-classdef vtcontour
+classdef vtcontour < handle
     %VTCONTOUR Representation of vocal tract contours
     %   The properties of instances are typically read from mat files
     
@@ -16,7 +16,8 @@ classdef vtcontour
         upperteeth; % a subset of the palate, actually
         velum; % contour of the velum
         pharynx; % contour of pharyngeal wall
-        tongue_lar; % tongue contour from tip to larynx       
+        tongue_lar; % tongue contour from tip to larynx  
+        tongue_lar_mri;     
         Vect_dents; % 
         Point_dents; 
         slope_D;
@@ -79,6 +80,17 @@ classdef vtcontour
             end
         end
 
+        function initTongueLar(cnt, rootNode)
+            % PP juli 2011 - Detection tongue root node on the tongue_lar contour
+            for itongue_lar = length(cnt.tongue_lar)-1:-1:1
+                if cnt.tongue_lar(2,itongue_lar) >= rootNode-1 
+                    ideptongue_lar = itongue_lar + 1;
+                    break;
+                end
+            end
+            cnt.tongue_lar_mri = cnt.tongue_lar(:, ideptongue_lar:end); % PP Juli 2011
+
+        end
     end
     
 end

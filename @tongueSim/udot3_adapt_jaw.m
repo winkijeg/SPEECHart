@@ -127,7 +127,7 @@ function Udot = udot3_adapt_jaw(TSObj, t,U)
 %% global TSObj.theta TSObj.theta_ll dist_lip hyoid_movment dist_hyoid Hyoid_corps TSObj.cont.lar_ar TSObj.cont.tongue_lar TSObj.cont.pharynx
 %% global TSObj.cont.lowerteeth lar_ar TSObj.cont.lowerlip palate pharynx tongue_lar TSObj.cont.upperlip velum hyoid_i_abs
 
-%% global TSObj.t_i ttout TSObj.length_ttout TSObj.X0_seq TSObj.Y0_seq TSObj.cont.X_condyle TSObj.cont.Y_condyle TSObj.old_t;
+%% global TSObj.t_i ttout TSObj.length_ttout TSObj.X0_seq TSObj.Y0_seq TSObj.X_origin TSObj.Y_origin TSObj.old_t;
 % ----------------------------------------------------------------------
 % Initialisations cycliques
 if TSObj.kkk==0	%modified by Yohan & Majid; Nov 30, 99
@@ -426,11 +426,12 @@ if t>=TSObj.t_affiche                         %      |
     plot(TSObj.cont.pharynx(1,1:end),TSObj.cont.pharynx(2,1:end),'k-')
     plot([TSObj.cont.pharynx(1,end) TSObj.cont.lar_ar(1,1)], [TSObj.cont.pharynx(2,end) TSObj.cont.lar_ar(2,1)],...
         ['-' TSObj.colors(colIndex)])
-    plot([X(1,TSObj.NN) TSObj.cont.tongue_lar(1,1)],[   Y(1,TSObj.NN) TSObj.cont.tongue_lar(2,1)],'r')
-    plot(TSObj.cont.tongue_lar(1,:), TSObj.cont.tongue_lar(2,:),['-' TSObj.colors(colIndex)])
-    plot(TSObj.cont.X_condyle,TSObj.cont.Y_condyle,'r*');
-    plot(TSObj.cont.X_condyle,TSObj.cont.Y_condyle,'ro');
-    %axis('equal')
+    plot([X(1,TSObj.NN) TSObj.cont.tongue_lar_mri(1,1)],[Y(1,TSObj.NN) TSObj.cont.tongue_lar_mri(2,1)],'m')
+    plot(TSObj.cont.tongue_lar_mri(1,:), TSObj.cont.tongue_lar_mri(2,:),['-' TSObj.colors(colIndex)])
+    %plot(TSObj.cont.tongue_lar_mri(1,:), TSObj.cont.tongue_lar_mri(2,:),'m-')
+    plot(TSObj.X_origin,TSObj.Y_origin,'r*');
+    plot(TSObj.X_origin,TSObj.Y_origin,'ro');
+    axis('equal')
     pause(0.001);
 end
 if t>=TSObj.t_verbose
@@ -440,7 +441,7 @@ if t>=TSObj.t_verbose
     minute=floor((TSObj.t_calcul-3600*hour)/60);
     second=TSObj.t_calcul-3600*hour-60*minute;
     fprintf('%d %%\n',round(100*t/TSObj.tf));
-    fprintf('Temps restant : %d h %d min %d s\n\n',hour,minute,second);
+    fprintf('Remaining time: %d h %d min %d s\n\n',hour,minute,second);
 end
 
 
@@ -538,10 +539,10 @@ end
 % -----------------------------------------------------------------------
 % Calcule la nouvelle matrice d'elasticite en fonction des muscles qui
 % se contractent
-global CALC_ELA;
+%global CALC_ELA;
 % fprintf('Facteur CAlC_ELA = %i\n',CALC_ELA)
-if CALC_ELA
-    disp ('elast')
+if TSObj.CALC_ELA
+    % disp ('elast')
     TSObj.A0=TSObj.elast2(sum(TSObj.Force.GGA)/(3*TSObj.fact),sum(TSObj.Force.GGP)/(1+3*TSObj.fact),sum(TSObj.Force.Hyo1)/3,(TSObj.Force.Stylo1+TSObj.Force.Stylo2)/2,TSObj.Force.SL,sum(TSObj.Force.Vert)/(3*TSObj.fact),neucontact);
 end
 % Pour GGA  1+3*TSObj.fact remplace par 3*TSObj.fact (6 fibres) Nov 99

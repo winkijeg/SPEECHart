@@ -10,6 +10,8 @@ clear *
 op = addpath(genpath('./model_adapt_jaw'))
 
 spkStr = 'pp_FF1';
+spkStr = 'cs';
+% spkStr = 'av';
 
 path_model = ['spec_' spkStr '/'];
 

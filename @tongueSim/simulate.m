@@ -28,7 +28,7 @@ TSObj.ll_rotation  = (pi/180) .* TSObj.ll_rotation;
 TSObj.X_origin=TSObj.X_origin_initial;
 TSObj.Y_origin=TSObj.Y_origin_initial;
 TSObj.lar_ar_initial = TSObj.cont.lar_ar;
-TSObj.tongue_lar_initial = TSObj.cont.tongue_lar;
+TSObj.tongue_lar_initial = TSObj.cont.tongue_lar_mri;
  
 TSObj.udot3_init();
 
@@ -36,7 +36,7 @@ TSObj.udot3_init();
 for ind = 1:length(TSObj.finalTimeCum)
     TSObj.i_Sim = ind;
     if TSObj.i_Sim==1
-        tfin=[];Ufin=[];
+        TSObj.tfin=[];TSObj.Ufin=[];
         TSObj.theta_start=0;
         TSObj.hyoid_start=0;
     else
@@ -48,19 +48,19 @@ for ind = 1:length(TSObj.finalTimeCum)
     X0_rest_pos=TSObj.restpos.X0;Y0_rest_pos=TSObj.restpos.Y0;%intitial tongue position
     
     % the initial angle alpha for each node of the tongue
-    TSObj.alpha_rest_pos = atan2((TSObj.cont.X_condyle-X0_rest_pos), (TSObj.cont.Y_condyle-Y0_rest_pos));
+    TSObj.alpha_rest_pos = atan2((TSObj.X_origin-X0_rest_pos), (TSObj.Y_origin-Y0_rest_pos));
     % the distance of each node of the tongue to the center of rotation
-    TSObj.dist_rest_pos = sqrt( (Y0_rest_pos-TSObj.cont.Y_condyle).^2 + ...
-                          (X0_rest_pos-TSObj.cont.X_condyle).^2 );
+    TSObj.dist_rest_pos = sqrt( (Y0_rest_pos-TSObj.Y_origin).^2 + ...
+                          (X0_rest_pos-TSObj.X_origin).^2 );
     
     %the initial angle alpha of the lower incisor
-    TSObj.alpha_rest_pos_dents_inf = atan2((TSObj.cont.X_condyle-TSObj.cont.lowerteeth(1,:)), ...
-        (TSObj.cont.Y_condyle-TSObj.cont.lowerteeth(2,:)));
+    TSObj.alpha_rest_pos_dents_inf = atan2((TSObj.X_origin-TSObj.cont.lowerteeth(1,:)), ...
+        (TSObj.Y_origin-TSObj.cont.lowerteeth(2,:)));
     %the initial distance of the lower incisor to the center of rotation
-    TSObj.dist_rest_pos_dents_inf = sqrt((TSObj.cont.lowerteeth(2,:)-TSObj.cont.Y_condyle).^2 + (TSObj.cont.lowerteeth(1,:)-TSObj.cont.X_condyle).^2);
+    TSObj.dist_rest_pos_dents_inf = sqrt((TSObj.cont.lowerteeth(2,:)-TSObj.Y_origin).^2 + (TSObj.cont.lowerteeth(1,:)-TSObj.X_origin).^2);
     
-    TSObj.X_origin_ll=TSObj.cont.X_condyle;
-    TSObj.Y_origin_ll=TSObj.cont.Y_condyle;
+    TSObj.X_origin_ll=TSObj.X_origin;
+    TSObj.Y_origin_ll=TSObj.Y_origin;
     TSObj.lowerlip_initial=TSObj.cont.lowerlip;
     TSObj.alpha_rest_pos_lowlip=atan2((TSObj.X_origin_ll-TSObj.cont.lowerlip(1,:)), (TSObj.Y_origin_ll-TSObj.cont.lowerlip(2,:)));%the initial angle alpha of the lower lip
     TSObj.dist_rest_pos_lowlip=sqrt((TSObj.cont.lowerlip(2,:)-TSObj.Y_origin_ll).^2+(TSObj.cont.lowerlip(1,:)-TSObj.X_origin_ll).^2);%the initial distance of the lower lip to the center of rotation
@@ -116,8 +116,8 @@ if ( TSObj.length_ttout < (200 * TSObj.tf) )
     TSObj.Y0_seq = TSObj.Y0_seq(1:TSObj.length_ttout, 1:221);
 end
 
-t=tfin';
-U=Ufin;
+t=TSObj.tfin';
+U=TSObj.Ufin;
 
 % interpolation des U pour prendre moins de place sur le disque
 % chaque 1/500 pour fact = 1
