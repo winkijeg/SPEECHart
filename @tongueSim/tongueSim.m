@@ -66,7 +66,7 @@ classdef tongueSim < handle
         
         % Temporary variables
         aff_fin;
-        t_affiche = 0.001;
+        t_affiche = 0.01;
         t_initial;
         t_transition;
         t_final;
@@ -219,6 +219,7 @@ classdef tongueSim < handle
             TSObj.restpos.calcFiberLength(TSObj.cont);
             TSObj.restpos.initMinLength();
             TSObj.initVariables();
+            TSObj.cont.initTongueLar(TSObj.restpos.Y0(TSObj.restpos.NN));
             
             TSObj.initMass();
             

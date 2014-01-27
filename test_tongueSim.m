@@ -8,7 +8,8 @@ clear *
 close all
 
 spkStr = 'pp_FF1';
-% spkStr = 'cs';
+ spkStr = 'cs';
+% spkStr = 'av';
 
 op=addpath(genpath('./elast'));
 

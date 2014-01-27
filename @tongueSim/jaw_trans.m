@@ -26,7 +26,7 @@ function [new_X0, new_Y0] = jaw_trans(TSObj, t)
     % global TSObj.cont.org_D
     % global TSObj.cont.upperlip
     % global TSObj.cont.lar_ar
-    % global TSObj.cont.tongue_lar
+    % global TSObj.cont.tongue_lar_mri
     % global TSObj.alpha_rest_pos_dents_inf
     % global TSObj.dist_rest_pos_dents_inf
     % global TSObj.alpha_rest_pos_lowlip
@@ -156,8 +156,8 @@ function [new_X0, new_Y0] = jaw_trans(TSObj, t)
         TSObj.cont.lar_ar(1, :) = TSObj.lar_ar_initial(1, :)-1/5*hyoid_i_abs;
         TSObj.cont.lar_ar(2, :) = TSObj.lar_ar_initial(2, :)-hyoid_i_abs;
         
-        TSObj.cont.tongue_lar(1, 2:end) = TSObj.tongue_lar_initial(1, 2:end)-1/5*hyoid_i_abs;
-        TSObj.cont.tongue_lar(2, 2:end) = TSObj.tongue_lar_initial(2, 2:end)-hyoid_i_abs;
+        TSObj.cont.tongue_lar_mri(1, 2:end) = TSObj.tongue_lar_initial(1, 2:end)-1/5*hyoid_i_abs;
+        TSObj.cont.tongue_lar_mri(2, 2:end) = TSObj.tongue_lar_initial(2, 2:end)-hyoid_i_abs;
         
     end
 
