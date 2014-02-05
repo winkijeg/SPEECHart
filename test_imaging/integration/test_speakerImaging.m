@@ -26,15 +26,14 @@ mat = load([pathImaging fn_speakerMat]);
 % create SpeakerImaging object
 mySpk = SpeakerImaging(mat);
 
-% resample midsagittal greyscale image
 mySpk = resampleMidSagittSlice(mySpk, 0.25, 0.25);
-
-
-if strcmp(phonLab, 'a')
-    mySpk = determineMeasuresTongueShape(mySpk);
-end
-
 mySpk = normalizeMidSagittSlice(mySpk);
+
+
+
+
+
+
 
 initPlotFigure(mySpk, imgFlag);
 
@@ -49,8 +48,11 @@ plotContours(mySpk, flagBspline, 'b')
 
 plotSemipolarGrid(mySpk, 'r', 5:20)
 
-% plot tongue shape measures
+% plot tongue shape measures if phoneme is /a/
 if strcmp(phonLab, 'a')
+    
+    mySpk = determineMeasuresTongueShape(mySpk);
+    
     plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'm')
     plotMeasureTongueShape(mySpk, 'quadCoeff', 'g')
     plotMeasureTongueShape(mySpk, 'tongLength', 'k')
