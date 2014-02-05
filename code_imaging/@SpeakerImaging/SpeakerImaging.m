@@ -1,13 +1,11 @@
 classdef SpeakerImaging
-    %UNTITLED Summary of this class goes here
-    %   Detailed explanation goes here
+    %create speaker model based on landmarks derived from midsagittal MRI image
     
     properties
         
-        princInvestigator = '';
-        name = '';
-        phoneme = '';
-        slicePosition3D = [];
+        princInvestigator = ''; % abbr. for PI during imaging
+        name = '';              % abbr. for speaker during imaging
+        phoneme = '';           % phoneme produced during imaging
         
         landmarks = [];
         landmarksDerivedMorpho = [];
@@ -30,6 +28,13 @@ classdef SpeakerImaging
         sliceData = [];
         sliceSegmentationData = [];
     end
+    
+    properties (Access = private)
+        
+        slicePosition3D = [];   % 3D position of 2D slice (if available)
+        
+    end
+    
     
     methods
         
