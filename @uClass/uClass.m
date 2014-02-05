@@ -1,0 +1,28 @@
+classdef uClass < handle
+	properties
+		X_condyle
+		X_origin
+		X_origin_fin	
+		Y_condyle
+		Y_origin	
+		Y_origin_fin	
+		lowerteeth	
+		lowerteeth_fin	
+		fin	
+		lar_ar
+		lar_ar_mri	
+		lar_ar_mri_fin	
+		lowerlip	
+		lowerlip_fin	
+		mandibule
+		pharynx	
+		pharynx_mri	
+		pharynx_mri_fin	
+		structures	
+		tongue_lar
+		tongue_lar_mri	
+		tongue_lar_mri_fin	
+		upperlip	
+		upperlip_fin	
+	end
+end
