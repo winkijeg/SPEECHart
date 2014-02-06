@@ -3,7 +3,7 @@ function obj = determineMeasuresTongueShape(obj)
 
 if (strcmp(obj.phoneme, 'a') == false)
     errorStr = 'SO FAR the m-file %s makes sence for /a/ only ... ';
-    error( errorStr, mfilename);
+    error(errorStr, mfilename);
 end
 
 innerPt = obj.filteredContours.innerPt;

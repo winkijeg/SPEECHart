@@ -1,12 +1,12 @@
-function [] = plotSemipolarGridFull(obj, col, nbsOfGrdLines, cAxes)
-% plot semipolar grid stored in the SpeakerImaging object
-%   takes an optional third argument gridLines in order to plot a part of the
-%   grid (i.e. 3:7) or only one gridline (i.e. 10)
+function [] = plotSemipolarGridFull(obj, col, cAxes)
+% plot full semipolar grid stored in the SpeakerImaging object
 
 if nargin == 2
-    nbsOfGrdLines = 1:obj.semipolarGrid.numberOfGridlines;
+    % create new figure
+    cAxes = initPlotFigure(obj, false);
 end
 
+nbsOfGrdLines = 1:obj.semipolarGrid.numberOfGridlines;
 nGrdLinesToPlot = length(nbsOfGrdLines);
 
 innerXval = obj.semipolarGrid.innerPt(1, nbsOfGrdLines(1):nbsOfGrdLines(end));
