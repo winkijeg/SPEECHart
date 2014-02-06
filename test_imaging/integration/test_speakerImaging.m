@@ -29,36 +29,31 @@ mySpk = SpeakerImaging(mat);
 mySpk = resampleMidSagittSlice(mySpk, 0.25, 0.25);
 mySpk = normalizeMidSagittSlice(mySpk);
 
+cAxesImg = initPlotFigure(mySpk, imgFlag);
+cAxesBlank = initPlotFigure(mySpk, false);
+cAxes3 = initPlotFigure(mySpk, true);
+cAxes4 = initPlotFigure(mySpk, true);
+
+plotLandmarks(mySpk, 'm', cAxesImg)
+plotContours(mySpk, ~flagBspline, 'r', cAxesImg)
+plotContours(mySpk, flagBspline, 'b', cAxesImg)
+plotLandmarksDerived(mySpk, 'c', cAxesImg)
+
+plotSemipolarGridFull(mySpk, 'k', cAxesBlank)
+plotSemipolarGridPart(mySpk, 'g', 5:20, cAxesBlank)
+plotSemipolarGridPart(mySpk, 'r', mySpk.semipolarGrid.indexBending, cAxesBlank)
+
+plotMeasureMorphology(mySpk, 'ratioVH', 'r', cAxes3)
+plotMeasureMorphology(mySpk, 'palateAngle', 'y', cAxes3)
 
 
+% constriction measures specific to /a/
+mySpk = determineMeasuresConstriction(mySpk);
+plotMeasureConstriction(mySpk, 'relConstrHeight', 'r', cAxesImg)
 
-
-
-
-initPlotFigure(mySpk, imgFlag);
-
-plotLandmarks(mySpk, 'm')
-plotLandmarksDerived(mySpk, 'c')
-plotMeasureMorphology(mySpk, 'ratioVH', 'r')
-plotMeasureMorphology(mySpk, 'palateAngle', 'r')
-
-%plotSemipolarGrid(mySpk, 'k')
-plotContours(mySpk, ~flagBspline, 'r')
-plotContours(mySpk, flagBspline, 'b')
-
-plotSemipolarGrid(mySpk, 'r', 5:20)
-
-% plot tongue shape measures if phoneme is /a/
-if strcmp(phonLab, 'a')
+% tongue shape measures specific to /a/
+mySpk = determineMeasuresTongueShape(mySpk);
+plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'm', cAxes4)
+plotMeasureTongueShape(mySpk, 'quadCoeff', 'g', cAxes4)
+plotMeasureTongueShape(mySpk, 'tongLength', 'r', cAxes4)
     
-    mySpk = determineMeasuresTongueShape(mySpk);
-    
-    plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'm')
-    plotMeasureTongueShape(mySpk, 'quadCoeff', 'g')
-    plotMeasureTongueShape(mySpk, 'tongLength', 'k')
-    
-    mySpk = determineMeasuresConstriction(mySpk);
-    
-    plotMeasureConstriction(mySpk, 'relConstrHeight', 'k')
-    plotSemipolarGrid(mySpk, 'c', mySpk.semipolarGrid.indexBending)
-end
