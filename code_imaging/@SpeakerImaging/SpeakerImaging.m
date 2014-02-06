@@ -38,18 +38,19 @@ classdef SpeakerImaging
     
     methods
         
-        function obj = SpeakerImaging(mat)
+        function obj = SpeakerImaging(struc)
+            % object needs a structure as input arg to create a valid object
             
-            obj.princInvestigator = mat.princInvestigator;
-            obj.name = mat.speakerName;
-            obj.phoneme = mat.phonLab;
+            obj.princInvestigator = struc.princInvestigator;
+            obj.name = struc.speakerName;
+            obj.phoneme = struc.phonLab;
             
-            obj.slicePosition3D = mat.ptPhysio.Lx(1);
+            obj.slicePosition3D = struc.ptPhysio.Lx(1);
             
             % assign landmarks
-            fieldnamesTmp = fieldnames(mat.ptPhysio);
+            fieldnamesTmp = fieldnames(struc.ptPhysio);
             for k = 1:length(fieldnamesTmp)
-                ptTmp = mat.ptPhysio.(fieldnamesTmp{k});
+                ptTmp = struc.ptPhysio.(fieldnamesTmp{k});
                 obj.landmarks.(fieldnamesTmp{k}) = ptTmp(2:3)';
             end
             
@@ -61,18 +62,18 @@ classdef SpeakerImaging
             obj.semipolarGrid = determineSemipolarGrid(obj);
             obj.gridZoning = zoneGridIntoAnatomicalRegions(obj);
             
-            obj.sliceInfo = mat.sliceInfo;
+            obj.sliceInfo = struc.sliceInfo;
             obj.xdataSlice = [0 obj.sliceInfo.PixelDimensions(2)*obj.sliceInfo.Dimensions(2)];
             obj.ydataSlice = [obj.sliceInfo.PixelDimensions(3)*obj.sliceInfo.Dimensions(3) 0];
-            obj.sliceData = mat.sliceData;
-            obj.sliceSegmentationData = mat.sliceSegmentationData;
+            obj.sliceData = struc.sliceData;
+            obj.sliceSegmentationData = struc.sliceSegmentationData;
             
             obj.contours = determineOutlineFromSegmentation(obj);
             obj.filteredContours = determineFilteredContour(obj);
             
         end
         
-        [] = initPlotFigure(obj, imageFlag);
+        currentAxes = initPlotFigure(obj, imageFlag);
 
         [] = plotLandmarks(obj, col);
         [] = plotLandmarksDerived(obj, col);
@@ -112,7 +113,7 @@ classdef SpeakerImaging
         
         [val, UserData] = determineCurvatureInvRadius(ptStart, ptMid, ptEnd);
         [val, UserData] = determineCurvatureQuadCoeff(innerPtPart);
-        [val, UserData] = determineTongueLength(innerPtPart, indTongStart, indTongEnd);
+        [val, UserData] = calculateTongueLength(innerPtPart, indTongStart, indTongEnd);
         [val, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
             innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
 
