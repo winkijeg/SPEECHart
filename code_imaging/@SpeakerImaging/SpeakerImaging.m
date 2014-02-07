@@ -54,7 +54,7 @@ classdef SpeakerImaging
             obj.landmarksDerivedMorpho = calcLandmarksMorpho(obj);
             obj.landmarksDerivedGrid = calcLandmarksGrid(obj);
             
-            obj.measuresMorphology = determineMeasuresMorphology(obj);
+            obj.measuresMorphology = calcMeasuresMorphology(obj);
             
             obj.semipolarGrid = determineSemipolarGrid(obj);
             obj.gridZoning = zoneGridIntoAnatomicalRegions(obj);
@@ -95,7 +95,7 @@ classdef SpeakerImaging
         
         ptPhysioDerived = calcLandmarksMorpho(obj);
         ptPhysioDerived = calcLandmarksGrid(obj);
-        measuresMorphology = determineMeasuresMorphology(obj);
+        measuresMorphology = calcMeasuresMorphology(obj);
         grid = determineSemipolarGrid(obj);
         gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);
