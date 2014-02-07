@@ -20,7 +20,7 @@ indexEnd = gridZoning.pharynx(2);
 innerPtPart = innerPt(1:2, indexStart:indexEnd);
 outerPtPart = outerPt(1:2, indexStart:indexEnd);
 
-[valMin, indMin] = obj.calculateMinBetweenContours(innerPtPart, outerPtPart);
+[valMin, indMin] = findMinDistanceBetweenTwoLines(innerPtPart, outerPtPart);
 
 innerPtGrdlineConstr = innerPtPart(1:2, indMin);
 outerPtGrdlineConstr = outerPtPart(1:2, indMin);
