@@ -25,14 +25,14 @@ outerPtPart = outerPt(1:2, indexStart:indexEnd);
 innerPtGrdlineConstr = innerPtPart(1:2, indMin);
 outerPtGrdlineConstr = outerPtPart(1:2, indMin);
 
-[hightRel, bData] = obj.determineRelConstrHeight(landmarksDerivedMorpho, ...
+[hightRel, ptConstrHeight] = obj.determineRelConstrHeight(landmarksDerivedMorpho, ...
     innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
 
-% assign values --------------------------------------------------------
+
 measures.relativeConstrHeight = hightRel;
 measures.constrictionWidth = valMin;
 
 obj.measuresConstriction = measures;
-obj.UserData.relConstrHeight = bData;
+obj.UserData.relConstrHeight.ptConstrHeight = ptConstrHeight;
 
 end
