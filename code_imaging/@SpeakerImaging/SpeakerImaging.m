@@ -31,7 +31,6 @@ classdef SpeakerImaging
     
     properties (Access = private)
         
-        slicePosition3D = [];   % 3D position of 2D slice (if available)
         
     end
     
@@ -44,8 +43,6 @@ classdef SpeakerImaging
             obj.princInvestigator = struc.princInvestigator;
             obj.name = struc.speakerName;
             obj.phoneme = struc.phonLab;
-            
-            obj.slicePosition3D = struc.ptPhysio.Lx(1);
             
             % assign landmarks
             fieldnamesTmp = fieldnames(struc.ptPhysio);
