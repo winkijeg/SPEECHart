@@ -115,7 +115,6 @@ classdef SpeakerImaging
         [val, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
             innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
         
-        [valMin, indMin] = calculateMinBetweenContours(innerCont, outerCont);
         indBending = calcGridlineOfBending(innerPt, outerPt, ptCircleMidpoint, ptNPW_d);
         
     end
