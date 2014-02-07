@@ -8,7 +8,6 @@ end
 
 innerPt = obj.filteredContours.innerPt;
 outerPt = obj.filteredContours.outerPt;
-landmarksDerivedMorpho = obj.landmarksDerivedMorpho;
 gridZoning = obj.gridZoning;
 
 
@@ -24,7 +23,7 @@ outerPtPart = outerPt(1:2, indexStart:indexEnd);
 innerPtGrdlineConstr = innerPtPart(1:2, indMin);
 outerPtGrdlineConstr = outerPtPart(1:2, indMin);
 
-[hightRel, ptConstrHeight] = determineRelConstrHeight(obj, ...
+[hightRel, ptConstrHeight] = calcRelConstrHeight(obj, ...
     innerPtGrdlineConstr, outerPtGrdlineConstr);
 
 measures.relativeConstrHeight = hightRel;
