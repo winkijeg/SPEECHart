@@ -1,22 +1,17 @@
-function struc = formatRawDataToSpeakerImaging( pathImaging, PI, spkName, phonLab )
+function struc = formatRawDataToSpeakerImaging( pathImaging, PI, ...
+    speakerName, phonLab )
 % import landmarks and images from mri speaker preparation
 
 
-princInvestigator = PI;
-speakerName = spkName;
-
 % read the landmarks determined within slicer3d
-fn_fList_landmark = [princInvestigator '_' speakerName '_' phonLab '_ptPhysio.fcsv'];
-% read (and calculate) remaining data
+fn_fList_landmark = [PI '_' speakerName '_' phonLab '_ptPhysio.fcsv'];
 ptPhysio = read_fiducialList([pathImaging fn_fList_landmark]);
 
-
 % read the 2D midsagittal MRI slice
-fn_img = [princInvestigator '_' speakerName '_' phonLab '_2d.mhd'];
+fn_img = [PI '_' speakerName '_' phonLab '_2d.mhd'];
 
 % read the 2D segmentation file produced with InsightSNAP
-fn_imgSeg = [princInvestigator '_' speakerName '_' phonLab '_2d_seg.mhd'];
-
+fn_imgSeg = [PI '_' speakerName '_' phonLab '_2d_seg.mhd'];
 sliceInfo = mha_read_header([pathImaging fn_img]);
 
 img1 = mha_read_volume(sliceInfo);
@@ -29,7 +24,7 @@ img_seg2 = permute(img_seg_tmp, [2 3 1]);
 sliceSegmentationData = logical(squeeze(img_seg2));
 
 struc.ptPhysio = ptPhysio;
-struc.princInvestigator = princInvestigator;
+struc.princInvestigator = PI;
 struc.speakerName = speakerName;
 struc.phonLab = phonLab;
 struc.sliceInfo = sliceInfo;

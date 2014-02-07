@@ -19,9 +19,7 @@ imgFlag = true; %false;
 [~, ~, pathImaging] = ...
     initPaths(princInvestigator, speakerName);
 
-
-
-% load structure that has been created before
+% read in raw speaker specification (landmarks and images)
 struc = formatRawDataToSpeakerImaging( pathImaging, princInvestigator, ...
     speakerName, phonLab );
 
