@@ -73,7 +73,7 @@ classdef SpeakerImaging
             
         end
         
-        currentAxes = initPlotFigure(obj, imageFlag);
+        currentAxes = initPlotFigure(obj, flagImage);
 
         [] = plotLandmarks(obj, col, currentAxes);
         [] = plotContours(obj, flagBspline, col, currentAxes);
@@ -90,7 +90,7 @@ classdef SpeakerImaging
         obj = determineMeasuresTongueShape(obj);
         obj = determineMeasuresConstriction(obj);
         
-        matModelTarget = convertToRawModelFormat(obj)
+        struc = convertToRawModelFormat(obj)
         
     end
     
