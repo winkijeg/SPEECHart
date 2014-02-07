@@ -19,12 +19,14 @@ imgFlag = true; %false;
 [~, ~, pathImaging] = ...
     initPaths(princInvestigator, speakerName);
 
+
+
 % load structure that has been created before
-fn_speakerMat = [princInvestigator '_' speakerName '_' phonLab '.mat'];
-mat = load([pathImaging fn_speakerMat]);
+struc = formatRawDataToSpeakerImaging( pathImaging, princInvestigator, ...
+    speakerName, phonLab );
 
 % create SpeakerImaging object
-mySpk = SpeakerImaging(mat);
+mySpk = SpeakerImaging(struc);
 
 mySpk = resampleMidSagittSlice(mySpk, 0.25, 0.25);
 mySpk = normalizeMidSagittSlice(mySpk);
