@@ -74,7 +74,7 @@ classdef SpeakerImaging
         end
         
         cAxes = initPlotFigure(obj, flagImage);
-
+        
         [] = plotLandmarks(obj, col, cAxes);
         [] = plotContours(obj, flagBspline, col, cAxes);
         [] = plotLandmarksDerived(obj, col, cAxes);
@@ -83,10 +83,10 @@ classdef SpeakerImaging
         [] = plotMeasureConstriction(obj, featureName, col, cAxes);
         [] = plotMeasureMorphology(obj, featureName, col, cAxes);
         [] = plotMeasureTongueShape(obj, featureName, col, cAxes);
-                
+        
         obj = resampleMidSagittSlice(obj, targetPixelWidth, targetPixelHeight);
         obj = normalizeMidSagittSlice(obj);
-
+        
         obj = determineMeasuresTongueShape(obj);
         obj = determineMeasuresConstriction(obj);
         
@@ -95,7 +95,7 @@ classdef SpeakerImaging
     end
     
     methods (Access = private)
-           
+        
         ptPhysioDerived = deriveLandmarksMorpho(obj);
         ptPhysioDerived = deriveLandmarksGrid(obj);
         measuresMorphology = determineMeasuresMorphology(obj);
@@ -103,25 +103,24 @@ classdef SpeakerImaging
         gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);
         filteredContours = determineFilteredContour(obj);
-
+        
         landmarks = exportLandmarksToModelFormat(obj)
         structures = exportStructuresToModelFormat(obj);
-
+        
         
     end
-
+    
     methods (Static)
         
-        [val, UserData] = determineCurvatureInvRadius(ptStart, ptMid, ptEnd);
+        [val, UserData] = calcCurvatureInvRadius(ptStart, ptMid, ptEnd);
         [val, UserData] = determineCurvatureQuadCoeff(innerPtPart);
         [val, UserData] = calculateTongueLength(innerPtPart, indTongStart, indTongEnd);
         [val, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
             innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
-
+        
         [valMin, indMin] = calculateMinBetweenContours(innerCont, outerCont);
         indBending = calcGridlineOfBending(innerPt, outerPt, ptCircleMidpoint, ptNPW_d);
         
     end
     
 end
-
