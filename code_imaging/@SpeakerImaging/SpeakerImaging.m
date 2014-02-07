@@ -113,7 +113,7 @@ classdef SpeakerImaging
     methods (Static)
         
         [val, UserData] = calcCurvatureInvRadius(ptStart, ptMid, ptEnd);
-        [val, UserData] = determineCurvatureQuadCoeff(innerPtPart);
+        [val, UserData] = calcCurvatureQuadCoeff(innerPtPart);
         [val, UserData] = calculateTongueLength(innerPtPart, indTongStart, indTongEnd);
         [val, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
             innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
