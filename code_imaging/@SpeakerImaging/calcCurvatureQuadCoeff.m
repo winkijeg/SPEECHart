@@ -1,4 +1,4 @@
-function [val, basicData] = determineCurvatureQuadCoeff(innerPtPart)
+function [val, basicData] = calcCurvatureQuadCoeff(innerPtPart)
 % determine curvature by means of curve fitting (quadratic approximation)
 
 nPointsPart = size(innerPtPart, 2);

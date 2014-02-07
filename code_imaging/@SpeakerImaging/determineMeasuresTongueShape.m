@@ -51,11 +51,11 @@ ptContEnd = innerPtPart(1:2, nPointsPart);
 
 % start calculating tongue back curvature
 [curvInvRadius, bDataInvRadius] = ...
-    obj.determineCurvatureInvRadius(ptContStart, ptContMid, ptContEnd);
+    obj.calcCurvatureInvRadius(ptContStart, ptContMid, ptContEnd);
 
 % start calculating quadratic approximation
 [curvQuadCoeff, bDataQuadCoeff] = ...
-    obj.determineCurvatureQuadCoeff(innerPtPart);
+    obj.calcCurvatureQuadCoeff(innerPtPart);
 
 % start calculating tongue length
 indexTongueStart = obj.gridZoning.tongue(1);
