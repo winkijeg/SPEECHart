@@ -6,8 +6,8 @@ close all
 % speaker specification, coded in the filename as PP_FF1_a[.ext]
 
 princInvestigator = 'PP';
-speakerName = 'FF1';
-phonLab = 'a';
+speakerName = 'FM1';
+phonLab = '@';
 
 % flag: true means contour spline interpolation, false uses raw contour data
 flagBspline = true;

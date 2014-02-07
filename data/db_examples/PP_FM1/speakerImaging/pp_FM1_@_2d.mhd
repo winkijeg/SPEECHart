@@ -1,0 +1,12 @@
+ObjectType = Image
+NDims = 3
+DimSize = 1 140 190
+ElementType = MET_UCHAR
+BinaryData = True
+BinaryDataByteOrderMSB = False
+TransformMatrix = 1 0 0 0 1 0 0 0 1
+ElementSpacing = 1.0000 1.0000 1.0000
+Offset = 0.0000 0.0000 0.0000
+CenterOfRotation = 0.0000 0.0000 0.0000
+AnatomicalOrientation =RAI
+ElementDataFile = pp_FM1_@_2d.raw
