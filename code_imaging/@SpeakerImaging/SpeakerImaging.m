@@ -96,7 +96,7 @@ classdef SpeakerImaging
         ptPhysioDerived = calcLandmarksMorpho(obj);
         ptPhysioDerived = calcLandmarksGrid(obj);
         measuresMorphology = calcMeasuresMorphology(obj);
-        [val, pt] = determineRelConstrHeight(obj, innerPtGrdlineConstr, ...
+        [val, pt] = calcRelConstrHeight(obj, innerPtGrdlineConstr, ...
             outerPtGrdlineConstr);
 
         grid = determineSemipolarGrid(obj);
