@@ -79,7 +79,7 @@ classdef SpeakerImaging
         [] = plotContours(obj, flagBspline, col, cAxes);
         [] = plotLandmarksDerived(obj, col, cAxes);
         [] = plotSemipolarGridFull(obj, col, cAxes);
-        [] = plotSemipolarGridPart(obj, col, nbsOfGrdLines, cAxes);
+        [] = plotSemipolarGridPart(obj, col, grdLines, cAxes);
         [] = plotMeasureConstriction(obj, featureName, col, cAxes);
         [] = plotMeasureMorphology(obj, featureName, col, cAxes);
         [] = plotMeasureTongueShape(obj, featureName, col, cAxes);
