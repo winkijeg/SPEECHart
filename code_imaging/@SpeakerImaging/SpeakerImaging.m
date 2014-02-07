@@ -73,16 +73,16 @@ classdef SpeakerImaging
             
         end
         
-        currentAxes = initPlotFigure(obj, flagImage);
+        cAxes = initPlotFigure(obj, flagImage);
 
-        [] = plotLandmarks(obj, col, currentAxes);
-        [] = plotContours(obj, flagBspline, col, currentAxes);
-        [] = plotLandmarksDerived(obj, col, currentAxes);
-        [] = plotSemipolarGridFull(obj, col, currentAxes);
-        [] = plotSemipolarGridPart(obj, col, nbsOfGrdLines, currentAxes);
-        [] = plotMeasureConstriction(obj, featureName, col, currentAxes);
-        [] = plotMeasureMorphology(obj, featureName, col, currentAxes);
-        [] = plotMeasureTongueShape(obj, featureName, col, currentAxes);
+        [] = plotLandmarks(obj, col, cAxes);
+        [] = plotContours(obj, flagBspline, col, cAxes);
+        [] = plotLandmarksDerived(obj, col, cAxes);
+        [] = plotSemipolarGridFull(obj, col, cAxes);
+        [] = plotSemipolarGridPart(obj, col, nbsOfGrdLines, cAxes);
+        [] = plotMeasureConstriction(obj, featureName, col, cAxes);
+        [] = plotMeasureMorphology(obj, featureName, col, cAxes);
+        [] = plotMeasureTongueShape(obj, featureName, col, cAxes);
                 
         obj = resampleMidSagittSlice(obj, targetPixelWidth, targetPixelHeight);
         obj = normalizeMidSagittSlice(obj);
