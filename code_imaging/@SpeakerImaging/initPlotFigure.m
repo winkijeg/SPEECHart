@@ -1,4 +1,4 @@
-function currentAxes = initPlotFigure(obj, imageFlag)
+function currentAxes = initPlotFigure(obj, flagImage)
 % initialize plot figure with regard to specific geometrical speaker data
 
 % range of x and y values seen in the new pic
@@ -13,7 +13,7 @@ ptCenter = obj.landmarksDerivedGrid.circleMidpoint;
 xlim = [ptCenter(1) - xDim/2 ptCenter(1) + xDim/2];
 ylim = [ptCenter(2) - yDim/2 ptCenter(2) + yDim/2];
 
-if imageFlag == true
+if flagImage == true
     figure;
     imshow(obj.sliceData, 'XData', obj.xdataSlice, 'YData', obj.ydataSlice);
     currentAxes = gca;
