@@ -7,7 +7,7 @@ close all
 
 princInvestigator = 'PP';
 speakerName = 'FM1';
-phonLab = '@';
+phonLab = 'a';
 
 % flag: true means contour spline interpolation, false uses raw contour data
 flagBspline = true;
