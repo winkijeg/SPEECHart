@@ -1,10 +1,12 @@
-function [height, ptConstrHeight] = determineRelConstrHeight(landmarksDerivedMorpho, ...
-    innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs)
+function [height, ptConstrHeight] = determineRelConstrHeight(obj, ...
+    innerPtGrdlineConstr, outerPtGrdlineConstr)
 % determine relative constriction height parallel to back pharyngeal wall
 
-ptPpdPharL_d = landmarksDerivedMorpho.ppdPharL_d;
-ptPharH_d = landmarksDerivedMorpho.PharH_d;
-ptPharL_d = landmarksDerivedMorpho.PharL_d;
+ptPpdPharL_d = obj.landmarksDerivedMorpho.ppdPharL_d;
+ptPharH_d = obj.landmarksDerivedMorpho.PharH_d;
+ptPharL_d = obj.landmarksDerivedMorpho.PharL_d;
+
+lenVertAbs = obj.measuresMorphology.lenVertAbs;
 
 [~, ptConstrHeight] = lines_exp_int_2d(ptPharH_d', ptPharL_d', ...
     innerPtGrdlineConstr', outerPtGrdlineConstr');
