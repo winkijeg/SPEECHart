@@ -54,8 +54,8 @@ classdef SpeakerImaging
                 obj.landmarks.(fieldnamesTmp{k}) = ptTmp(2:3)';
             end
             
-            obj.landmarksDerivedMorpho = deriveLandmarksMorpho(obj);
-            obj.landmarksDerivedGrid = deriveLandmarksGrid(obj);
+            obj.landmarksDerivedMorpho = calcLandmarksMorpho(obj);
+            obj.landmarksDerivedGrid = calcLandmarksGrid(obj);
             
             obj.measuresMorphology = determineMeasuresMorphology(obj);
             
@@ -96,8 +96,8 @@ classdef SpeakerImaging
     
     methods (Access = private)
         
-        ptPhysioDerived = deriveLandmarksMorpho(obj);
-        ptPhysioDerived = deriveLandmarksGrid(obj);
+        ptPhysioDerived = calcLandmarksMorpho(obj);
+        ptPhysioDerived = calcLandmarksGrid(obj);
         measuresMorphology = determineMeasuresMorphology(obj);
         grid = determineSemipolarGrid(obj);
         gridZoning = zoneGridIntoAnatomicalRegions(obj);

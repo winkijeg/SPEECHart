@@ -1,4 +1,4 @@
-function landmarksDerived = deriveLandmarksGrid(obj)
+function landmarksDerived = calcLandmarksGrid(obj)
 % calculate anatomical landmarks neccessary for semipolar grid generation
 
 p_AlvRidge = obj.landmarks.AlvRidge;

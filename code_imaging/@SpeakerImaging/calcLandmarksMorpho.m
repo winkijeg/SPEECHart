@@ -1,4 +1,4 @@
-function landmarksDerived = deriveLandmarksMorpho(obj)
+function landmarksDerived = calcLandmarksMorpho(obj)
 % calculate derived landmarks neccessary for morphological measures
 
 ptANS = obj.landmarks.ANS;
