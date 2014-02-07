@@ -96,6 +96,9 @@ classdef SpeakerImaging
         ptPhysioDerived = calcLandmarksMorpho(obj);
         ptPhysioDerived = calcLandmarksGrid(obj);
         measuresMorphology = calcMeasuresMorphology(obj);
+        [val, pt] = determineRelConstrHeight(obj, innerPtGrdlineConstr, ...
+            outerPtGrdlineConstr);
+
         grid = determineSemipolarGrid(obj);
         gridZoning = zoneGridIntoAnatomicalRegions(obj);
         contours = determineOutlineFromSegmentation(obj);
@@ -112,8 +115,6 @@ classdef SpeakerImaging
         [val, UserData] = calcCurvatureInvRadius(ptStart, ptMid, ptEnd);
         [val, UserData] = calcCurvatureQuadCoeff(innerPtPart);
         [val, UserData] = calculateTongueLength(innerPtPart, indTongStart, indTongEnd);
-        [val, UserData] = determineRelConstrHeight(landmarksDerivedMorpho, ...
-            innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
         
         indBending = calcGridlineOfBending(innerPt, outerPt, ptCircleMidpoint, ptNPW_d);
         

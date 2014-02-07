@@ -11,7 +11,6 @@ outerPt = obj.filteredContours.outerPt;
 landmarksDerivedMorpho = obj.landmarksDerivedMorpho;
 gridZoning = obj.gridZoning;
 
-lenVertAbs = obj.measuresMorphology.lenVertAbs;
 
 % extract relevant contours (feasable part) -------------------------
 indexStart = gridZoning.pharynx(1);
@@ -25,9 +24,8 @@ outerPtPart = outerPt(1:2, indexStart:indexEnd);
 innerPtGrdlineConstr = innerPtPart(1:2, indMin);
 outerPtGrdlineConstr = outerPtPart(1:2, indMin);
 
-[hightRel, ptConstrHeight] = obj.determineRelConstrHeight(landmarksDerivedMorpho, ...
-    innerPtGrdlineConstr, outerPtGrdlineConstr, lenVertAbs);
-
+[hightRel, ptConstrHeight] = determineRelConstrHeight(obj, ...
+    innerPtGrdlineConstr, outerPtGrdlineConstr);
 
 measures.relativeConstrHeight = hightRel;
 measures.constrictionWidth = valMin;
