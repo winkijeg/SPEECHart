@@ -1,4 +1,4 @@
-function measuresMorphology = calcMeasuresMorphology( obj )
+function obj = calcMeasuresMorphology( obj )
 % calculate morphological measures related to the specific speaker
 
 ptANS = obj.landmarks.ANS;
@@ -24,10 +24,9 @@ ptHelp1(:, 1) = line_exp_point_near_2d(ptANS', ptPNS', ptAlvRidge');
 
 palateAngleDegree = angle_deg_2d(ptHelp1', ptAlvRidge', ptPalate');
 
-% -------------- assignments ------------------------------------------
-measuresMorphology.lenHoriAbs = lenHoriAbs;
-measuresMorphology.lenVertAbs = lenVertAbs;
-measuresMorphology.ratioVH = ratioVH;
-measuresMorphology.palateAngle = palateAngleDegree;
+obj.measuresMorphology.lenHoriAbs = lenHoriAbs;
+obj.measuresMorphology.lenVertAbs = lenVertAbs;
+obj.measuresMorphology.ratioVH = ratioVH;
+obj.measuresMorphology.palateAngle = palateAngleDegree;
 
 end
