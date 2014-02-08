@@ -114,7 +114,7 @@ classdef SpeakerImaging
         
         [val, UserData] = calcCurvatureInvRadius(ptStart, ptMid, ptEnd);
         [val, UserData] = calcCurvatureQuadCoeff(innerPtPart);
-        [val, UserData] = calculateTongueLength(innerPtPart, indTongStart, indTongEnd);
+        [val, UserData] = calcTongueLength(innerPtPart, indTongStart, indTongEnd);
         
         indBending = calcGridlineOfBending(innerPt, outerPt, ptCircleMidpoint, ptNPW_d);
         

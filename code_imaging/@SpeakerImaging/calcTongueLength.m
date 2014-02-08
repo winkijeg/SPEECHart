@@ -1,4 +1,4 @@
-function [val, basicData] = calculateTongueLength(innerPtPart, indStart, indEnd)
+function [val, basicData] = calcTongueLength(innerPtPart, indStart, indEnd)
 % calculate tongue length by summing up piecewise linear approximation 
 
 lenTotal = 0;
