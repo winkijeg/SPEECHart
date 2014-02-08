@@ -2,7 +2,7 @@ function [] = plotSemipolarGridPart(obj, col, nbsOfGrdLines, cAxes)
 % plot partially semipolar grid specified by the third argument
 %   i.e. 3:7 or only one gridline (i.e. 10)
 
-if nargin == 2
+if nargin == 3
     % create new figure
     cAxes = initPlotFigure(obj, false);
 end
