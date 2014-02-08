@@ -1,4 +1,4 @@
-function contours = determineOutlineFromSegmentation(obj)
+function contours = calcContoursFromSegmentation(obj)
 
     nSamplePointsProfile = 200;
 

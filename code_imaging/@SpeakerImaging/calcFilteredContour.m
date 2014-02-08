@@ -1,4 +1,4 @@
-function filteredContours = determineFilteredContour(obj)
+function filteredContours = calcFilteredContour(obj)
     % smoothes contour for constriction location measurement in MRI slices
     % 
     % the contour is smoothed in parts based on physiological landmarks. All
