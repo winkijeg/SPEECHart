@@ -62,7 +62,7 @@ indexTongueStart = obj.gridZoning.tongue(1);
 indexTongueEnd = obj.gridZoning.tongue(2);
 
 [tongueLength, bDataTongLength] = ...
-    obj.calculateTongueLength(innerPt, indexTongueStart, indexTongueEnd);
+    obj.calcTongueLength(innerPt, indexTongueStart, indexTongueEnd);
 
 obj.measuresTongueShape.curvatureInversRadius = curvInvRadius;
 obj.measuresTongueShape.curvatureQuadCoeff = curvQuadCoeff;
