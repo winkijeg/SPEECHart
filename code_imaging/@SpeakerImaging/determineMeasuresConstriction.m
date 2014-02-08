@@ -11,7 +11,7 @@ outerPt = obj.filteredContours.outerPt;
 gridZoning = obj.gridZoning;
 
 
-% extract relevant contours (feasable part) -------------------------
+% extract relevant contours (feasable part)
 indexStart = gridZoning.pharynx(1);
 indexEnd = gridZoning.pharynx(2);
 
