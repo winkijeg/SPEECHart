@@ -54,10 +54,10 @@ classdef SpeakerImaging
             obj.landmarksDerivedMorpho = calcLandmarksMorphology(obj);
             obj.landmarksDerivedGrid = calcLandmarksGrid(obj);
             
-            obj.measuresMorphology = calcMeasuresMorphology(obj);
+            obj = calcMeasuresMorphology(obj);
             
-            obj.semipolarGrid = determineSemipolarGrid(obj);
-            obj.gridZoning = zoneGridIntoAnatomicalRegions(obj);
+            obj.semipolarGrid = calcGrid(obj);
+            obj.gridZoning = calcGridIndexOfAnatomicalRegions(obj);
             
             obj.sliceInfo = struc.sliceInfo;
             obj.xdataSlice = [0 obj.sliceInfo.PixelDimensions(2)*obj.sliceInfo.Dimensions(2)];
@@ -65,8 +65,8 @@ classdef SpeakerImaging
             obj.sliceData = struc.sliceData;
             obj.sliceSegmentationData = struc.sliceSegmentationData;
             
-            obj.contours = determineOutlineFromSegmentation(obj);
-            obj.filteredContours = determineFilteredContour(obj);
+            obj.contours = calcContoursFromSegmentation(obj);
+            obj.filteredContours = calcFilteredContour(obj);
             
         end
         
@@ -95,14 +95,14 @@ classdef SpeakerImaging
         
         ptPhysioDerived = calcLandmarksMorphology(obj);
         ptPhysioDerived = calcLandmarksGrid(obj);
-        measuresMorphology = calcMeasuresMorphology(obj);
+        obj = calcMeasuresMorphology(obj);
         [val, pt] = calcRelConstrHeight(obj, innerPtGrdlineConstr, ...
             outerPtGrdlineConstr);
 
-        grid = determineSemipolarGrid(obj);
-        gridZoning = zoneGridIntoAnatomicalRegions(obj);
-        contours = determineOutlineFromSegmentation(obj);
-        filteredContours = determineFilteredContour(obj);
+        grid = calcGrid(obj);
+        gridZoning = calcGridIndexOfAnatomicalRegions(obj);
+        contours = calcContoursFromSegmentation(obj);
+        filteredContours = calcFilteredContour(obj);
         
         landmarks = exportLandmarksToModelFormat(obj)
         structures = exportStructuresToModelFormat(obj);
