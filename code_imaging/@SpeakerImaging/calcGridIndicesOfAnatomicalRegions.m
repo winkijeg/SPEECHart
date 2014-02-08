@@ -1,4 +1,4 @@
-function gridZoning = calcGridIndexOfAnatomicalRegions(obj)
+function gridZoning = calcGridIndicesOfAnatomicalRegions(obj)
 % split inner and outer contours into anatomical motivated parts
 %   The INNER contour is labels as:
 %   - tongue surface between two landmarks (VallSin - TongTip).

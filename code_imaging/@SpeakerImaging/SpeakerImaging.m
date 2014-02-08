@@ -57,7 +57,7 @@ classdef SpeakerImaging
             obj = calcMeasuresMorphology(obj);
             
             obj.semipolarGrid = calcGrid(obj);
-            obj.gridZoning = calcGridIndexOfAnatomicalRegions(obj);
+            obj.gridZoning = calcGridIndicesOfAnatomicalRegions(obj);
             
             obj.sliceInfo = struc.sliceInfo;
             obj.xdataSlice = [0 obj.sliceInfo.PixelDimensions(2)*obj.sliceInfo.Dimensions(2)];
@@ -100,7 +100,7 @@ classdef SpeakerImaging
             outerPtGrdlineConstr);
 
         grid = calcGrid(obj);
-        gridZoning = calcGridIndexOfAnatomicalRegions(obj);
+        gridZoning = calcGridIndicesOfAnatomicalRegions(obj);
         contours = calcContoursFromSegmentation(obj);
         filteredContours = calcFilteredContour(obj);
         
