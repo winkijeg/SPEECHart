@@ -9,23 +9,17 @@ phonLab = '@';
 % specify path names
 [path_root, ~, pathImaging] = ...
     initPaths(princInvestigator, speakerName);
-path_mat_modelGeneric = [path_root 'data/models_obsolete/ypm/'];
-
-% load generic Model (matrix format)
-matModelGeneric = load([path_mat_modelGeneric 'ypm_model.mat']);
-
-% create modelFactory-object
-myModelFactory = ModelFactory(matModelGeneric);
 
 % read in raw speaker specification (landmarks and images)
 strucImagingIn = formatRawDataToSpeakerImaging( pathImaging, princInvestigator, ...
     speakerName, phonLab );
 
-
 % create SpeakerImaging object
 mySpkImg = SpeakerImaging(strucImagingIn);
 strucMatchingIn = convertToRawModelFormat(mySpkImg);
 
+% create modelFactory-object
+myModelFactory = ModelFactory();
 strucSpkModelIn = matching2D_ForRefactoring(myModelFactory, strucMatchingIn);
 mySpkModel = SpeakerModel(strucSpkModelIn);
 

@@ -10,8 +10,9 @@ classdef ModelFactory
     
     methods
         
-        function obj = ModelFactory(matModelGeneric)
+        function obj = ModelFactory()
             
+            matModelGeneric = load('ypm_model.mat');
             obj.modelGeneric = SpeakerModel(matModelGeneric);
             
         end
