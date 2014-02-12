@@ -53,7 +53,7 @@ classdef ModelProducer
             
         end
 
-        dataModel = matching2D_ForRefactoring( obj );
+        dataModel = matchModel( obj );
 
     end
     

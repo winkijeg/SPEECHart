@@ -1,4 +1,4 @@
-function struc = matching2D_ForRefactoring( obj )
+function struc = matchModel( obj )
 % fits the generic model to the speaker-specific anatomy
 
 nligne = 17;
@@ -34,7 +34,7 @@ tongue_lar_mri = obj.anatomicalStructures.tongueLarynx;
 upperlip_mri = obj.anatomicalStructures.upperLip;
 velum_mri = obj.anatomicalStructures.velum;
 
-% Data related to the original (generic) tongue model (YPM)
+% Data related to the original (generic) tongue model (YPM) 
 % Mesh at rest
 meanx = obj.modelGeneric.landmarks.origin(1); % x coordinate
 meany = obj.modelGeneric.landmarks.origin(2); % y coordinate
