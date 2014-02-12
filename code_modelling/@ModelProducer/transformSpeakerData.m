@@ -10,6 +10,7 @@ styloidProcess3D = [0; obj.landmarks.styloidProcess];
 condyle3D = [0; obj.landmarks.condyle];
 ANS3D = [0; obj.landmarks.ANS];
 PNS3D = [0; obj.landmarks.PNS];
+origin3D = [0; obj.landmarks.origin];
 
 tongInsLTrans = tmat_mxp(tMat, tongInsL3D);
 tongInsHTrans = tmat_mxp(tMat, tongInsH3D);
@@ -17,6 +18,8 @@ styloidProcessTrans = tmat_mxp(tMat, styloidProcess3D);
 condyleTrans = tmat_mxp(tMat, condyle3D);
 ANSTrans = tmat_mxp(tMat, ANS3D);
 PNSTrans = tmat_mxp(tMat, PNS3D);
+originTrans = tmat_mxp(tMat, origin3D);
+
 
 landmarksTrans.tongInsL(1:2, 1) = tongInsLTrans(2:3);
 landmarksTrans.tongInsH(1:2, 1) = tongInsHTrans(2:3);
@@ -24,6 +27,8 @@ landmarksTrans.styloidProcess(1:2, 1) = styloidProcessTrans(2:3);
 landmarksTrans.condyle(1:2, 1) = condyleTrans(2:3);
 landmarksTrans.ANS(1:2, 1) = ANSTrans(2:3);
 landmarksTrans.PNS(1:2, 1) = PNSTrans(2:3);
+landmarksTrans.origin(1:2, 1) = originTrans(2:3);
+
 
 % transform the two contours
 innerPt2D = obj.contours.innerPt;
