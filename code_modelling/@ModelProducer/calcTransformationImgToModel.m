@@ -1,4 +1,4 @@
-function [tMatGeom, tformImg] = calcTransformationImgToModel(obj, strucSpk)
+function [tMatGeom, tformImg] = calcTransformationImgToModel( obj )
 % calculate transform from MRI coordinate space to generic coordinates (model)
 %   this function returns two matrices:
 %   tMat: to be used with geometric coordinates
@@ -7,9 +7,8 @@ function [tMatGeom, tformImg] = calcTransformationImgToModel(obj, strucSpk)
 pt_ANS_generic = obj.modelGeneric.landmarks.ANS;
 pt_PNS_generic = obj.modelGeneric.landmarks.PNS;
 
-pt_ANS_mri = strucSpk.ANS;
-pt_PNS_mri = strucSpk.PNS;
-
+pt_ANS_mri = obj.landmarks.ANS;
+pt_PNS_mri = obj.landmarks.PNS;
 
 % determine ANS-PNS orientation in the generic (model) space
 angle_GenericRad = lines_exp_angle_nd(2, pt_PNS_generic', ...

@@ -1,26 +1,28 @@
-function structs = convertContoursIntoStructures( obj, strucTransformed, gridZoning )
-%UNTITLED Summary of this function goes here
+function anatomicalStructures = convertContoursIntoStructures( obj )
+% create anatomical structures from inner and outer contours
 
-innerPt = strucTransformed.innerPt;
-outerPt = strucTransformed.outerPt;
+gridZoning = obj.gridZoning;
+
+innerPt = obj.contoursTransformed.innerPt;
+outerPt = obj.contoursTransformed.outerPt;
 
 % segment the inner contour
-structs.tongueSurface = ...
+anatomicalStructures.tongueSurface = ...
     innerPt(:, gridZoning.tongue(1):gridZoning.tongue(2));
 
 tongueLarynxTmp = innerPt(:, 1:gridZoning.palate(2));
-structs.tongueLarynx = fliplr(tongueLarynxTmp);
+anatomicalStructures.tongueLarynx = fliplr(tongueLarynxTmp);
 
 % segment the outer contour
 larynxArytenoidTmp = outerPt(:, 1:gridZoning.pharynx(1));
-structs.larynxArytenoid = fliplr(larynxArytenoidTmp);
+anatomicalStructures.larynxArytenoid = fliplr(larynxArytenoidTmp);
 
 backPharyngealWallTmp = outerPt(:, gridZoning.pharynx(1):gridZoning.pharynx(2));
-structs.backPharyngealWall = fliplr(backPharyngealWallTmp);
+anatomicalStructures.backPharyngealWall = fliplr(backPharyngealWallTmp);
 
 % \todo : replace velum by a standard velum at some time 
 velumTmp = outerPt(:, gridZoning.velum(1):gridZoning.velum(2));
-structs.velum = fliplr(velumTmp);
+anatomicalStructures.velum = fliplr(velumTmp);
 
 % reformat palatal part + teeth
 upperTeethStandard = [-1.7639 -3.8806 -5.2917 -6.3500 -5.6444 -3.5278 0;
@@ -31,7 +33,7 @@ shiftedTeeth = fliplr(upperTeethStandard) + ...
     repmat(outerPt(:, gridZoning.palate(2)), 1, nPointsUpperTeeth);
 
 upperIncisorPalateTmp = [outerPt(:, gridZoning.palate(1):gridZoning.palate(2)) shiftedTeeth];
-structs.upperIncisorPalate = fliplr(upperIncisorPalateTmp);
+anatomicalStructures.upperIncisorPalate = fliplr(upperIncisorPalateTmp);
 
 % define upperlip (standard)
 upperlip_standard = [-17.6742 11.5358; ...
@@ -61,18 +63,6 @@ upperlip_standard = [-17.6742 11.5358; ...
 nPtUpperLip = length(upperlip_standard);
 shiftedUpperLip = fliplr(upperlip_standard) + ...
     repmat(outerPt(:, gridZoning.palate(2)), 1, nPtUpperLip);
-structs.upperLip = fliplr(shiftedUpperLip);
-
-% anatomical landmarks are already formated
-structs.tongInsL = strucTransformed.tongInsL;
-structs.tongInsH = strucTransformed.tongInsH;
-structs.styloidProcess = strucTransformed.styloidProcess;
-structs.condyle = strucTransformed.condyle;
-structs.ANS = strucTransformed.ANS;
-structs.PNS = strucTransformed.PNS;
-
-structs.innerPt = strucTransformed.innerPt;
-structs.outerPt = strucTransformed.outerPt;
-
+anatomicalStructures.upperLip = fliplr(shiftedUpperLip);
 
 end

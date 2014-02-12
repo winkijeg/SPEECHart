@@ -17,19 +17,13 @@ strucImagingIn = formatRawDataToSpeakerImaging( pathImaging, princInvestigator, 
 
 % create SpeakerImaging object
 mySpkImg = SpeakerImaging(strucImagingIn);
-[strucMriCoordinates, gridZoning] = extractDataForModelCreation(mySpkImg);
+[dataSpkMRI, gridZoning] = extractDataForModelCreation(mySpkImg);
 
 % create modelFactory-object
-myModelProducer = ModelProducer();
+myModelProducer = ModelProducer(dataSpkMRI, gridZoning);
 
-[tMatGeom, tformImg] = calcTransformationImgToModel(myModelProducer, strucMriCoordinates);
-strucTransformed = transformSpeakerData(myModelProducer, strucMriCoordinates, tMatGeom);
-structsAnatomical = convertContoursIntoStructures(myModelProducer, strucTransformed, gridZoning);
-
-
-
-strucMatched = matching2D_ForRefactoring(myModelProducer, structsAnatomical);
-mySpkModel = SpeakerModel(strucMatched);
+dataModel = matching2D_ForRefactoring(myModelProducer);
+mySpkModel = SpeakerModel(dataModel);
 
 
 

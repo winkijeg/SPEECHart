@@ -1,4 +1,4 @@
-function struc = matching2D_ForRefactoring(obj, strucSpecific)
+function struc = matching2D_ForRefactoring( obj )
 % fits the generic model to the speaker-specific anatomy
 
 nligne = 17;
@@ -8,14 +8,14 @@ ncol = 13;
 % vocal tract contours, and the (P1, P2, and P3) of the speaker to which the
 % model will be adapted.
 
-X_contour = strucSpecific.tongueSurface(1, :);
-Y_contour = strucSpecific.tongueSurface(2, :);
+X_contour = obj.anatomicalStructures.tongueSurface(1, :);
+Y_contour = obj.anatomicalStructures.tongueSurface(2, :);
 
-styloidProcess = strucSpecific.styloidProcess;
-tongInsL = strucSpecific.tongInsL;
-tongInsH = strucSpecific.tongInsH;
-ANS = strucSpecific.ANS;
-PNS = strucSpecific.PNS;
+styloidProcess = obj.landmarksTransformed.styloidProcess;
+tongInsL = obj.landmarksTransformed.tongInsL;
+tongInsH = obj.landmarksTransformed.tongInsH;
+ANS = obj.landmarksTransformed.ANS;
+PNS = obj.landmarksTransformed.PNS;
 
 % Insertion points: 3 points for the hyoglossus on the hyoid bone
 X1 = obj.modelGeneric.landmarks.hyoA(1);
@@ -27,12 +27,12 @@ Y2 = obj.modelGeneric.landmarks.hyoB(2);
 X3 = obj.modelGeneric.landmarks.hyoC(1);
 Y3 = obj.modelGeneric.landmarks.hyoC(2);
 
-lar_ar_mri = strucSpecific.larynxArytenoid;
-palate_mri = strucSpecific.upperIncisorPalate;
-pharynx_mri = strucSpecific.backPharyngealWall;
-tongue_lar_mri = strucSpecific.tongueLarynx;
-upperlip_mri = strucSpecific.upperLip;
-velum_mri = strucSpecific.velum;
+lar_ar_mri = obj.anatomicalStructures.larynxArytenoid;
+palate_mri = obj.anatomicalStructures.upperIncisorPalate;
+pharynx_mri = obj.anatomicalStructures.backPharyngealWall;
+tongue_lar_mri = obj.anatomicalStructures.tongueLarynx;
+upperlip_mri = obj.anatomicalStructures.upperLip;
+velum_mri = obj.anatomicalStructures.velum;
 
 % Data related to the original (generic) tongue model (YPM)
 % Mesh at rest

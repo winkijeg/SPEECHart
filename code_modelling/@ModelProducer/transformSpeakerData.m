@@ -1,15 +1,15 @@
-function strucTransformed = transformSpeakerData( obj, strucOrig, tMat)
+function [landmarksTrans, contourTrans] = transformSpeakerData( obj )
 % transform extracted speaker data given a transformation matrix
 
+tMat = obj.tMatGeom;
 
 % trandform landmarks
-tongInsL3D = [0; strucOrig.tongInsL];
-tongInsH3D = [0; strucOrig.tongInsH];
-styloidProcess3D = [0; strucOrig.styloidProcess];
-condyle3D = [0; strucOrig.condyle];
-ANS3D = [0; strucOrig.ANS];
-PNS3D = [0; strucOrig.PNS];
-
+tongInsL3D = [0; obj.landmarks.tongInsL];
+tongInsH3D = [0; obj.landmarks.tongInsH];
+styloidProcess3D = [0; obj.landmarks.styloidProcess];
+condyle3D = [0; obj.landmarks.condyle];
+ANS3D = [0; obj.landmarks.ANS];
+PNS3D = [0; obj.landmarks.PNS];
 
 tongInsLTrans = tmat_mxp(tMat, tongInsL3D);
 tongInsHTrans = tmat_mxp(tMat, tongInsH3D);
@@ -18,16 +18,16 @@ condyleTrans = tmat_mxp(tMat, condyle3D);
 ANSTrans = tmat_mxp(tMat, ANS3D);
 PNSTrans = tmat_mxp(tMat, PNS3D);
 
-strucTransformed.tongInsL(1:2, 1) = tongInsLTrans(2:3);
-strucTransformed.tongInsH(1:2, 1) = tongInsHTrans(2:3);
-strucTransformed.styloidProcess(1:2, 1) = styloidProcessTrans(2:3);
-strucTransformed.condyle(1:2, 1) = condyleTrans(2:3);
-strucTransformed.ANS(1:2, 1) = ANSTrans(2:3);
-strucTransformed.PNS(1:2, 1) = PNSTrans(2:3);
+landmarksTrans.tongInsL(1:2, 1) = tongInsLTrans(2:3);
+landmarksTrans.tongInsH(1:2, 1) = tongInsHTrans(2:3);
+landmarksTrans.styloidProcess(1:2, 1) = styloidProcessTrans(2:3);
+landmarksTrans.condyle(1:2, 1) = condyleTrans(2:3);
+landmarksTrans.ANS(1:2, 1) = ANSTrans(2:3);
+landmarksTrans.PNS(1:2, 1) = PNSTrans(2:3);
 
 % transform the two contours
-innerPt2D = strucOrig.innerPt;
-outerPt2D = strucOrig.outerPt;
+innerPt2D = obj.contours.innerPt;
+outerPt2D = obj.contours.outerPt;
 
 nPointsOuter = size(innerPt2D, 2);
 nPointsInner = size(outerPt2D, 2);
@@ -38,7 +38,7 @@ outerPt3D = [zeros(1, nPointsOuter); outerPt2D];
 innerPt3DTrans = tmat_mxp2(tMat, nPointsInner, innerPt3D);
 outerPt3DTrans = tmat_mxp2(tMat, nPointsOuter, outerPt3D);
 
-strucTransformed.innerPt = innerPt3DTrans(2:3, :);
-strucTransformed.outerPt = outerPt3DTrans(2:3, :);
+contourTrans.innerPt = innerPt3DTrans(2:3, :);
+contourTrans.outerPt = outerPt3DTrans(2:3, :);
 
 end
