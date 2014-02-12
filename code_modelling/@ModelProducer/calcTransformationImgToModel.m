@@ -37,8 +37,10 @@ tform1 = maketform('affine', t1);
 
 % rotate according to angle ANS-PNS in the generic model
 tMat2 = tmat_rot_axis(tMat1, -1*angle_RotationDegree, 'X');
+
 t2 = [cos(angle_RotationRad) sin(angle_RotationRad) 0; ...
     -sin(angle_RotationRad) cos(angle_RotationRad) 0; 0 0 1];
+
 tform2 = maketform('affine', t2);
 
 % translation to ANS of generic model
