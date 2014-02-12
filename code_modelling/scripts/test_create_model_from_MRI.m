@@ -21,11 +21,10 @@ mySpkImg = SpeakerImaging(strucImagingIn);
 
 % create modelFactory-object
 myModelProducer = ModelProducer(dataSpkMRI, gridZoning);
+dataModel = matchModel(myModelProducer);
 
-dataModel = matching2D_ForRefactoring(myModelProducer);
+% create the model object
 mySpkModel = SpeakerModel(dataModel);
-
-
 
 
 
