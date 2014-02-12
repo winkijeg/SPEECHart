@@ -18,18 +18,20 @@ classdef SpeakerModel
     
     methods
         
-        function obj = SpeakerModel(mat)
+        function obj = SpeakerModel(struc)
 
-            obj.landmarks.styloidProcess = mat.landmarks.styloidProcess;
-            obj.landmarks.condyle = mat.landmarks.condyle;
-            obj.landmarks.origin = mat.landmarks.origin;
-            obj.landmarks.hyoA = mat.landmarks.hyo1;
-            obj.landmarks.hyoB = mat.landmarks.hyo2;
-            obj.landmarks.hyoC = mat.landmarks.hyo3;
+            obj.landmarks.styloidProcess = struc.landmarks.styloidProcess;
+            obj.landmarks.condyle = struc.landmarks.condyle;
+            obj.landmarks.origin = struc.landmarks.origin;
+            obj.landmarks.hyoA = struc.landmarks.hyo1;
+            obj.landmarks.hyoB = struc.landmarks.hyo2;
+            obj.landmarks.hyoC = struc.landmarks.hyo3;
+            obj.landmarks.ANS = struc.landmarks.ANS;
+            obj.landmarks.PNS = struc.landmarks.PNS;
             
-            obj.structures = mat.structures;
+            obj.structures = struc.structures;
             
-            obj.tongGrid = PositionFrame(0, mat.tongGrid.x, mat.tongGrid.y);
+            obj.tongGrid = PositionFrame(0, struc.tongGrid.x, struc.tongGrid.y);
             
             obj.muscleCollection = MuscleCollection({'GGP', 'GGA', 'HYO', 'STY', 'VER', 'IL', 'SL'}, ...
                 obj.tongGrid, obj.landmarks);

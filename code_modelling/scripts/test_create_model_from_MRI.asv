@@ -20,15 +20,15 @@ mySpkImg = SpeakerImaging(strucImagingIn);
 [strucMriCoordinates, gridZoning] = extractDataForModelCreation(mySpkImg);
 
 % create modelFactory-object
-myModelProducer = ModelProducer();
+myModelP = ModelFactory();
 
-[tMatGeom, tformImg] = calcTransformationImgToModel(myModelProducer, strucMriCoordinates);
-strucTransformed = transformSpeakerData(myModelProducer, strucMriCoordinates, tMatGeom);
-structsAnatomical = convertContoursIntoStructures(myModelProducer, strucTransformed, gridZoning);
+[tMatGeom, tformImg] = calcTransformationImgToModel(myModelFactory, strucMriCoordinates);
+strucTransformed = transformSpeakerData(myModelFactory, strucMriCoordinates, tMatGeom);
+structsAnatomical = convertContoursIntoStructures(myModelFactory, strucTransformed, gridZoning);
 
 
 
-strucMatched = matching2D_ForRefactoring(myModelProducer, structsAnatomical);
+strucMatched = matching2D_ForRefactoring(myModelFactory, structsAnatomical);
 mySpkModel = SpeakerModel(strucMatched);
 
 

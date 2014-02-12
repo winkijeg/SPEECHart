@@ -1,35 +1,38 @@
-function mat = matching2D_ForRefactoring(obj, matRawModelTarget)
+function struc = matching2D_ForRefactoring(obj, strucSpecific)
 % fits the generic model to the speaker-specific anatomy
-%
 
 nligne = 17;
 ncol = 13;
 
-% data related to the source speaker (i.e. pp_FF1) containing the tongue and 
+% data related to the source speaker (i.e. pp_FF1) containing the tongue and
 % vocal tract contours, and the (P1, P2, and P3) of the speaker to which the
 % model will be adapted.
 
-X_contour = matRawModelTarget.structures.tongueSurface(1, :);
-Y_contour = matRawModelTarget.structures.tongueSurface(2, :);
+X_contour = strucSpecific.tongueSurface(1, :);
+Y_contour = strucSpecific.tongueSurface(2, :);
 
-styloidProcess = matRawModelTarget.landmarks.styloidProcess;
-tongInsL = matRawModelTarget.landmarks.tongInsL;
-tongInsH = matRawModelTarget.landmarks.tongInsH;
+styloidProcess = strucSpecific.styloidProcess;
+tongInsL = strucSpecific.tongInsL;
+tongInsH = strucSpecific.tongInsH;
+ANS = strucSpecific.ANS;
+PNS = strucSpecific.PNS;
 
-% Insertion points: 3 points for the hyoglossus on the hyoid bone :
+% Insertion points: 3 points for the hyoglossus on the hyoid bone
 X1 = obj.modelGeneric.landmarks.hyoA(1);
 Y1 = obj.modelGeneric.landmarks.hyoA(2);
+
 X2 = obj.modelGeneric.landmarks.hyoB(1);
 Y2 = obj.modelGeneric.landmarks.hyoB(2);
+
 X3 = obj.modelGeneric.landmarks.hyoC(1);
 Y3 = obj.modelGeneric.landmarks.hyoC(2);
 
-lar_ar_mri = matRawModelTarget.structures.larynxArytenoid;
-palate_mri = matRawModelTarget.structures.upperIncisorPalate;
-pharynx_mri = matRawModelTarget.structures.backPharyngealWall;
-tongue_lar_mri = matRawModelTarget.structures.tongueLarynx;
-upperlip_mri = matRawModelTarget.structures.upperLip;
-velum_mri = matRawModelTarget.structures.velum;
+lar_ar_mri = strucSpecific.larynxArytenoid;
+palate_mri = strucSpecific.upperIncisorPalate;
+pharynx_mri = strucSpecific.backPharyngealWall;
+tongue_lar_mri = strucSpecific.tongueLarynx;
+upperlip_mri = strucSpecific.upperLip;
+velum_mri = strucSpecific.velum;
 
 % Data related to the original (generic) tongue model (YPM)
 % Mesh at rest
@@ -46,8 +49,8 @@ xValsTongSurfGeneric = X_repos(:, ncol); % x coordinates
 yValsTongSurfGeneric = Y_repos(:, ncol); % y coordinates
 nPointsTongSurfGeneric = length(xValsTongSurfGeneric);
 
-% Average position of the tongue contour in the sagittalplane. This will be 
-% used to position the other contours around the same average position whatever 
+% Average position of the tongue contour in the sagittalplane. This will be
+% used to position the other contours around the same average position whatever
 % the position of the subject's head in the mri scanner.
 
 %load and plot the mri data of the target subject
@@ -64,13 +67,6 @@ plot(X_contour, Y_contour,'r', 'LineWidth', 2)
 plot(lar_ar_mri(1,:),lar_ar_mri(2,:))
 plot(tongue_lar_mri(1,:),tongue_lar_mri(2,:))
 
-
-
-
-
-
-
-
 % Plot the reference points P1, P2 and P3 measured on the MRI images for
 % the lower teeth and the styloid process
 plot(tongInsH(1), tongInsH(2), 'xg', 'Linewidth', 2)
@@ -78,12 +74,22 @@ plot(tongInsL(1), tongInsL(2), 'xr', 'Linewidth', 2)
 plot(styloidProcess(1),styloidProcess(2), 'oc', 'Linewidth',2)
 axis('equal')
 
+
+
+
+
+
+
+
+
+
+
 % Tongue contours measured on the MRI images for target subject.
 xtemp = X_contour; % x coordinates
 ytemp = Y_contour; % y coordinates
 l_contour = length(X_contour);
-% Average position of the tongue contour in the sagittal plane. This will be 
-% used to position the other contours around the average position of YPM, 
+% Average position of the tongue contour in the sagittal plane. This will be
+% used to position the other contours around the average position of YPM,
 % whatever the position of the subject's head in the mri scanner.
 meanxtemp = mean(xtemp); % x coordinate
 meanytemp = mean(ytemp); % y coordinate
@@ -100,8 +106,8 @@ y = yValsTongSurfGeneric; % YP Model tongue contour
 n = 1:l_contour;
 
 % Interpolation of the tongue contour of the target speaker in order to
-% get a better matching of this contour starting from YPM's contour. We take 
-% 10 times more nodes for a better definition of the speaker-specific 
+% get a better matching of this contour starting from YPM's contour. We take
+% 10 times more nodes for a better definition of the speaker-specific
 % tongue contour
 ns = 1:1/10:l_contour;
 % Interpolated target tongue contour - x coordinates
@@ -112,8 +118,8 @@ yref = spline(n, ytemp, ns) - ecart_meany;
 lref = length(xref);
 
 % Positioning of the subject's data around the average position of YPM
-% This generates new contours that are exactely the same as the contours 
-% extracted from the MRI images, but located at a different place in the 
+% This generates new contours that are exactely the same as the contours
+% extracted from the MRI images, but located at a different place in the
 % sagittal plane and with more points.
 upperlip_new(1,:)= upperlip_mri(1,:) - ecart_meanx;
 upperlip_new(2,:)= upperlip_mri(2,:) - ecart_meany;
@@ -141,6 +147,13 @@ incisor_low(2)=tongInsL(2) - ecart_meany;
 
 XS_new = styloidProcess(1) - ecart_meanx;
 YS_new = styloidProcess(2) - ecart_meany;
+
+ANS_new(1) = ANS(1) - ecart_meanx;
+ANS_new(2) = ANS(2) - ecart_meany;
+
+PNS_new(1) = PNS(1) - ecart_meanx;
+PNS_new(2) = PNS(2) - ecart_meany;
+
 
 % Plot the data around the average position of YPM
 figure
@@ -175,10 +188,10 @@ end
 % Total length of the tongue contour in YPM
 l_cont_mod = sum(d_elem_mod);
 
-% Computation for the original model (YPM) of the relative position of the 
+% Computation for the original model (YPM) of the relative position of the
 % nodes along the tongue contour. The reference point is the first point of the
 % contour on the hyoid bone. The relative position is characterised by
-% the ratio prop_elem_mod of the distance between the node on the contour and 
+% the ratio prop_elem_mod of the distance between the node on the contour and
 % the reference point divided by the total length of the contour.
 
 % For the first point the ratio is obviously 0
@@ -195,13 +208,13 @@ end
 
 % Total length of the tongue contour of the target speaker
 l_cont_ref = sum(d_elem_ref);
-% Scaling factor between the adapted and the original tongue contours 
+% Scaling factor between the adapted and the original tongue contours
 % calculated on the basis of the tongue contour's length
 length_ratio = l_cont_ref / l_cont_mod;
 
-% Computation for the target speaker of the relative position of the points 
-% along the tongue contour. The reference point is the first (lowest) point 
-% of the contour. The relative position is characterised by the ratio 
+% Computation for the target speaker of the relative position of the points
+% along the tongue contour. The reference point is the first (lowest) point
+% of the contour. The relative position is characterised by the ratio
 % prop_elem_ref of the distance between the point on the contour and the
 % reference point divided by the total length of the contour.
 
@@ -222,24 +235,24 @@ end
 % the target speaker, and by aligning the tongue tip point of the adapted
 % model with the last point of the tongue contour of the target speaker.
 
-% Lowest point of the upper contour of the adapted model = Lowest point 
+% Lowest point of the upper contour of the adapted model = Lowest point
 % of the speaker specific tongue contour
 x_new(1) = xref(1);
-% Lowest point of the upper contour of the adapted model = Lowest point 
+% Lowest point of the upper contour of the adapted model = Lowest point
 % of the speaker specific tongue contour
 y_new(1) = yref(1);
- % Tongue tip point of the upper contour of the adapted model = Tongue tip 
- % point of the speaker specific tongue contour
+% Tongue tip point of the upper contour of the adapted model = Tongue tip
+% point of the speaker specific tongue contour
 x_new(nPointsTongSurfGeneric) = xref(lref);
-% Tongue tip point of the upper contour of the adapted model = Tongue tip 
+% Tongue tip point of the upper contour of the adapted model = Tongue tip
 % point of the speaker specific tongue contour
 y_new(nPointsTongSurfGeneric) = yref(lref);
 jlast = 1;
 
-% To match the upper contour of the adapted model with the tongue contour of 
-% the target subject each node nYPM of the contour of YPM is projected onto 
-% the point nREF of the tongue contour of the target speaker, for which the 
-% ratio prop_elem_ref gives the best approximation of the ratio 
+% To match the upper contour of the adapted model with the tongue contour of
+% the target subject each node nYPM of the contour of YPM is projected onto
+% the point nREF of the tongue contour of the target speaker, for which the
+% ratio prop_elem_ref gives the best approximation of the ratio
 % prop_elem_mod calculated for node nYPM.
 for i = 2:nPointsTongSurfGeneric-1
     j = jlast;
@@ -283,7 +296,7 @@ Y_repos_new(nligne,1) = incisor_up(2);
 
 % Characteristics of the lower incisor contour for YPM
 file_standard_subject = 'standard_teeth_lips';
-% height_bone_int, index_height_bone_int and index_height_bone_ext been added 
+% height_bone_int, index_height_bone_int and index_height_bone_ext been added
 % in this file in February 2011 (Pascal)
 load(file_standard_subject);
 nPointsTeeth = length(lower_teeth_standard(1, :));
@@ -293,7 +306,7 @@ nPointsTeeth = length(lower_teeth_standard(1, :));
 dist_inc_new = sqrt((incisor_up(1)-incisor_low(1))^2 + (incisor_up(2) - incisor_low(2))^2);
 % Distance between the lowest and highest insertion points in YPM
 dist_inc_mod = sqrt((lower_teeth_standard(1,index_height_bone_int) - lower_teeth_standard(1,end))^2 +...
-        (lower_teeth_standard(2,index_height_bone_int) - lower_teeth_standard(2,end))^2);
+    (lower_teeth_standard(2,index_height_bone_int) - lower_teeth_standard(2,end))^2);
 % Distance ratio for the incisor between the length in the adapted model
 % and the length in YPM
 rapport_dist_inc = dist_inc_new/dist_inc_mod;
@@ -303,7 +316,7 @@ signe_inc_new = sign(incisor_up(2)-incisor_low(2));
 % Sign of the vertical difference between the lowest and highest
 % insertion points on the incisor in the original model (YPM)
 signe_inc_mod = sign(lower_teeth_standard(2,index_height_bone_int)-lower_teeth_standard(2,end));
-% Angle of the line joining the lowest and highest insertion points on the 
+% Angle of the line joining the lowest and highest insertion points on the
 % incisor in the adapted model
 angle_inc_new = signe_inc_new*acos((incisor_up(1)-incisor_low(1))/dist_inc_new);
 % Angle of the line joining the lowest and highest insertion points on
@@ -335,25 +348,25 @@ for j = ind_max_height_teeth:nPointsTeeth-1
     % YPM
     dist_teeth_int(j) = sqrt((lower_teeth_standard(1,j) - lower_teeth_standard(1,end))^2 + ...
         (lower_teeth_standard(2,j) - lower_teeth_standard(2,end))^2);
-    % Angle of the line joining the current insertion point and the lowest 
+    % Angle of the line joining the current insertion point and the lowest
     % insertion point in YPM
     angle_teeth_int(j) = abs(acos((lower_teeth_standard(1,j) - ...
         lower_teeth_standard(1, end)) / dist_teeth_int(j)));
 end
 
 for j = 1:index_height_bone_ext
-    % Distance in x and y between the current point and the corresponding 
+    % Distance in x and y between the current point and the corresponding
     % point on the internal contour
     x_teeth_ext_int(j) = lower_teeth_standard(1,j) - lower_teeth_standard(1,end-j+1);
     y_teeth_ext_int(j) = lower_teeth_standard(2,j) - lower_teeth_standard(2,end-j+1);
 end
 
-% positioning of the lower incisor in the adapted model. New insertions of the 
-% tongue model on the incisors (all the points are located between the lowest 
+% positioning of the lower incisor in the adapted model. New insertions of the
+% tongue model on the incisors (all the points are located between the lowest
 % and the highest insertion points) after rotation
 for j = index_height_bone_int+1:nPointsTeeth-1
-    % Angle of the line joining the current point and the lowest insertion 
-    % point in the adapted model after a rotation equal to the global rotation 
+    % Angle of the line joining the current point and the lowest insertion
+    % point in the adapted model after a rotation equal to the global rotation
     % of the incisor
     angle_teeth_final_int(j) = angle_teeth_int(j) + angle_inc_rotat;
     % Position of the corresponding insertion point in the adapted model
@@ -470,7 +483,7 @@ lowlip_new(2,:) = min(1,rapport_dist_inc) * (lowlip_standard(2,:) - lower_teeth_
 
 % Computation of the internal nodes of the adapted tongue model
 for i = 1:nligne
-    % Distance between the node on the upper contour of the adapted model and 
+    % Distance between the node on the upper contour of the adapted model and
     % the corresponding insertion nodes on the incisor
     dist_new = sqrt((X_repos_new(i,ncol) - X_repos_new(i,1))^2 + (Y_repos_new(i,ncol) - Y_repos_new(i,1))^2);
     % Distance between the node on the upper contour of YPM and the
@@ -478,13 +491,13 @@ for i = 1:nligne
     dist_mod = sqrt((X_repos(i,ncol)-X_repos(i,1))^2+(Y_repos(i,ncol)-Y_repos(i,1))^2);
     % Distance ratio for the current line between the adapted model and YPM
     rapport_dist = dist_new/dist_mod;
-    % Sign of the vertical difference between the node on the upper contour 
+    % Sign of the vertical difference between the node on the upper contour
     % of the adapted model and the corresponding insertion nodes on the incisor
     signe_new = sign((Y_repos_new(i,ncol)-Y_repos_new(i,1)));
-    % Sign of the vertical difference between the node on the upper contour of 
+    % Sign of the vertical difference between the node on the upper contour of
     % YPM and the corresponding insertion nodes on the incisor
     signe_mod = sign((Y_repos(i,ncol)-Y_repos(i,1)));
-    % Angle of the line joining the node on the upper contour of adapted model 
+    % Angle of the line joining the node on the upper contour of adapted model
     % and the corresponding insertion nodes on the incisor
     angle_new = signe_new*acos((X_repos_new(i, ncol) - X_repos_new(i,1))/dist_new);
     % Angle of the line joining the node on the upper contour of YPM and the
@@ -494,12 +507,12 @@ for i = 1:nligne
     % rotation of the current line
     angle_rotat = angle_new-angle_mod;
     
-    % Computation of the parameter used to define the hyoid bone in the 
+    % Computation of the parameter used to define the hyoid bone in the
     % adapted model
     if (i == 1)
-        % In order to be able to predict the hyoid bone position in the adapted 
-        % model we take into account the rapport_dist and angle_rotat 
-        % parameters found for the 1st line (corresponding to the bottom of the 
+        % In order to be able to predict the hyoid bone position in the adapted
+        % model we take into account the rapport_dist and angle_rotat
+        % parameters found for the 1st line (corresponding to the bottom of the
         % tongue)
         rapport_dist_hyoid = rapport_dist;
         
@@ -507,7 +520,7 @@ for i = 1:nligne
         % on the incisor and the lowest point of hyoid bone (X1,Y1) will be
         % rotated in the adapted model by the same angle as the lowest
         % line of the mesh (see below)
-        angle_rotat_hyoid = angle_rotat; 
+        angle_rotat_hyoid = angle_rotat;
     end
     % Plot the nodes on the lowest line in the adapted model
     plot(X_repos_new(i, 1), Y_repos_new(i, 1), '+r', 'Linewidth',2)
@@ -519,14 +532,14 @@ for i = 1:nligne
         % Distance between this node and the corresponding insertion node
         % on the incisor in the original tongue model (YPM)
         dist(j) = sqrt((X_repos(i,j)-X_repos(i,1))^2+(Y_repos(i,j)-Y_repos(i,1))^2);
-        % Sign of the vertical difference between this node and the 
+        % Sign of the vertical difference between this node and the
         % corresponding insertion node on the incisor in the generic model (YPM)
         signe(j) = sign((Y_repos(i,j)-Y_repos(i,1)));
-        % Angle of the line joining this node and the corresponding insertion 
+        % Angle of the line joining this node and the corresponding insertion
         % node on the incisor in YPM
         angle_intern(j) = signe(j)*abs(acos((X_repos(i,j)-X_repos(i,1))/dist(j)));
         % Angle of the line joining this node and the corresponding insertion
-        % node on the incisor in the adapted model after a rotation equal to 
+        % node on the incisor in the adapted model after a rotation equal to
         % the global rotation of the current line
         angle_final(j) = angle_intern(j) + angle_rotat;
         
@@ -575,21 +588,21 @@ upperlip_new(1,:) = min(1,rapport_dist_inc*1.1) * ...
 upperlip_new(2,:) = min(1,rapport_dist_inc*1.1) * ...
     (upperlip_new(2,:) - palate_new_orig(2)) + palate_new(2,1);
 
-% Computation of the 3 points for the hyoglossus insertion on the hyoid bone 
+% Computation of the 3 points for the hyoglossus insertion on the hyoid bone
 % in the adapted model
-% Distance between the first point of the hyoid bone (X1,Y1) and the lowest 
+% Distance between the first point of the hyoid bone (X1,Y1) and the lowest
 % insertion point of the tongue on the incisor in the original model (YPM)
 dist1 = sqrt((X1 - X_repos(1,1))^2 + (Y1 - Y_repos(1,1))^2);
-% Sign of the vertical difference between the first point of the hyoid 
-% bone (X1,Y1) and the lowest insertion point of the tongue on the incisor in 
+% Sign of the vertical difference between the first point of the hyoid
+% bone (X1,Y1) and the lowest insertion point of the tongue on the incisor in
 % the original model (YPM)
 signe1 = sign((Y1 - Y_repos(1,1)));
-% Angle of the line joining the first point of the hyoid bone (X1,Y1) and the 
+% Angle of the line joining the first point of the hyoid bone (X1,Y1) and the
 % lowest insertion point of the tongue on the incisor in the generic model (YPM)
 angle_hyoid1 = signe1 * abs(acos((X1 - X_repos(1,1)) / dist1));
-% Angle of the line joining the first point of the hyoid bone (X1_new,Y1_new) 
-% and the lowest insertion point of the tongue on the incisor in the adapted 
-% model after a rotation with an angle angle_rotat_hyoid equal to the rotation 
+% Angle of the line joining the first point of the hyoid bone (X1_new,Y1_new)
+% and the lowest insertion point of the tongue on the incisor in the adapted
+% model after a rotation with an angle angle_rotat_hyoid equal to the rotation
 % of the lowest line of the mesh (see above)
 angle_final_hyoid1 = angle_hyoid1 + angle_rotat_hyoid;
 
@@ -647,28 +660,36 @@ axis('equal')
 
 % ------------------ store data in matrix ------------------------------------
 
-mat.landmarks.styloidProcess = [XS_new; YS_new];
-mat.landmarks.hyo1 = [X1_new; Y1_new];
-mat.landmarks.hyo2 = [X2_new; Y2_new];
-mat.landmarks.hyo3 = [X3_new; Y3_new];
-mat.landmarks.condyle = [XS_new; YS_new+8];
+struc.landmarks.styloidProcess = [XS_new; YS_new];
+struc.landmarks.hyo1 = [X1_new; Y1_new];
+struc.landmarks.hyo2 = [X2_new; Y2_new];
+struc.landmarks.hyo3 = [X3_new; Y3_new];
+struc.landmarks.condyle = [XS_new; YS_new+8];
+
+struc.landmarks.ANS(1:2, 1) = ANS_new;
+struc.landmarks.PNS(1:2, 1) = PNS_new;
+
+
 % \todo this might be wrong, more an offset than an origin ...
-mat.landmarks.origin = [meanxtemp; meanytemp];
+struc.landmarks.origin = [meanxtemp; meanytemp];
 
 % to be inspected .... \todo
-mat.landmarks.incisor_up_mri = [incisor_up(1); incisor_up(2)];
-mat.landmarks.incisor_low_mri = [incisor_low(1); incisor_low(2)];
+struc.landmarks.incisor_up_mri = [incisor_up(1); incisor_up(2)];
+struc.landmarks.incisor_low_mri = [incisor_low(1); incisor_low(2)];
 
 %Save the data related to the adopted vocal tract contour
-mat.structures.upperLip = upperlip_new;
-mat.structures.upperIncisorPalate = palate_new;
-mat.structures.velum = velum_new;
-mat.structures.backPharyngealWall = pharynx_new;
-mat.structures.larynxArytenoid = lar_ar_new;
-mat.structures.tongueLarynx = tongue_lar_new;
-mat.structures.lowerIncisor = dents_inf_new;
-mat.structures.lowerLip = lowlip_new;
+struc.structures.upperLip = upperlip_new;
+struc.structures.upperIncisorPalate = palate_new;
+struc.structures.velum = velum_new;
+struc.structures.backPharyngealWall = pharynx_new;
+struc.structures.larynxArytenoid = lar_ar_new;
+struc.structures.tongueLarynx = tongue_lar_new;
+struc.structures.lowerIncisor = dents_inf_new;
+struc.structures.lowerLip = lowlip_new;
 
-% Save the adopted tongue rest position 
-mat.tongGrid.x = reshape(X_repos_new', 1, 221);
-mat.tongGrid.y = reshape(Y_repos_new', 1, 221);
+% Save the adopted tongue rest position
+struc.tongGrid.x = reshape(X_repos_new', 1, 221);
+struc.tongGrid.y = reshape(Y_repos_new', 1, 221);
+
+end
+

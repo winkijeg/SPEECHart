@@ -87,7 +87,7 @@ classdef SpeakerImaging
         obj = determineMeasuresTongueShape(obj);
         obj = determineMeasuresConstriction(obj);
         
-        struc = convertToRawModelFormat(obj)
+        [struc, gridZoning] = extractDataForModelCreation(obj)
         
     end
     
@@ -102,11 +102,7 @@ classdef SpeakerImaging
         grid = calcGrid(obj);
         gridZoning = calcGridIndicesOfAnatomicalRegions(obj);
         contours = calcContoursFromSegmentation(obj);
-        filteredContours = calcFilteredContour(obj);
-        
-        landmarks = exportLandmarksToModelFormat(obj)
-        structures = exportStructuresToModelFormat(obj);
-        
+        filteredContours = calcFilteredContour(obj);        
         
     end
     
