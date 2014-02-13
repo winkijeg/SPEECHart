@@ -6,16 +6,18 @@ function [tMatGeom, tformImg] = calcTransformationImgToModel( obj )
 
 pt_ANS_generic = obj.modelGeneric.landmarks.ANS;
 pt_PNS_generic = obj.modelGeneric.landmarks.PNS;
+pt_origin_generic = obj.modelGeneric.landmarks.origin;
 
 pt_ANS_mri = obj.landmarks.ANS;
 pt_PNS_mri = obj.landmarks.PNS;
+pt_origin_mri = obj.landmarks.origin;
 
 % determine ANS-PNS orientation in the generic (model) space
 angle_GenericRad = lines_exp_angle_nd(2, pt_PNS_generic', ...
     [pt_ANS_generic(1) pt_PNS_generic(2)], pt_PNS_generic', pt_ANS_generic');
 angle_GenericDegree = radians_to_degrees(angle_GenericRad);
 
-% determine ANS-PNS orientation in the speaker (mri) space
+% determine ANS-PNS orientation in the mri space
 angle_MriRad = lines_exp_angle_nd(2, pt_PNS_mri', ...
     [pt_ANS_mri(1) pt_PNS_mri(2)], pt_PNS_mri', pt_ANS_mri');
 angleMriDegree = radians_to_degrees(angle_MriRad);
@@ -25,7 +27,7 @@ angle_RotationDegree = angle_GenericDegree - angleMriDegree;
 angle_RotationRad = degrees_to_radians(angle_RotationDegree);
 
 
-% derives transfomation matrix from MRI to genaral model coordinates
+% derive transfomation matrix from MRI to model coordinates
 tMat = tmat_init();
 
 % first translate to the center of rotation
@@ -43,9 +45,14 @@ t2 = [cos(angle_RotationRad) sin(angle_RotationRad) 0; ...
 
 tform2 = maketform('affine', t2);
 
-% translation to ANS of generic model
-tx = pt_ANS_generic(1);
-ty = pt_ANS_generic(2);
+% translation according to the offset between thw two origins
+originMRI3D = [0; pt_origin_mri];
+originMRI3DTrans = tmat_mxp(tMat2, originMRI3D);
+originMRI2DTrans(1:2, 1) = originMRI3DTrans(2:3);
+diffOrigins = originMRI2DTrans - pt_origin_generic;
+
+tx = -1 * diffOrigins(1);
+ty = -1 * diffOrigins(2);
 
 tMat3 = tmat_trans(tMat2, [0 tx ty]);
 t3 = [1 0 0; 0 1 0; -tx -ty 1];
