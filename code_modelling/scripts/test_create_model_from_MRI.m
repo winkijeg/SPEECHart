@@ -10,6 +10,9 @@ phonLab = '@';
 % specify path names
 [path_root, ~, pathImaging] = ...
     initPaths(princInvestigator, speakerName);
+% read and construct the generic model object
+strucGeneric = load([path_root 'code_modelling\@ModelProducer\ypm_model.mat']);
+modelGeneric = SpeakerModel(strucGeneric);
 
 % read in raw speaker specification (landmarks and images)
 strucImagingIn = formatRawDataToSpeakerImaging( pathImaging, princInvestigator, ...
@@ -31,12 +34,13 @@ mySpkModel = SpeakerModel(dataModel);
 % plotting ............................................................
 figure
 initPlotFigure(mySpkModel, true)
+
+plotStructures(modelGeneric, 'k--')
+
 plotLandmarks(mySpkModel, 'r')
 plotStructures(mySpkModel, 'b')
-plotTongueMesh(mySpkModel, 'k')
-
-
-drawTongSurface(mySpkModel.tongGrid, 'r')
+%plotTongueMesh(mySpkModel, 'k')
+%drawTongSurface(mySpkModel.tongGrid, 'r')
 
 
 % convert Model into obsolete format to simulate with the original code
