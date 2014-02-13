@@ -639,7 +639,7 @@ struc.landmarks.hyo1 = [X1_new; Y1_new];
 struc.landmarks.hyo2 = [X2_new; Y2_new];
 struc.landmarks.hyo3 = [X3_new; Y3_new];
 struc.landmarks.condyle = [styloidProcess_new(1); styloidProcess_new(2)+8];
-struc.landmarks.origin = originMRI;
+struc.landmarks.origin = originGen;
 
 % to be inspected .... \todo
 struc.landmarks.incisor_up_mri = [incisor_up(1); incisor_up(2)];
