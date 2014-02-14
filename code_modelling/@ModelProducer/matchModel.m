@@ -543,6 +543,10 @@ structTemp = load ('data_palais_repos.mat');
 plot(structTemp.dents_inf(1,:), structTemp.dents_inf(2,:),':r')
 plot(structTemp.lowlip(1,:), structTemp.lowlip(2,:),':r')
 
+lowerLipGen = obj.modelGeneric.structures.lowerLip;
+lowerIncisor = obj.modelGeneric.structures.lowerIncisor;
+plot(lowerIncisor(1,:), lowerIncisor(2,:),':r')
+plot(lowerLipGen(1,:), lowerLipGen(2,:),':r')
 title('Matching in sagittal plane')
 
 
