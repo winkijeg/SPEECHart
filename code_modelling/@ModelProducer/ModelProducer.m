@@ -62,7 +62,8 @@ classdef ModelProducer
         [tMatGeom, tformImg] = calcTransformationImgToModel(obj);
         [landmarksTrans, contoursTrans] = transformSpeakerData(obj);
         anatomicalStructures = convertContoursIntoStructures(obj);
-        
+        upperIncisorPalate = matchUpperIncisor(obj, palateMRI, distRatioTeethInsertionPoints);
+        upperLip = matchUpperLip(obj, ptAttachIncisor, distRatioTeethInsertionPoints);
     end
         
 end
