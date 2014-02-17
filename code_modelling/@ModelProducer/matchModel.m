@@ -4,13 +4,13 @@ function struc = matchModel( obj )
 nRowTongMesh = 17;
 nColTongueMesh = 13;
 
-tongSurfMRI = obj.anatomicalStructures.tongueSurface;
-nPointsTongSurfMRI = size(tongSurfMRI, 2);
+tongSurf_mri = obj.anatomicalStructures.tongueSurface;
+nPointsTongSurf_mri = size(tongSurf_mri, 2);
 
-styloidProcess = obj.landmarksTransformed.styloidProcess;
+styloidProcess_mri = obj.landmarksTransformed.styloidProcess;
 
-tongInsL = obj.landmarksTransformed.tongInsL;
-tongInsH = obj.landmarksTransformed.tongInsH;
+tongInsL_mri = obj.landmarksTransformed.tongInsL;
+tongInsH_mri = obj.landmarksTransformed.tongInsH;
 ANS_mri = obj.landmarksTransformed.ANS;
 PNS_mri = obj.landmarksTransformed.PNS;
 
@@ -18,12 +18,14 @@ PNS_mri = obj.landmarksTransformed.PNS;
 hyoAGeneric = obj.modelGeneric.landmarks.hyoA;
 hyoBGeneric = obj.modelGeneric.landmarks.hyoB;
 hyoCGeneric = obj.modelGeneric.landmarks.hyoC;
+tongInsLGeneric = obj.modelGeneric.landmarks.tongInsL;
+tongInsHGeneric = obj.modelGeneric.landmarks.tongInsH;
 
-lar_ar_mri = obj.anatomicalStructures.larynxArytenoid;
-palate_mri = obj.anatomicalStructures.upperIncisorPalate;
+
+larynxArytenoid = obj.anatomicalStructures.larynxArytenoid;
+palateMRI = obj.anatomicalStructures.palate;
 pharynx_mri = obj.anatomicalStructures.backPharyngealWall;
 tongue_lar_mri = obj.anatomicalStructures.tongueLarynx;
-upperlip_mri = obj.anatomicalStructures.upperLip;
 velum_mri = obj.anatomicalStructures.velum;
 
 % generic tongue mesh at rest position
@@ -32,7 +34,7 @@ valTmp = getPositionOfNodeNumbers(tongMeshGen, 1:221);
 X_repos = reshape(valTmp(1, :), nColTongueMesh, nRowTongMesh)';
 Y_repos = reshape(valTmp(2, :), nColTongueMesh, nRowTongMesh)';
 
-% tongue surface of YPM
+% tongue surface of generic model
 xValsTongSurfGenMatrix = X_repos(:, nColTongueMesh); % x coordinates
 yValsTongSurfGenMatrix = Y_repos(:, nColTongueMesh); % y coordinates
 tongSurfGen = [xValsTongSurfGenMatrix'; yValsTongSurfGenMatrix'];
@@ -43,11 +45,11 @@ nPointsTongSurfGen = length(xValsTongSurfGenMatrix);
 % 10 times more nodes for a better definition of the speaker-specific
 % tongue contour
 xValsTongSurgMRIOrig = ...
-    spline(1:nPointsTongSurfMRI, tongSurfMRI(1, :), 1:1/10:nPointsTongSurfMRI);
+    spline(1:nPointsTongSurf_mri, tongSurf_mri(1, :), 1:1/10:nPointsTongSurf_mri);
 yValsTongSurgMRIOrig = ...
-    spline(1:nPointsTongSurfMRI, tongSurfMRI(2, :), 1:1/10:nPointsTongSurfMRI);
+    spline(1:nPointsTongSurf_mri, tongSurf_mri(2, :), 1:1/10:nPointsTongSurf_mri);
 
-tongSurfMRI = [xValsTongSurgMRIOrig; yValsTongSurgMRIOrig];
+tongSurf_mri = [xValsTongSurgMRIOrig; yValsTongSurgMRIOrig];
 nPointsTongSurfMRIOrig = length(xValsTongSurgMRIOrig);
 
 % Plot the data around the generic average position ----------------------
@@ -72,7 +74,7 @@ plot(xValsTongSurfGenMatrix, yValsTongSurfGenMatrix,'*g')
 hold on
 
 % plot the interpolated MRI tongue surface
-plot(tongSurfMRI(1, :), tongSurfMRI(2, :), 'b*', 'Linewidth', 2)
+plot(tongSurf_mri(1, :), tongSurf_mri(2, :), 'b*', 'Linewidth', 2)
 axis('equal')
 
 % end plotting ------------------------------------------------------------
@@ -90,7 +92,7 @@ lenTotTongSurfGen = sum(lenSegTongSurfGen);
 lenSegTongSurfMRIOrig = nan(1, nPointsTongSurfMRIOrig-1);
 for k = 1:nPointsTongSurfMRIOrig-1
     lenSegTongSurfMRIOrig(k) = points_dist_nd (2, ...
-        tongSurfMRI(:, k), tongSurfMRI(:, k+1));
+        tongSurf_mri(:, k), tongSurf_mri(:, k+1));
 end
 lenTotTongSurfMRI = sum(lenSegTongSurfMRIOrig);
 
@@ -174,20 +176,18 @@ X_repos_new(1:17, nColTongueMesh) = x_new;
 Y_repos_new(1:17, nColTongueMesh) = y_new;
 
 % Lowest insertion point of the lower incisor
-X_repos_new(1,1) = tongInsL(1);
-Y_repos_new(1,1) = tongInsL(2);
+X_repos_new(1,1) = tongInsL_mri(1);
+Y_repos_new(1,1) = tongInsL_mri(2);
 
 % Upper insertion on the incisor
-X_repos_new(nRowTongMesh,1) = tongInsH(1);
-Y_repos_new(nRowTongMesh,1) = tongInsH(2);
+X_repos_new(nRowTongMesh,1) = tongInsH_mri(1);
+Y_repos_new(nRowTongMesh,1) = tongInsH_mri(2);
 
 
 
-
+% up from here the lower teeth fit ! --------------------------------------
 
 % load generic lower incisor contour
-% height_bone_int, index_height_bone_int and index_height_bone_ext been added
-% in this file in February 2011 (Pascal)
 strucTeethLips = load('standard_teeth_lips.mat');
 teethLowerStandard = strucTeethLips.lower_teeth_standard;
 nPointsteethLowerStandard = length(teethLowerStandard(1, :));
@@ -197,52 +197,47 @@ lowlip_standard = strucTeethLips.lowlip_standard;
 index_intersect_lips_tooth = strucTeethLips.index_intersect_lips_tooth;
 index_end_upper_inc = strucTeethLips.index_end_upper_inc;
 
-% calculate inclination angle of the incisor
-% distance between the transformed mri lowest and highest insertion points
-dist_inc_new = sqrt((tongInsH(1)-tongInsL(1))^2 + (tongInsH(2) - tongInsL(2))^2);
-% distance between the generic lowest and highest insertion points
-dist_inc_mod = sqrt((teethLowerStandard(1, index_height_bone_int) - teethLowerStandard(1,end))^2 +...
-    (teethLowerStandard(2, index_height_bone_int) - teethLowerStandard(2,end))^2);
-% distance ratio for the incisor between the length in the adapted model
-% and the length in YPM
-rapport_dist_inc = dist_inc_new/dist_inc_mod;
+% distance between the mri lowest and highest insertion points
+distTeethInsertionPointsMRI = points_dist_nd(2, tongInsH_mri, tongInsL_mri);
+
+tongInsHStandard = teethLowerStandard(:, index_height_bone_int);
+tongInsLStandard = teethLowerStandard(:, end);
+distTeethInsertionPointsGen = points_dist_nd(2, tongInsHStandard, tongInsLStandard);
+
+distRatioTeethInsertionPoints = ...
+    distTeethInsertionPointsMRI / distTeethInsertionPointsGen;
+
+% angle of the line joining the lowest and highest insertion points on the
+% lower teeth in the mri model
+angleTeethLowMRIDegree = angle_deg_2d(tongInsH_mri, tongInsL_mri, ...
+    [1000; tongInsL_mri(2)]);
+angleTeethLowMRIRad = degrees_to_radians(angleTeethLowMRIDegree);
+
+angleTeethLowGenDegree = angle_deg_2d(tongInsHStandard, tongInsLStandard, ...
+    [1000; tongInsLStandard(2)]);
+angleTeethLowGenRad = degrees_to_radians(angleTeethLowGenDegree);
+
+angleTeethRotationRad = angleTeethLowMRIRad - angleTeethLowGenRad;
 
 
 
 
-
-
-
-% Sign of the vertical difference between the lowest and highest
-% insertion points on the incisor in the adapted model
-signe_inc_new = sign(tongInsH(2)-tongInsL(2));
-% Sign of the vertical difference between the lowest and highest
-% insertion points on the incisor in the generic model
-signe_inc_mod = sign(teethLowerStandard(2, index_height_bone_int) - teethLowerStandard(2,end));
-% Angle of the line joining the lowest and highest insertion points on the
-% incisor in the adapted model
-angle_inc_new = signe_inc_new*acos((tongInsH(1)-tongInsL(1))/dist_inc_new);
-% Angle of the line joining the lowest and highest insertion points on
-% the incisor in YPM
-angle_inc_mod = signe_inc_mod*acos((teethLowerStandard(1,index_height_bone_int)-teethLowerStandard(1,end))/dist_inc_mod);
-% The difference between these two angles is a measure of the global
-% rotation of the incisor
-angle_inc_rotat = angle_inc_new - angle_inc_mod;
-% Characteristics of the insertion points of the tongue on the generic incisor
+% insertion points characteristics of the tongue on the standard teeth
 dist_inc = nan(1, nRowTongMesh-1);
 signe_inc = nan(1, nRowTongMesh-1);
 angle_inc = nan(1, nRowTongMesh-1);
 for j = 2:nRowTongMesh-1
     % Distance between the current insertion point and the lowest insertion
     % point in YPM
-    dist_inc(j) = sqrt((X_repos(j,1)-X_repos(1,1))^2 + (Y_repos(j,1)-Y_repos(1,1))^2);
+    dist_inc(j) = sqrt((X_repos(j,1)-tongInsLGeneric(1))^2 + (Y_repos(j,1)-Y_repos(1,1))^2);
     % Sign of the vertical difference between the current insertion
     % point and the lowest insertion point in the original model YPM
     signe_inc(j) = sign((Y_repos(j,1) - Y_repos(1,1)));
     % Angle of the line joining the current insertion
     % point and the lowest insertion point in the original model YPM
-    angle_inc(j) = signe_inc(j) * abs(acos((X_repos(j,1)-X_repos(1,1))/dist_inc(j)));
+    angle_inc(j) = signe_inc(j) * abs(acos((X_repos(j,1)-tongInsLGeneric(1))/dist_inc(j)));
 end
+
 
 % teeth characteristics in the adopted model
 [~, ind_max_height_teeth] = max(teethLowerStandard(2,:));
@@ -260,13 +255,14 @@ for j = ind_max_height_teeth:nPointsteethLowerStandard-1
         teethLowerStandard(1, end)) / dist_teeth_int(j)));
 end
 
-x_teeth_ext_int = nan(1, index_height_bone_ext);
-y_teeth_ext_int = nan(1, index_height_bone_ext);
+
+xTeethLowerPart = nan(1, index_height_bone_ext);
+yTeethLowerPart = nan(1, index_height_bone_ext);
 for j = 1:index_height_bone_ext
     % Distance in x and y between the current point and the corresponding
     % point on the internal contour
-    x_teeth_ext_int(j) = teethLowerStandard(1,j) - teethLowerStandard(1,end-j+1);
-    y_teeth_ext_int(j) = teethLowerStandard(2,j) - teethLowerStandard(2,end-j+1);
+    xTeethLowerPart(j) = teethLowerStandard(1,j) - teethLowerStandard(1,end-j+1);
+    yTeethLowerPart(j) = teethLowerStandard(2,j) - teethLowerStandard(2,end-j+1);
 end
 
 % positioning of the lower incisor in the adapted model. New insertions of the
@@ -276,53 +272,55 @@ for j = index_height_bone_int+1:nPointsteethLowerStandard-1
     % Angle of the line joining the current point and the lowest insertion
     % point in the adapted model after a rotation equal to the global rotation
     % of the incisor
-    angle_teeth_final_int(j) = angle_teeth_int(j) + angle_inc_rotat;
+    angle_teeth_final_int(j) = angle_teeth_int(j) + angleTeethRotationRad;
     % Position of the corresponding insertion point in the adapted model
-    new_dist = rapport_dist_inc * dist_teeth_int(j);
-    dents_inf_new(1,j) = teethLowerStandard(1,end) + ...
-        rapport_dist_inc * dist_teeth_int(j) * cos(angle_teeth_final_int(j));
-    dents_inf_new(2,j) = teethLowerStandard(2,end) + ...
-        rapport_dist_inc * dist_teeth_int(j) * sin(angle_teeth_final_int(j));
+    new_dist = distRatioTeethInsertionPoints * dist_teeth_int(j);
+    teethLowerNew(1,j) = teethLowerStandard(1,end) + ...
+        distRatioTeethInsertionPoints * dist_teeth_int(j) * cos(angle_teeth_final_int(j));
+    teethLowerNew(2,j) = teethLowerStandard(2,end) + ...
+        distRatioTeethInsertionPoints * dist_teeth_int(j) * sin(angle_teeth_final_int(j));
 end
-dents_inf_new(1, nPointsteethLowerStandard) = 0;
-dents_inf_new(2, nPointsteethLowerStandard) = 0;
 
-dents_inf_new(1, index_height_bone_int) = tongInsH(1)-tongInsL(1);
-dents_inf_new(2, index_height_bone_int) = tongInsH(2)-tongInsL(2);
+
+teethLowerNew(1, nPointsteethLowerStandard) = 0;
+teethLowerNew(2, nPointsteethLowerStandard) = 0;
+
+teethLowerNew(1, index_height_bone_int) = tongInsH_mri(1)-tongInsL_mri(1);
+teethLowerNew(2, index_height_bone_int) = tongInsH_mri(2)-tongInsL_mri(2);
 
 for j = 1:index_height_bone_ext
-    dents_inf_new(1,j) = x_teeth_ext_int(j) + dents_inf_new(1,end-j+1);
-    dents_inf_new(2,j) = y_teeth_ext_int(j) + dents_inf_new(2,end-j+1);
+    teethLowerNew(1,j) = xTeethLowerPart(j) + teethLowerNew(1,end-j+1);
+    teethLowerNew(2,j) = yTeethLowerPart(j) + teethLowerNew(2,end-j+1);
 end
 
 for j = ind_max_height_teeth:index_height_bone_int-1
-    dents_inf_new(1,j) = dents_inf_new(1,index_height_bone_int) + min(1,rapport_dist_inc) *...
+    teethLowerNew(1,j) = teethLowerNew(1,index_height_bone_int) + min(1,distRatioTeethInsertionPoints) *...
         (teethLowerStandard(1,j) - teethLowerStandard(1,index_height_bone_int));
-    dents_inf_new(2,j) = dents_inf_new(2,index_height_bone_int) + min(1,rapport_dist_inc) *...
+    teethLowerNew(2,j) = teethLowerNew(2,index_height_bone_int) + min(1,distRatioTeethInsertionPoints) *...
         (teethLowerStandard(2,j) - teethLowerStandard(2,index_height_bone_int));
 end
 
 for j = index_height_bone_ext+2:ind_max_height_teeth-1
-    dents_inf_new(1,j) = dents_inf_new(1,index_height_bone_int) + min(1,rapport_dist_inc) *...
+    teethLowerNew(1,j) = teethLowerNew(1,index_height_bone_int) + min(1,distRatioTeethInsertionPoints) *...
         (teethLowerStandard(1,j) - teethLowerStandard(1,index_height_bone_int));
-    dents_inf_new(2,j) = dents_inf_new(2,index_height_bone_int) + min(1,rapport_dist_inc) *...
+    teethLowerNew(2,j) = teethLowerNew(2,index_height_bone_int) + min(1,distRatioTeethInsertionPoints) *...
         (teethLowerStandard(2,j) - teethLowerStandard(2,index_height_bone_int));
 end
 
-dents_inf_new(1,index_height_bone_ext+1) = mean([dents_inf_new(1,index_height_bone_ext) ...
-    dents_inf_new(1, index_height_bone_ext + 2)]);
+teethLowerNew(1,index_height_bone_ext+1) = mean([teethLowerNew(1,index_height_bone_ext) ...
+    teethLowerNew(1, index_height_bone_ext + 2)]);
 
-dents_inf_new(2,index_height_bone_ext+1) = mean([dents_inf_new(2,index_height_bone_ext) ...
-    dents_inf_new(2, index_height_bone_ext+2)]);
+teethLowerNew(2,index_height_bone_ext+1) = mean([teethLowerNew(2,index_height_bone_ext) ...
+    teethLowerNew(2, index_height_bone_ext+2)]);
 
-dents_inf_new(1,:) = X_repos_new(1,1) + dents_inf_new(1,:);
-dents_inf_new(2,:) = Y_repos_new(1,1) + dents_inf_new(2,:);
+teethLowerNew(1,:) = X_repos_new(1,1) + teethLowerNew(1,:);
+teethLowerNew(2,:) = Y_repos_new(1,1) + teethLowerNew(2,:);
 
 
 % first (lowest) 3 mesh lines
 % devide space between teeth last two teeth points into two sections
 
-lineSegTmp = dents_inf_new(1:2, end:-1:end-1);
+lineSegTmp = teethLowerNew(1:2, end:-1:end-1);
 ptsTmp = polyline_points_nd(2, 2, lineSegTmp, 3);
 
 X_repos_new(2, 1) = ptsTmp(1, 2);
@@ -333,7 +331,7 @@ Y_repos_new(3, 1) = ptsTmp(2, 3);
 
 
 % second section (2/3)
-lineSegTmp = dents_inf_new(1:2, end-1:-1:end-2);
+lineSegTmp = teethLowerNew(1:2, end-1:-1:end-2);
 ptsTmp = polyline_points_nd(2, 2, lineSegTmp, 7);
 
 X_repos_new(4, 1) = ptsTmp(1, 2);
@@ -355,7 +353,7 @@ X_repos_new(9, 1) = ptsTmp(1, 7);
 Y_repos_new(9, 1) = ptsTmp(2, 7);
 
 % third section (3/3)
-lineSegTmp = dents_inf_new(1:2, end-2:-1:end-3);
+lineSegTmp = teethLowerNew(1:2, end-2:-1:end-3);
 ptsTmp = polyline_points_nd(2, 2, lineSegTmp, 9);
 
 X_repos_new(10, 1) = ptsTmp(1, 2);
@@ -382,13 +380,26 @@ Y_repos_new(16, 1) = ptsTmp(2, 8);
 % 17th point is assigned elsewhere ...
 
 
+% end of teeth calculation ------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 % Changes for the lower lip
-lowlip_new(1,:) = min(1,rapport_dist_inc) * (lowlip_standard(1,:) - teethLowerStandard(1,index_intersect_lips_tooth)) +...
-    dents_inf_new(1,index_intersect_lips_tooth);
-lowlip_new(2,:) = min(1,rapport_dist_inc) * (lowlip_standard(2,:) - teethLowerStandard(2,index_intersect_lips_tooth)) +...
-    dents_inf_new(2,index_intersect_lips_tooth);
+lowlip_new(1,:) = min(1, distRatioTeethInsertionPoints) * (lowlip_standard(1,:) ...
+    - teethLowerStandard(1, index_intersect_lips_tooth)) + ...
+    teethLowerNew(1, index_intersect_lips_tooth);
 
-
+lowlip_new(2,:) = min(1, distRatioTeethInsertionPoints) * (lowlip_standard(2,:) ...
+    - teethLowerStandard(2, index_intersect_lips_tooth)) + ...
+    teethLowerNew(2, index_intersect_lips_tooth);
 
 
 
@@ -397,49 +408,40 @@ lowlip_new(2,:) = min(1,rapport_dist_inc) * (lowlip_standard(2,:) - teethLowerSt
 
 % Computation of the internal nodes of the adapted tongue model
 for i = 1:nRowTongMesh
-    % Distance between the node on the upper contour of the adapted model and
-    % the corresponding insertion nodes on the incisor
-    dist_new = sqrt((X_repos_new(i,nColTongueMesh) - X_repos_new(i,1))^2 + (Y_repos_new(i,nColTongueMesh) - Y_repos_new(i,1))^2);
-    % Distance between the node on the upper contour of YPM and the
+    % distance between the node on the mri tongue surface and the 
     % corresponding insertion nodes on the incisor
-    dist_mod = sqrt((X_repos(i,nColTongueMesh)-X_repos(i,1))^2+(Y_repos(i,nColTongueMesh)-Y_repos(i,1))^2);
-    % Distance ratio for the current line between the adapted model and YPM
-    rapport_dist = dist_new/dist_mod;
+    p1 = [X_repos_new(i, nColTongueMesh); Y_repos_new(i, nColTongueMesh)];
+    p2 = [X_repos_new(i, 1); Y_repos_new(i, 1)];
+    lengthRowMRI = points_dist_nd(2, p1', p2');
+    % the same for the generic model
+    p1 = [X_repos(i, nColTongueMesh); Y_repos(i, nColTongueMesh)];
+    p2 = [X_repos(i, 1); Y_repos(i, 1)];
+    lengthRowGeneric = points_dist_nd(2, p1', p2');
+    
+    lengthRatioCurrentRow = lengthRowMRI / lengthRowGeneric;
+    
     % Sign of the vertical difference between the node on the upper contour
     % of the adapted model and the corresponding insertion nodes on the incisor
-    signe_new = sign((Y_repos_new(i,nColTongueMesh)-Y_repos_new(i,1)));
+    signe_new = sign((Y_repos_new(i, nColTongueMesh) - Y_repos_new(i, 1)));
     % Sign of the vertical difference between the node on the upper contour of
     % YPM and the corresponding insertion nodes on the incisor
-    signe_mod = sign((Y_repos(i,nColTongueMesh)-Y_repos(i,1)));
-    % Angle of the line joining the node on the upper contour of adapted model
+    signe_mod = sign((Y_repos(i, nColTongueMesh)-Y_repos(i, 1)));
+    % Angle of the line joining the node on the mri tongue surface
     % and the corresponding insertion nodes on the incisor
-    angle_new = signe_new*acos((X_repos_new(i, nColTongueMesh) - X_repos_new(i,1))/dist_new);
+    angleMRI = signe_new * ...
+        acos((X_repos_new(i, nColTongueMesh) - X_repos_new(i, 1)) / lengthRowMRI);
     % Angle of the line joining the node on the upper contour of YPM and the
     % corresponding insertion nodes on the incisor
-    angle_mod = signe_mod*acos((X_repos(i,nColTongueMesh)-X_repos(i,1))/dist_mod);
+    angleGeneric = signe_mod * ...
+        acos((X_repos(i, nColTongueMesh) - X_repos(i, 1)) / lengthRowGeneric);
     % The difference between these two angles is a measure of the global
     % rotation of the current line
-    angle_rotat = angle_new - angle_mod;
+    angle_rotat = angleMRI - angleGeneric;
     
-    % Computation of the parameter used to define the hyoid bone in the
-    % adapted model
-    if (i == 1)
-        % In order to be able to predict the hyoid bone position in the adapted
-        % model we take into account the rapport_dist and angle_rotat
-        % parameters found for the 1st line (corresponding to the bottom of the
-        % tongue)
-        rapport_dist_hyoid = rapport_dist;
-        
-        % The line joining the lowest insertion point of the tongue
-        % on the incisor and the lowest point of hyoid bone (X1,Y1) will be
-        % rotated in the adapted model by the same angle as the lowest
-        % line of the mesh (see below)
-        angle_rotat_hyoid = angle_rotat;
-    end
     % Plot the nodes on the lowest line in the adapted model
     plot(X_repos_new(i, 1), Y_repos_new(i, 1), '+r', 'Linewidth',2)
     
-    plot(tongInsH(1), tongInsH(2),'or','Linewidth',3)
+    plot(tongInsH_mri(1), tongInsH_mri(2),'or','Linewidth',3)
     
     
     distTmp = nan(1, nColTongueMesh-1);
@@ -463,8 +465,8 @@ for i = 1:nRowTongMesh
         angle_final(j) = angle_intern(j) + angle_rotat;
         
         % Position of the corresponding node in the adapted model
-        X_repos_new(i, j) = X_repos_new(i, 1) + rapport_dist*distTmp(j)*cos(angle_final(j));
-        Y_repos_new(i, j) = Y_repos_new(i, 1) + rapport_dist*distTmp(j)*sin(angle_final(j));
+        X_repos_new(i, j) = X_repos_new(i, 1) + lengthRatioCurrentRow*distTmp(j)*cos(angle_final(j));
+        Y_repos_new(i, j) = Y_repos_new(i, 1) + lengthRatioCurrentRow*distTmp(j)*sin(angle_final(j));
         
         plot(X_repos(i, j), Y_repos(i, j), 'ob')
         % Plot the nodes on the corresponding line in the adapted model
@@ -473,6 +475,9 @@ for i = 1:nRowTongMesh
     end
     
 end
+
+
+% end mesh adaptation ----------------------------------------------------
 
 % Plot the new mesh
 for j=1:nColTongueMesh
@@ -487,61 +492,123 @@ for i=1:nRowTongMesh
             [Y_repos_new(i,j) Y_repos_new(i,j+1)], 'r')
     end
 end
-plot(dents_inf_new(1,:), dents_inf_new(2,:),'g')
-plot(dents_inf_new(1,:), dents_inf_new(2,:),'og')
+plot(teethLowerNew(1,:), teethLowerNew(2,:),'g')
+plot(teethLowerNew(1,:), teethLowerNew(2,:),'og')
 plot(lowlip_new(1,:),lowlip_new(2,:),'g')
 
-% Change upper incisor and upper lip
-palate_new_orig(1) = palate_mri(1,1);
-palate_new_orig(2) = palate_mri(2,1);
-for j=1:index_end_upper_inc
-    palate_mri(1,j) = palate_mri(1,index_end_upper_inc) + ...
-        min(1,rapport_dist_inc)*(palate_mri(1,j) - ...
-        palate_mri(1, index_end_upper_inc));
-    palate_mri(2,j) = palate_mri(2,index_end_upper_inc) + ...
-        min(1,rapport_dist_inc)*(palate_mri(2,j) - ...
-        palate_mri(2, index_end_upper_inc));
-end
-upperlip_mri(1,:) = min(1,rapport_dist_inc*1.1) * ...
-    (upperlip_mri(1,:) - palate_new_orig(1)) + palate_mri(1,1);
-upperlip_mri(2,:) = min(1,rapport_dist_inc*1.1) * ...
-    (upperlip_mri(2,:) - palate_new_orig(2)) + palate_mri(2,1);
+% change upper incisor and upper lip --------------------------------------
+upperIncisorPalate = matchUpperIncisor(obj, palateMRI, distRatioTeethInsertionPoints);
 
-% Computation of the 3 points for the hyoglossus insertion on the hyoid bone
-% in the adapted model
-% Distance between the first point of the hyoid bone (X1,Y1) and the lowest
-% insertion point of the tongue on the incisor in the original model (YPM)
-dist1 = sqrt((hyoAGeneric(1) - X_repos(1,1))^2 + (hyoAGeneric(2) - Y_repos(1,1))^2);
-% Sign of the vertical difference between the first point of the hyoid
-% bone (X1,Y1) and the lowest insertion point of the tongue on the incisor in
-% the original model (YPM)
-signe1 = sign((hyoAGeneric(2) - Y_repos(1,1)));
-% Angle of the line joining the first point of the hyoid bone (X1,Y1) and the
-% lowest insertion point of the tongue on the incisor in the generic model (YPM)
-angle_hyoid1 = signe1 * abs(acos((hyoAGeneric(1) - X_repos(1,1)) / dist1));
-% Angle of the line joining the first point of the hyoid bone (X1_new,Y1_new)
-% and the lowest insertion point of the tongue on the incisor in the adapted
-% model after a rotation with an angle angle_rotat_hyoid equal to the rotation
+
+ptAttachIncisor = upperIncisorPalate(1:2, 4);
+
+
+
+upperLip = matchUpperLip(obj, ptAttachIncisor, distRatioTeethInsertionPoints);
+
+% calculate the 3 hyoglossus insertion points on the hyoid bone -----------
+
+% Lengthes of the mouth floor
+% In order to be able to predict the hyoid bone position in the adapted
+% model we take into account the rapport_dist and angle_rotat
+% parameters found for the 1st line (corresponding to mouth floor)
+p1 = [X_repos_new(1, nColTongueMesh); Y_repos_new(1, nColTongueMesh)];
+p2 = [X_repos_new(1, 1); Y_repos_new(1, 1)];
+lengthRowMRI = points_dist_nd(2, p1', p2');
+% the same for the generic model
+p1 = [X_repos(1, nColTongueMesh); Y_repos(1, nColTongueMesh)];
+p2 = [tongInsLGeneric(1); Y_repos(1, 1)];
+lengthRowGeneric = points_dist_nd(2, p1', p2');
+    
+distRatioMouthFloors = lengthRowMRI / lengthRowGeneric;
+
+% Sign of the vertical difference between the node on the upper contour
+% of the adapted model and the corresponding insertion nodes on the incisor
+signe_new = sign((Y_repos_new(1, nColTongueMesh)-Y_repos_new(1,1)));
+% Sign of the vertical difference between the node on the upper contour of
+% YPM and the corresponding insertion nodes on the incisor
+signe_mod = sign((Y_repos(1, nColTongueMesh)-Y_repos(1,1)));
+% Angle of the line joining the node on the upper contour of adapted model
+% and the corresponding insertion nodes on the incisor
+angleMRI = signe_new * ...
+    acos((X_repos_new(1, nColTongueMesh) - X_repos_new(1,1)) / lengthRowMRI);
+% Angle of the line joining the node on the upper contour of YPM and the
+% corresponding insertion nodes on the incisor
+angleGeneric = signe_mod * ...
+    acos((X_repos(1, nColTongueMesh) - tongInsLGeneric(1)) / lengthRowGeneric);
+% The difference between these two angles is a measure of the global
+% rotation of the first line (mouth floor)
+
+% The line joining the lowest insertion point of the tongue
+% on the incisor and the lowest point of hyoid bone (hyoA) will be
+% rotated in the adapted model by the same angle as the lowest
+% line of the mesh
+angle_rotat_hyoid = angleMRI - angleGeneric;
+angleMRIDeg = radians_to_degrees(angleMRI);
+disp(['angle mouth floor MRI ', num2str(angleMRIDeg)])
+
+angleGenericDeg = radians_to_degrees(angleGeneric);
+disp(['angle mouth floor Generic ', num2str(angleGenericDeg)])
+
+diffAngels = radians_to_degrees(angle_rotat_hyoid);
+disp(['difference mouth floor angle ', num2str(diffAngels)])
+
+
+distHyoTongInsGen = points_dist_nd(2, hyoAGeneric, tongInsLGeneric);
+
+% Angle of the line joining the first point of the hyoid bone (hyoA) and the
+% lowest insertion point of the tongue (tongInsL) in the generic model
+angle_hyoid1 = -1 * abs(acos((hyoAGeneric(1) - tongInsLGeneric(1)) / distHyoTongInsGen));
+radians_to_degrees(angle_hyoid1)
+angleTmp = -1 * angle_deg_2d ([tongInsLGeneric(1), hyoAGeneric(2)], hyoAGeneric, tongInsLGeneric)
+
+
+% Angle of the line joining the first hyoid point (hyoA) and the lowest 
+% insertion point of the tongue on the incisor (tongInsL) in the mri after 
+% a rotation with an angle angle_rotat_hyoid equal to the rotation
 % of the lowest line of the mesh (see above)
+
 angle_final_hyoid1 = angle_hyoid1 + angle_rotat_hyoid;
+angle_final_hyoid1Deg = radians_to_degrees(angle_final_hyoid1);
+angle_rotat_hyoidDeg = radians_to_degrees(angle_rotat_hyoid);
+
+disp(['generic mouth loor angle: '  num2str(angleTmp)]);
+disp(['angle_rotat_hyoidDeg: '  num2str(angle_rotat_hyoidDeg)]);
+disp(['rotation angle: '  num2str(angle_final_hyoid1Deg)]);
+%angleRot = angle_deg_2d ( tongInsLGeneric, hyoAGeneric, [-1000, tongInsLGeneric(2)] )
 
 % Position of the corresponding point in the adapted model
-X1_new = X_repos_new(1,1) + rapport_dist_hyoid*dist1*cos(angle_final_hyoid1);
-Y1_new = Y_repos_new(1,1) + rapport_dist_hyoid*dist1*sin(angle_final_hyoid1);
+hyo1_new(1, 1) = tongInsL_mri(1) + ...
+    (distRatioMouthFloors * distHyoTongInsGen * cos(angle_final_hyoid1));
+hyo1_new(2, 1) = tongInsL_mri(2) + ...
+    (distRatioMouthFloors * distHyoTongInsGen * sin(angle_final_hyoid1))
 
-% The other points of the hyoid bone will be defined from the points of the
-% hyoid bone in the original model (YPM)
-X2_new = X1_new + hyoBGeneric(1) - hyoAGeneric(1);
-Y2_new = Y1_new + hyoBGeneric(2) - hyoAGeneric(2);
-
-X3_new = X1_new + hyoCGeneric(1) - hyoAGeneric(1);
-Y3_new = Y1_new + hyoCGeneric(2) - hyoAGeneric(2);
+% the remaining insertion points will be defined from the points of the
+% hyoid bone in the generic model
+hyo2_new = hyo1_new + hyoBGeneric - hyoAGeneric;
+hyo3_new = hyo1_new + hyoCGeneric - hyoAGeneric;
 
 
-structTemp = load ('data_palais_repos.mat');
+lengthNewSure = points_dist_nd(2, tongInsL_mri', hyo1_new')
 
-plot(structTemp.dents_inf(1,:), structTemp.dents_inf(2,:),':r')
-plot(structTemp.lowlip(1,:), structTemp.lowlip(2,:),':r')
+
+% new version
+
+strucGen.tongInsL = tongInsLGeneric;
+strucGen.hyoA = hyoAGeneric;
+strucGen.hyoB = hyoBGeneric;
+strucGen.hyoC = hyoCGeneric;
+
+strucHyoTrans = transform_hyoidBone(tongInsL_mri, strucGen);
+
+hyo1_new = strucHyoTrans.hyoA
+hyo2_new = strucHyoTrans.hyoB
+hyo3_new = strucHyoTrans.hyoC
+
+% end 3 hyoglossus points -------------------------------------------------
+
+
+
 
 lowerLipGen = obj.modelGeneric.structures.lowerLip;
 lowerIncisor = obj.modelGeneric.structures.lowerIncisor;
@@ -551,28 +618,26 @@ title('Matching in sagittal plane')
 
 
 % store data in a structure
-struc.landmarks.styloidProcess = styloidProcess;
-struc.landmarks.condyle = [styloidProcess(1); styloidProcess(2)+8];
+struc.landmarks.styloidProcess = styloidProcess_mri;
+struc.landmarks.condyle = [styloidProcess_mri(1); styloidProcess_mri(2)+8];
 struc.landmarks.ANS(1:2, 1) = ANS_mri;
 struc.landmarks.PNS(1:2, 1) = PNS_mri;
-struc.landmarks.hyo1 = [X1_new; Y1_new];
-struc.landmarks.hyo2 = [X2_new; Y2_new];
-struc.landmarks.hyo3 = [X3_new; Y3_new];
+struc.landmarks.hyo1 = hyo1_new;
+struc.landmarks.hyo2 = hyo2_new;
+struc.landmarks.hyo3 = hyo3_new;
 struc.landmarks.origin = obj.modelGeneric.landmarks.origin;
-
-% to be inspected .... \todo
-struc.landmarks.incisor_up_mri = [tongInsH(1); tongInsH(2)];
-struc.landmarks.incisor_low_mri = [tongInsL(1); tongInsL(2)];
+struc.landmarks.tongInsL = tongInsL_mri;
+struc.landmarks.tongInsH = tongInsH_mri;
 
 % store data related to the adopted vocal tract contour
 % anatomical structures are not affected by adaptation
-struc.structures.upperLip = upperlip_mri;
-struc.structures.upperIncisorPalate = palate_mri;
+struc.structures.upperLip = upperLip;
+struc.structures.upperIncisorPalate = upperIncisorPalate;
 struc.structures.velum = velum_mri;
 struc.structures.backPharyngealWall = pharynx_mri;
-struc.structures.larynxArytenoid = lar_ar_mri;
+struc.structures.larynxArytenoid = larynxArytenoid;
 struc.structures.tongueLarynx = tongue_lar_mri;
-struc.structures.lowerIncisor = dents_inf_new;
+struc.structures.lowerIncisor = teethLowerNew;
 struc.structures.lowerLip = lowlip_new;
 
 % Save the adopted tongue rest position
