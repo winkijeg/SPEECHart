@@ -497,14 +497,9 @@ plot(teethLowerNew(1,:), teethLowerNew(2,:),'og')
 plot(lowlip_new(1,:),lowlip_new(2,:),'g')
 
 % change upper incisor and upper lip --------------------------------------
-upperIncisorPalate = matchUpperIncisor(obj, palateMRI, distRatioTeethInsertionPoints);
+[upperIncisorPalate, ptAttachLip] = matchUpperIncisor(obj, palateMRI, distRatioTeethInsertionPoints);
 
-
-ptAttachIncisor = upperIncisorPalate(1:2, 4);
-
-
-
-upperLip = matchUpperLip(obj, ptAttachIncisor, distRatioTeethInsertionPoints);
+upperLip = matchUpperLip(obj, ptAttachLip, distRatioTeethInsertionPoints);
 
 % calculate the 3 hyoglossus insertion points on the hyoid bone -----------
 
