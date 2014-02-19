@@ -31,7 +31,9 @@ t2 = tmat_trans(t1, translateVec);
 incisorTrans = tmat_mxp2(t2, nPointsIncisor, upperIncisorStandard3D);
 incisorNew(1:2, :) = incisorTrans(2:3, :);
 
-upperIncisorPalate = [incisorNew palateLeftToRightOrder];
+% do not copy the last incisor point, because it is identical to the first
+% palate point!
+upperIncisorPalate = [incisorNew(1:2, 1:nPointsIncisor-1) palateLeftToRightOrder];
 ptAttachLip = upperIncisorPalate(1:2, indexAttachLip);
 
 end
