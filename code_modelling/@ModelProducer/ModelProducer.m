@@ -64,6 +64,7 @@ classdef ModelProducer
         anatomicalStructures = convertContoursIntoStructures(obj);
         [upperIncisorPalate, ptAttachLip] = matchUpperIncisor(obj, palateMRI, distRatioTeethInsertionPoints);
         upperLip = matchUpperLip(obj, ptAttachIncisor, distRatioTeethInsertionPoints);
+        lowerLip = matchLowerLip(obj, ptAttachIncisor, distRatioTeethInsertionPoints);
     end
         
 end
