@@ -20,7 +20,7 @@ anatomicalStructures.larynxArytenoid = fliplr(larynxArytenoidTmp);
 backPharyngealWallTmp = outerPt(:, gridZoning.pharynx(1):gridZoning.pharynx(2));
 anatomicalStructures.backPharyngealWall = fliplr(backPharyngealWallTmp);
 
-% \todo : replace velum by a standard velum at some time 
+% todo : replace velum by a standard velum at some time 
 velumTmp = outerPt(:, gridZoning.velum(1):gridZoning.velum(2));
 anatomicalStructures.velum = fliplr(velumTmp);
 
