@@ -28,6 +28,8 @@ classdef SpeakerModel
             obj.landmarks.hyoC = struc.landmarks.hyo3;
             obj.landmarks.ANS = struc.landmarks.ANS;
             obj.landmarks.PNS = struc.landmarks.PNS;
+            obj.landmarks.tongInsL = struc.landmarks.tongInsL;
+            obj.landmarks.tongInsH = struc.landmarks.tongInsH;
             
             obj.structures = struc.structures;
             
