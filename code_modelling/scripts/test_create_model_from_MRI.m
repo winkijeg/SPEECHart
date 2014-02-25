@@ -36,11 +36,15 @@ figure
 initPlotFigure(mySpkModel, true)
 
 plotStructures(modelGeneric, 'k--')
+plotLandmarks(modelGeneric, 'k')
+drawTongSurface(modelGeneric.tongGrid, 'r')
 
-plotLandmarks(mySpkModel, 'r')
+initPlotFigure(mySpkModel, true)
+plotLandmarks(mySpkModel, 'b')
 plotStructures(mySpkModel, 'b')
+drawTongSurface(mySpkModel.tongGrid, 'r')
+
 %plotTongueMesh(mySpkModel, 'k')
-%drawTongSurface(mySpkModel.tongGrid, 'r')
 
 
 % convert Model into obsolete format to simulate with the original code
