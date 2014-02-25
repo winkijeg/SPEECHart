@@ -1,11 +1,8 @@
 function struc = matchModel( obj )
 % fits the generic model to the speaker-specific anatomy
 
-nRowTongMesh = 17;
-nColTongueMesh = 13;
-
-tongSurf_mri = obj.anatomicalStructures.tongueSurface;
-nPointsTongSurf_mri = size(tongSurf_mri, 2);
+nFibers = 17;
+nSamplePointsPerFiber = 13;
 
 styloidProcess_mri = obj.landmarksTransformed.styloidProcess;
 
@@ -28,158 +25,31 @@ pharynx_mri = obj.anatomicalStructures.backPharyngealWall;
 tongue_lar_mri = obj.anatomicalStructures.tongueLarynx;
 velum_mri = obj.anatomicalStructures.velum;
 
-% generic tongue mesh at rest position
-tongMeshGen = obj.modelGeneric.tongGrid; % Class PositionFrame
+% generic tongue mesh / tongue surface at rest position
+tongMeshGen = obj.modelGeneric.tongGrid;
 valTmp = getPositionOfNodeNumbers(tongMeshGen, 1:221);
-X_repos = reshape(valTmp(1, :), nColTongueMesh, nRowTongMesh)';
-Y_repos = reshape(valTmp(2, :), nColTongueMesh, nRowTongMesh)';
-
-% tongue surface of generic model
-xValsTongSurfGenMatrix = X_repos(:, nColTongueMesh); % x coordinates
-yValsTongSurfGenMatrix = Y_repos(:, nColTongueMesh); % y coordinates
-tongSurfGen = [xValsTongSurfGenMatrix'; yValsTongSurfGenMatrix'];
-nPointsTongSurfGen = length(xValsTongSurfGenMatrix);
-
-% Interpolation of the tongue contour of the target speaker in order to
-% get a better matching of this contour starting from YPM's contour. We take
-% 10 times more nodes for a better definition of the speaker-specific
-% tongue contour
-xValsTongSurgMRIOrig = ...
-    spline(1:nPointsTongSurf_mri, tongSurf_mri(1, :), 1:1/10:nPointsTongSurf_mri);
-yValsTongSurgMRIOrig = ...
-    spline(1:nPointsTongSurf_mri, tongSurf_mri(2, :), 1:1/10:nPointsTongSurf_mri);
-
-tongSurf_mri = [xValsTongSurgMRIOrig; yValsTongSurgMRIOrig];
-nPointsTongSurfMRIOrig = length(xValsTongSurgMRIOrig);
-
-% Plot the data around the generic average position ----------------------
-% % % figure
-% % % % Plot the generic tongue
-% % % for j = 1:nColTongueMesh
-% % %     for i = 1:nRowTongMesh-1
-% % %         plot([X_repos(i,j) X_repos(i+1,j)], ...
-% % %             [Y_repos(i,j) Y_repos(i+1,j)], ':r')
-% % %         hold on
-% % %     end
-% % % end
-% % % for i = 1:nRowTongMesh
-% % %     for j = 1:nColTongueMesh-1
-% % %         plot([X_repos(i,j) X_repos(i,j+1)], ...
-% % %             [Y_repos(i,j) Y_repos(i,j+1)], ':r')
-% % %     end
-% % % end
-% % % 
-% % % % draw in green the nodes of the generic tongue surface
-% % % plot(xValsTongSurfGenMatrix, yValsTongSurfGenMatrix,'*g')
-% % % hold on
-% % % 
-% % % % plot the interpolated MRI tongue surface
-% % % plot(tongSurf_mri(1, :), tongSurf_mri(2, :), 'b*', 'Linewidth', 2)
-% % % axis('equal')
-
-% end plotting ------------------------------------------------------------
+X_repos = reshape(valTmp(1, :), nSamplePointsPerFiber, nFibers)';
+Y_repos = reshape(valTmp(2, :), nSamplePointsPerFiber, nFibers)';
+tongSurfaceGeneric = getPositionOfTongSurface(tongMeshGen);
 
 
-% computation of the piecewise length of the generic tongue contour
-lenSegTongSurfGen = nan(1, nPointsTongSurfGen-1);
-for k = 1:nPointsTongSurfGen-1
-    lenSegTongSurfGen(k) = points_dist_nd (2, ...
-        tongSurfGen(:, k), tongSurfGen(:, k+1));
-end
-lenTotTongSurfGen = sum(lenSegTongSurfGen);
+% MRI tongue surface at rest position
+tongSurfMRI = obj.anatomicalStructures.tongueSurface;
 
-% computation of the piecewise length of the mri tongue contour
-lenSegTongSurfMRIOrig = nan(1, nPointsTongSurfMRIOrig-1);
-for k = 1:nPointsTongSurfMRIOrig-1
-    lenSegTongSurfMRIOrig(k) = points_dist_nd (2, ...
-        tongSurf_mri(:, k), tongSurf_mri(:, k+1));
-end
-lenTotTongSurfMRI = sum(lenSegTongSurfMRIOrig);
-
-% calculate the relative position of the nodes along the generic tongue surface. 
-% the reference point is the first point of the
-% surface located on the hyoid bone. The relative position of each surface node 
-% is characterised by the ratio ratioRelPosGen of its distance to the 
-% reference point divided by the total length of the tongue surface.
-
-% for the first point the ratio is obviously 0
-ratiosRelPosGen = nan(1, nPointsTongSurfGen);
-ratiosRelPosGen(1) = 0;
-for k = 2:nPointsTongSurfGen
-    ratiosRelPosGen(k) = sum(lenSegTongSurfGen(1:k-1)) / lenTotTongSurfGen;
-end
-
-ratiosRelPosMRI = nan(1, nPointsTongSurfMRIOrig);
-ratiosRelPosMRI(1) = 0;
-for i = 2:nPointsTongSurfMRIOrig
-    % Ratio for the other points on the contour
-    ratiosRelPosMRI(i) = sum(lenSegTongSurfMRIOrig(1:i-1)) / lenTotTongSurfMRI;
-end
-
-% constructing the adapted tongue surface
-% the matching process starts by aligning the first point of the adapted
-% model (on the hyoid bone) with the first point of the tongue contour of
-% the target speaker, and by aligning the tongue tip point of the adapted
-% model with the last point of the tongue contour of the target speaker.
-
-% lowest point of the adapted tongue surface = lowest point
-% of the speaker specific tongue contour
-x_new(1) = xValsTongSurgMRIOrig(1);
-% Lowest point of the upper contour of the adapted model = Lowest point
-% of the speaker specific tongue contour
-y_new(1) = yValsTongSurgMRIOrig(1);
-% Tongue tip point of the upper contour of the adapted model = Tongue tip
-% point of the speaker specific tongue contour
-x_new(nPointsTongSurfGen) = xValsTongSurgMRIOrig(nPointsTongSurfMRIOrig);
-% Tongue tip point of the upper contour of the adapted model = Tongue tip
-% point of the speaker specific tongue contour
-y_new(nPointsTongSurfGen) = yValsTongSurgMRIOrig(nPointsTongSurfMRIOrig);
-
-
-
-
-% To match the upper contour of the adapted model with the tongue contour of
-% the target subject each node n of the generic tongue surface is projected onto
-% the point nREF of the tongue contour of the target speaker, for which the
-% ratio prop_elem_ref gives the best approximation of the ratio
-% prop_elem_mod calculated for generic node n.
-jlast = 1;
-for k = 2:nPointsTongSurfGen-1
-    j = jlast;
-    while (j < nPointsTongSurfMRIOrig)
-        j = j + 1;
-        if ratiosRelPosMRI(j-1) < ratiosRelPosGen(k) && ratiosRelPosMRI(j) >= ratiosRelPosGen(k)
-            jlast = j;
-            x_new(k) = xValsTongSurgMRIOrig(j);
-            y_new(k) = yValsTongSurgMRIOrig(j);
-            j = nPointsTongSurfMRIOrig;
-        end
-    end
-end
-
-
-
-% plot adapted tongue surface and shows displacement from generic
-% % % plot(x_new, y_new, 'or', 'Linewidth', 2)
-% % % for i = 1:nPointsTongSurfGen
-% % %     plot([xValsTongSurfGenMatrix(i) x_new(i)], [yValsTongSurfGenMatrix(i) y_new(i)], ':g')
-% % % end
-% % % 
-
-
+surfOut = matchTongueSurface(tongSurfaceGeneric, tongSurfMRI);
 
 % the nodes on the adapted tongue contour correspond to the nodes of
 % the tongue mesh at rest (ncol = 13)
-X_repos_new(1:17, nColTongueMesh) = x_new;
-Y_repos_new(1:17, nColTongueMesh) = y_new;
+X_repos_new(1:17, nSamplePointsPerFiber) = surfOut(1, :);
+Y_repos_new(1:17, nSamplePointsPerFiber) = surfOut(2, :);
 
 % lowest insertion point of the lower incisor
 X_repos_new(1, 1) = ggOriginL_mri(1);
 Y_repos_new(1, 1) = ggOriginL_mri(2);
 
 % Upper insertion on the incisor
-X_repos_new(nRowTongMesh, 1) = ggOriginH_mri(1);
-Y_repos_new(nRowTongMesh, 1) = ggOriginH_mri(2);
+X_repos_new(nFibers, 1) = ggOriginH_mri(1);
+Y_repos_new(nFibers, 1) = ggOriginH_mri(2);
 
 
 
@@ -248,15 +118,17 @@ Y_repos_new(16, 1) = ptsTmp(2, 8);
 % 17th point is assigned elsewhere ...
 
 
+
+
 % Computation of the internal nodes of the adapted tongue model
-for i = 1:nRowTongMesh
+for i = 1:nFibers
     % distance between the node on the mri tongue surface and the 
     % corresponding insertion nodes on the incisor
-    p1 = [X_repos_new(i, nColTongueMesh); Y_repos_new(i, nColTongueMesh)];
+    p1 = [X_repos_new(i, nSamplePointsPerFiber); Y_repos_new(i, nSamplePointsPerFiber)];
     p2 = [X_repos_new(i, 1); Y_repos_new(i, 1)];
     lengthFirstFiberGGMRI = points_dist_nd(2, p1', p2');
     % the same for the generic model
-    p1 = [X_repos(i, nColTongueMesh); Y_repos(i, nColTongueMesh)];
+    p1 = [X_repos(i, nSamplePointsPerFiber); Y_repos(i, nSamplePointsPerFiber)];
     p2 = [X_repos(i, 1); Y_repos(i, 1)];
     lengthFirstFiberGGGeneric = points_dist_nd(2, p1', p2');
     
@@ -264,33 +136,28 @@ for i = 1:nRowTongMesh
     
     % Sign of the vertical difference between the node on the upper contour
     % of the adapted model and the corresponding insertion nodes on the incisor
-    signe_new = sign((Y_repos_new(i, nColTongueMesh) - Y_repos_new(i, 1)));
+    signe_new = sign((Y_repos_new(i, nSamplePointsPerFiber) - Y_repos_new(i, 1)));
     % Sign of the vertical difference between the node on the upper contour of
     % YPM and the corresponding insertion nodes on the incisor
-    signe_mod = sign((Y_repos(i, nColTongueMesh)-Y_repos(i, 1)));
+    signe_mod = sign((Y_repos(i, nSamplePointsPerFiber)-Y_repos(i, 1)));
     % Angle of the line joining the node on the mri tongue surface
     % and the corresponding insertion nodes on the incisor
     angleMRI = signe_new * ...
-        acos((X_repos_new(i, nColTongueMesh) - X_repos_new(i, 1)) / lengthFirstFiberGGMRI);
+        acos((X_repos_new(i, nSamplePointsPerFiber) - X_repos_new(i, 1)) / lengthFirstFiberGGMRI);
     % Angle of the line joining the node on the upper contour of YPM and the
     % corresponding insertion nodes on the incisor
     angleGeneric = signe_mod * ...
-        acos((X_repos(i, nColTongueMesh) - X_repos(i, 1)) / lengthFirstFiberGGGeneric);
+        acos((X_repos(i, nSamplePointsPerFiber) - X_repos(i, 1)) / lengthFirstFiberGGGeneric);
     % The difference between these two angles is a measure of the global
     % rotation of the current line
     angle_rotat = angleMRI - angleGeneric;
     
-% % %     % Plot the nodes on the lowest line in the adapted model
-% % %     plot(X_repos_new(i, 1), Y_repos_new(i, 1), '+r', 'Linewidth',2)
-% % %     
-% % %     plot(ggOriginH_mri(1), ggOriginH_mri(2),'or','Linewidth',3)
-% % %     
     
-    distTmp = nan(1, nColTongueMesh-1);
-    signTmp = nan(1, nColTongueMesh-1);
-    angle_intern = nan(1, nColTongueMesh-1);
-    angle_final = nan(1, nColTongueMesh-1);
-    for j = 2:nColTongueMesh-1
+    distTmp = nan(1, nSamplePointsPerFiber-1);
+    signTmp = nan(1, nSamplePointsPerFiber-1);
+    angle_intern = nan(1, nSamplePointsPerFiber-1);
+    angle_final = nan(1, nSamplePointsPerFiber-1);
+    for j = 2:nSamplePointsPerFiber-1
         % Now we consider each internal node of the current line separately
         % Distance between this node and the corresponding insertion node
         % on the incisor in the original tongue model (YPM)
@@ -360,29 +227,29 @@ upperLip = matchUpperLip(obj, ptAttachLip, scaleFactor);
 % in order to predict the hyoid bone position in the adapted
 % model we take into account the rapport_dist and angle_rotat
 % parameters found for the two 1st genioglossus fibers
-p1 = [X_repos_new(1, nColTongueMesh); Y_repos_new(1, nColTongueMesh)];
+p1 = [X_repos_new(1, nSamplePointsPerFiber); Y_repos_new(1, nSamplePointsPerFiber)];
 p2 = [X_repos_new(1, 1); Y_repos_new(1, 1)];
 lengthFirstFiberGGMRI = points_dist_nd(2, p1', p2');
 % the same for the generic model
-p1 = [X_repos(1, nColTongueMesh); Y_repos(1, nColTongueMesh)];
+p1 = [X_repos(1, nSamplePointsPerFiber); Y_repos(1, nSamplePointsPerFiber)];
 p2 = [tongInsLGeneric(1); Y_repos(1, 1)];
 lengthFirstFiberGGGeneric = points_dist_nd(2, p1', p2');
 distRatioFirstFibers = lengthFirstFiberGGMRI / lengthFirstFiberGGGeneric;
 
 % sign of the vertical difference between the node on the upper contour
 % of the adapted model and the corresponding insertion nodes on the incisor
-signe_new = sign((Y_repos_new(1, nColTongueMesh)-Y_repos_new(1,1)));
+signe_new = sign((Y_repos_new(1, nSamplePointsPerFiber)-Y_repos_new(1,1)));
 % Sign of the vertical difference between the node on the upper contour of
 % YPM and the corresponding insertion nodes on the incisor
-signe_mod = sign((Y_repos(1, nColTongueMesh)-Y_repos(1,1)));
+signe_mod = sign((Y_repos(1, nSamplePointsPerFiber)-Y_repos(1,1)));
 % Angle of the line joining the node on the upper contour of adapted model
 % and the corresponding insertion nodes on the incisor
 angleMRI = signe_new * ...
-    acos((X_repos_new(1, nColTongueMesh) - X_repos_new(1,1)) / lengthFirstFiberGGMRI);
+    acos((X_repos_new(1, nSamplePointsPerFiber) - X_repos_new(1,1)) / lengthFirstFiberGGMRI);
 % Angle of the line joining the node on the upper contour of YPM and the
 % corresponding insertion nodes on the incisor
 angleGeneric = signe_mod * ...
-    acos((X_repos(1, nColTongueMesh) - tongInsLGeneric(1)) / lengthFirstFiberGGGeneric);
+    acos((X_repos(1, nSamplePointsPerFiber) - tongInsLGeneric(1)) / lengthFirstFiberGGGeneric);
 % The difference between these two angles is a measure of the global
 % rotation of the first line (mouth floor)
 
