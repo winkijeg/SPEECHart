@@ -11,4 +11,3 @@ function [] = drawMesh(obj, col)
     end       
 
 end
-
