@@ -29,8 +29,6 @@ dataModel = matchModel(myModelProducer);
 % create the model object
 mySpkModel = SpeakerModel(dataModel);
 
-
-
 % plotting ............................................................
 figure
 initPlotFigure(mySpkModel, true)
@@ -38,14 +36,13 @@ initPlotFigure(mySpkModel, true)
 plotStructures(modelGeneric, 'k--')
 plotLandmarks(modelGeneric, 'k')
 drawTongSurface(modelGeneric.tongGrid, 'r')
+plotTongueMesh(modelGeneric, 'k')
 
 initPlotFigure(mySpkModel, true)
 plotLandmarks(mySpkModel, 'b')
 plotStructures(mySpkModel, 'b')
 drawTongSurface(mySpkModel.tongGrid, 'r')
-
-%plotTongueMesh(mySpkModel, 'k')
-
+%plotTongueMesh(mySpkModel, 'r')
 
 % convert Model into obsolete format to simulate with the original code
 matsOut = exportModelObsolete(mySpkModel);
