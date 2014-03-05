@@ -7,7 +7,7 @@ classdef tongueSim < handle
         SEQUENCE
         speaker
         spkConf; % an object of class spkConfig
-        
+        outFile;
         % -----
         % coordinates
         XY % Vector containing the tongue shape, odd = x; even = y
@@ -191,7 +191,8 @@ classdef tongueSim < handle
             TSObj.cont = vtcontour([path_model filesep 'data_palais_repos_' spkStr], 'frenchmat');
             TSObj.restpos = restPos([path_model filesep 'XY_repos_' spkStr], 'frenchmat');
             TSObj.spkConf = spkConfig([path_model filesep 'result_stocke_' spkStr], 'frenchmat');
-            
+            TSObj.outFile = [spkStr, '_', out_file];
+
             TSObj.activationTime = t_trans;
             TSObj.holdTime = t_hold;
             TSObj.jaw_rotation = jaw_rot;
@@ -266,6 +267,8 @@ classdef tongueSim < handle
         IL(TSObj, U);
         VERT(TSObj, U);
 
+        save (TSObj);
+
         function plot(TSObj)
             figure('Units','normal','Position',[0.4 0.41 0.5 0.5]);
             % Pour eviter un core dump on met un point en 0,0
@@ -282,4 +285,7 @@ classdef tongueSim < handle
         end
     end
     
+    methods (Static, Access = private)
+        saveVars();
+    end
 end
