@@ -1,7 +1,7 @@
-function saveVars(fileName, varargin)
+function command = saveVars(fileName, varargin)
 	%SAVEVARS save variables with given names to file 
 	nVar = length(varargin);
-	if (mod(nVar), 2) ~= 0
+	if (mod(nVar, 2) ~= 0)
 		error('Bad input arguments'); 
 	end
 
@@ -12,5 +12,6 @@ function saveVars(fileName, varargin)
 		assignin('caller', names{i}, values{i});
 	end
 
-	command = ['save' fileName cellstr(names)];
+	command = ['save ' fileName ' ' strjoin(names, ' ')];
+    keyboard;   
 end

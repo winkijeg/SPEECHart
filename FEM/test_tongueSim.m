@@ -11,7 +11,8 @@ spkStr = 'pp_FF1';
  spkStr = 'cs';
 % spkStr = 'av';
 
-op=addpath(genpath('./elast'));
+op=addpath(genpath('./elast'), genpath('./strjoin'));
+
 
 path_model = ['spec_' spkStr '/'];
 

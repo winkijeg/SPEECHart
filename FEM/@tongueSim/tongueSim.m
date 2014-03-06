@@ -8,6 +8,7 @@ classdef tongueSim < handle
         speaker
         spkConf; % an object of class spkConfig
         outFile;
+        saveLight;
         % -----
         % coordinates
         XY % Vector containing the tongue shape, odd = x; even = y
@@ -192,6 +193,7 @@ classdef tongueSim < handle
             TSObj.restpos = restPos([path_model filesep 'XY_repos_' spkStr], 'frenchmat');
             TSObj.spkConf = spkConfig([path_model filesep 'result_stocke_' spkStr], 'frenchmat');
             TSObj.outFile = [spkStr, '_', out_file];
+            TSObj.saveLight = light;
 
             TSObj.activationTime = t_trans;
             TSObj.holdTime = t_hold;
@@ -286,6 +288,6 @@ classdef tongueSim < handle
     end
     
     methods (Static, Access = private)
-        saveVars();
+        command = saveVars(fileName, varargin);
     end
 end
