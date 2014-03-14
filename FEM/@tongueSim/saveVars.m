@@ -13,5 +13,4 @@ function command = saveVars(fileName, varargin)
 	end
 
 	command = ['save ' fileName ' ' strjoin(names, ' ')];
-    keyboard;   
 end
