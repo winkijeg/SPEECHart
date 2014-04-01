@@ -19,10 +19,10 @@ hyoBGeneric = obj.modelGeneric.landmarks.hyoB;
 hyoCGeneric = obj.modelGeneric.landmarks.hyoC;
 
 larynxArytenoid = obj.anatomicalStructures.larynxArytenoid;
-palateMRI = obj.anatomicalStructures.palate;
-pharynx_mri = obj.anatomicalStructures.backPharyngealWall;
-tongue_lar_mri = obj.anatomicalStructures.tongueLarynx;
-velum_mri = obj.anatomicalStructures.velum;
+palateMRI       = obj.anatomicalStructures.palate;
+pharynx_mri     = obj.anatomicalStructures.backPharyngealWall;
+tongue_lar_mri  = obj.anatomicalStructures.tongueLarynx;
+velum_mri       = obj.anatomicalStructures.velum;
 
 % generic tongue mesh / tongue surface at rest position
 tongMeshGen = obj.modelGeneric.tongGrid;
@@ -30,7 +30,6 @@ valTmp = getPositionOfNodeNumbers(tongMeshGen, 1:nMeshPoints);
 X_repos = reshape(valTmp(1, :), nSamplePointsPerFiber, nFibers)';
 Y_repos = reshape(valTmp(2, :), nSamplePointsPerFiber, nFibers)';
 tongSurfaceGeneric = getPositionOfTongSurface(tongMeshGen);
-
 
 % MRI tongue surface at rest position
 tongSurfMRI = obj.anatomicalStructures.tongueSurface;
