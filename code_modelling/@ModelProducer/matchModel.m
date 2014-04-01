@@ -1,8 +1,8 @@
 function struc = matchModel( obj )
 % fits the generic model to the speaker-specific anatomy
 
-nFibers = 17;
-nSamplePointsPerFiber = 13;
+nFibers = obj.nFibers;
+nSamplePointsPerFiber = obj.nSamplePointsPerFiber;
 
 styloidProcess_mri = obj.landmarksTransformed.styloidProcess;
 
