@@ -4,6 +4,8 @@ function struc = matchModel( obj )
 nFibers = obj.nFibers;
 nSamplePointsPerFiber = obj.nSamplePointsPerFiber;
 
+nMeshPoints = obj.nMeshPoints;
+
 styloidProcess_mri = obj.landmarksTransformed.styloidProcess;
 
 ggOriginL_mri = obj.landmarksTransformed.tongInsL;
@@ -24,7 +26,7 @@ velum_mri = obj.anatomicalStructures.velum;
 
 % generic tongue mesh / tongue surface at rest position
 tongMeshGen = obj.modelGeneric.tongGrid;
-valTmp = getPositionOfNodeNumbers(tongMeshGen, 1:221);
+valTmp = getPositionOfNodeNumbers(tongMeshGen, 1:nMeshPoints);
 X_repos = reshape(valTmp(1, :), nSamplePointsPerFiber, nFibers)';
 Y_repos = reshape(valTmp(2, :), nSamplePointsPerFiber, nFibers)';
 tongSurfaceGeneric = getPositionOfTongSurface(tongMeshGen);
@@ -135,8 +137,8 @@ struc.structures.lowerIncisor = teethLowerNew;
 struc.structures.lowerLip = lowerLip;
 
 % Save the adopted tongue rest position
-struc.tongGrid.x = reshape(X_repos_new', 1, 221);
-struc.tongGrid.y = reshape(Y_repos_new', 1, 221);
+struc.tongGrid.x = reshape(X_repos_new', 1, nMeshPoints);
+struc.tongGrid.y = reshape(Y_repos_new', 1, nMeshPoints);
 
 end
 
