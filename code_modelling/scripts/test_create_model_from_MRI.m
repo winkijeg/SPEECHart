@@ -4,7 +4,7 @@ clearvars
 close all
 
 princInvestigator = 'PP';
-speakerName = 'FF1';
+speakerName = 'FM1';
 phonLab = '@';
 
 % specify path names
@@ -36,7 +36,7 @@ initPlotFigure(mySpkModel, true)
 plotStructures(modelGeneric, 'k--')
 plotLandmarks(modelGeneric, 'k')
 drawTongSurface(modelGeneric.tongGrid, 'r')
-plotTongueMesh(modelGeneric, 'k')
+%plotTongueMesh(modelGeneric, 'k')
 
 initPlotFigure(mySpkModel, true)
 plotLandmarks(mySpkModel, 'b')
