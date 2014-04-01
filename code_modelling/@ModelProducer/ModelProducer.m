@@ -6,8 +6,6 @@ classdef ModelProducer
         nFibers = 17; % according to rows in the tongue mesh
         nSamplePointsPerFiber = 13; % colums in the tongue mesh
         
-        nMeshPoints = 221;
-        
         modelGeneric
         
         landmarks

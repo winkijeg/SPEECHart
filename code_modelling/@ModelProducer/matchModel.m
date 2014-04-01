@@ -4,7 +4,7 @@ function struc = matchModel( obj )
 nFibers = obj.nFibers;
 nSamplePointsPerFiber = obj.nSamplePointsPerFiber;
 
-nMeshPoints = obj.nMeshPoints;
+nMeshPoints = nFibers * nSamplePointsPerFiber;
 
 styloidProcess_mri = obj.landmarksTransformed.styloidProcess;
 
@@ -38,8 +38,8 @@ surfOut = matchTongueSurface(tongSurfaceGeneric, tongSurfMRI);
 
 % the nodes on the adapted tongue contour correspond to the nodes of
 % the tongue mesh at rest
-X_repos_new(1:17, nSamplePointsPerFiber) = surfOut(1, :);
-Y_repos_new(1:17, nSamplePointsPerFiber) = surfOut(2, :);
+X_repos_new(1:nFibers, nSamplePointsPerFiber) = surfOut(1, :);
+Y_repos_new(1:nFibers, nSamplePointsPerFiber) = surfOut(2, :);
 
 % lowest insertion point of the lower incisor
 X_repos_new(1, 1) = ggOriginL_mri(1);
@@ -55,30 +55,9 @@ Y_repos_new(1:17, 1) = originsAdapted(2, :);
 
 [X_repos_new, Y_repos_new] = matchInnerTongueMesh(X_repos, Y_repos, X_repos_new, Y_repos_new);
 
-figure
-plot(teethLowerNew(1,:), teethLowerNew(2,:),'go-')
-hold on
-axis equal
-
-for j=1:nSamplePointsPerFiber
-    for i=1:nFibers-1
-        plot([X_repos_new(i,j) X_repos_new(i+1,j)], ...
-            [Y_repos_new(i,j) Y_repos_new(i+1,j)], 'r')
-    end
-end
-for i=1:nFibers
-    for j=1:nSamplePointsPerFiber-1
-        plot([X_repos_new(i,j) X_repos_new(i,j+1)], ...
-            [Y_repos_new(i,j) Y_repos_new(i,j+1)], 'r')
-    end
-end
-
 % match upper lip --------------------------------------
 ptAttachLowerLips = teethLowerNew(1:2, 7);
 lowerLip = matchLowerLip(obj, ptAttachLowerLips, scaleFactor);
-
-plot(lowerLip(1,:), lowerLip(2,:),'g')
-
 
 % match upper incisor and upper lip --------------------------------------
 [upperIncisorPalate, ptAttachLip] = matchUpperIncisor(obj, palateMRI, scaleFactor);
@@ -108,9 +87,6 @@ hyo3_new = strucHyoTrans.hyoC;
 % assign values -----------------------------------------------------
 lowerLipGen = obj.modelGeneric.structures.lowerLip;
 lowerIncisor = obj.modelGeneric.structures.lowerIncisor;
-plot(lowerIncisor(1, :), lowerIncisor(2, :), 'ro-')
-plot(lowerLipGen(1, :), lowerLipGen(2, :), 'ro-')
-
 
 % store data in a structure
 struc.landmarks.styloidProcess = styloidProcess_mri;
