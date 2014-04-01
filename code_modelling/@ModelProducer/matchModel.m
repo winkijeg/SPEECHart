@@ -15,9 +15,6 @@ PNS_mri = obj.landmarksTransformed.PNS;
 hyoAGeneric = obj.modelGeneric.landmarks.hyoA;
 hyoBGeneric = obj.modelGeneric.landmarks.hyoB;
 hyoCGeneric = obj.modelGeneric.landmarks.hyoC;
-tongInsLGeneric = obj.modelGeneric.landmarks.tongInsL;
-tongInsHGeneric = obj.modelGeneric.landmarks.tongInsH;
-
 
 larynxArytenoid = obj.anatomicalStructures.larynxArytenoid;
 palateMRI = obj.anatomicalStructures.palate;
