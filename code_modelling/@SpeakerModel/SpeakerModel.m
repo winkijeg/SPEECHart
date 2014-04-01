@@ -1,6 +1,5 @@
 classdef SpeakerModel
-    %UNTITLED2 Summary of this class goes here
-    %   Detailed explanation goes here
+    % hold data representing a FEM speaker model
     
     properties
         
