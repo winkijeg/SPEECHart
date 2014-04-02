@@ -1,5 +1,5 @@
 classdef ModelProducer
-    % produce a FEM-model based on mri-data of a specific speaker
+    % produce a FEM-model based on mri data of a specific speaker
     
     properties
         
@@ -56,7 +56,7 @@ classdef ModelProducer
             
         end
 
-        dataModel = matchModel( obj );
+        model = matchModel( myModelProducer );
 
     end
     

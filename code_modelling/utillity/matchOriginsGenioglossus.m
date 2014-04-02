@@ -1,5 +1,5 @@
 function originsAdapted = matchOriginsGenioglossus( partOfMentalSpine )
-% adapt MRI genioglossus oringins with to the generic tongue mesh
+% adapt MRI genioglossus oringins with respect to the generic tongue mesh
 
 % first (lowest) 3 mesh lines
 % equaly spced points between first (last) two teeth points
@@ -16,9 +16,6 @@ originsAdapted(1:2, 4:9) = ptsTmp2(1:2, 2:7);
 lineSegTmp3 = partOfMentalSpine(1:2, 3:4);
 ptsTmp3 = polyline_points_nd(2, 2, lineSegTmp3, 9);
 originsAdapted(1:2, 10:17) = ptsTmp3(1:2, 2:9);
-
-% 17th point is assigned elsewhere ...
-
 
 end
 
