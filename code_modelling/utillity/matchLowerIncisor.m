@@ -1,12 +1,9 @@
-function [lowerIncisor, scaleFactor] = matchLowerIncisor( obj, ptAttachIncisor)
+function [lowerIncisor, scaleFactor] = matchLowerIncisor( tongInsL_mri, tongInsH_mri)
 % connect standard lower incisor with tongue with regard to incisor size
 
 % the two indices split the incisor roughly into mental spine and real
 % incisor. the lower part (in other words the mental spine part) is matched
 % different from the part cooresponding to the incisor (teeth tip).
-
-tongInsL_MRI = obj.landmarksTransformed.tongInsL;
-tongInsH_MRI = obj.landmarksTransformed.tongInsH;
 
 % load standard incisor 
 mat = load('lowerIncisorStandard.mat');
@@ -17,14 +14,14 @@ tongInsH_Standard = incisorStandard(1:2, 14);
 tongInsL_Standard = incisorStandard(1:2, 17);
 
 % calculate rotation angle
-angleIncisorMRI_deg = angle_deg_2d(tongInsH_MRI, tongInsL_MRI, ...
-    [1000; tongInsL_MRI(2)]);
-angleIncisorStandard_deg = angle_deg_2d(tongInsH_Standard, tongInsL_Standard, ...
+angleIncisor_mri_deg = angle_deg_2d(tongInsH_mri, tongInsL_mri, ...
+    [1000; tongInsL_mri(2)]);
+angleIncisor_standard_deg = angle_deg_2d(tongInsH_Standard, tongInsL_Standard, ...
     [1000; tongInsL_Standard(2)]);
-angleRotation = angleIncisorMRI_deg - angleIncisorStandard_deg;
+angleRotation = angleIncisor_mri_deg - angleIncisor_standard_deg;
 
 % calculate scaling factor used to scale the rigid structures almost everywhere
-distMRI = points_dist_nd(2, tongInsH_MRI, tongInsL_MRI);
+distMRI = points_dist_nd(2, tongInsH_mri, tongInsL_mri);
 distStandard = points_dist_nd(2, tongInsH_Standard, tongInsL_Standard);
 scaleFactor = distMRI / distStandard;
 
@@ -73,7 +70,7 @@ lowerIncisorTmp(1:2, 5) = [xValTmp; yValTmp];
 lowerIncisor3D = [zeros(1, nPointsIncisorStandard); lowerIncisorTmp];
 
 t1 = tmat_init();
-t2 = tmat_trans(t1, [0; ptAttachIncisor]');
+t2 = tmat_trans(t1, [0; tongInsL_mri]');
 incisorTrans = tmat_mxp2(t2, nPointsIncisorStandard, lowerIncisor3D);
 lowerIncisor(1:2, :) = incisorTrans(2:3, :);
 
