@@ -67,10 +67,12 @@ classdef tongueSim < handle
         
         % Temporary variables
         aff_fin;
-        t_affiche = 0.01;
+        t_affiche = 0.001;
         t_initial;
         t_transition;
         t_final;
+        t_final_cum;
+        t_hold; 
         t_calcul;
         t_verbose = 0.001;
         n_contact = 0;
@@ -196,15 +198,15 @@ classdef tongueSim < handle
             TSObj.saveLight = light;
 
             TSObj.activationTime = t_trans;
-            TSObj.holdTime = t_hold;
+            TSObj.t_hold = t_hold;
             TSObj.jaw_rotation = jaw_rot;
             TSObj.ll_rotation = ll_rot;
             TSObj.lip_protrusion = lip_prot;
             TSObj.hyoid_movment = hyoid_mov;
-            TSObj.finalTime = TSObj.activationTime + TSObj.holdTime; % combiner le t-rise et le t-hold pour t-final
+            TSObj.t_final = TSObj.activationTime + TSObj.t_hold; % combiner le t-rise et le t-hold pour t-final
             % combine t_trans (!) and
             % t_hold to t_final
-            TSObj.finalTimeCum = cumsum(TSObj.finalTime);     % Vector avec le temps final de chaque transition
+            TSObj.t_final_cum = cumsum(TSObj.t_final);     % Vector avec le temps final de chaque transition
             % Vector with every transitions'
             % final times
             
@@ -228,7 +230,7 @@ classdef tongueSim < handle
             
             %A modifier ICI
             %to modify HERE
-            TSObj.n_phon = length(TSObj.holdTime);
+            TSObj.n_phon = length(TSObj.t_hold);
             TSObj.delta_lambda=[delta_lambda_ggp' delta_lambda_gga' delta_lambda_hyo' delta_lambda_sty' delta_lambda_ver' delta_lambda_sl' delta_lambda_il']';
             TSObj.MATRICE_LAMBDA(:,1) = TSObj.spkConf.configs(1,1:2:14)';
             
@@ -288,6 +290,6 @@ classdef tongueSim < handle
     end
     
     methods (Static, Access = private)
-        command = saveVars(fileName, varargin);
+        command =   saveVars(fileName, varargin);
     end
 end

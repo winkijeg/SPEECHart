@@ -9,9 +9,9 @@ function LAMBDA = comLambda_adapt_jaw(TSObj, t)
     % between the length at rest and minimum length for each fiber
     
     % the time interval where we are ...
-    interval = min(find(TSObj.finalTimeCum >= t));
+    interval = min(find(TSObj.t_final_cum >= t));
     
-    t_cum = [0, TSObj.finalTimeCum];
+    t_cum = [0, TSObj.t_final_cum];
     t = t - t_cum(interval);
 
     if length(interval)

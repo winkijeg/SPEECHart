@@ -3,9 +3,9 @@ function simulate(TSObj)
 
 tic;
 
-% tfseq=TSObj.finalTimeCum;
-t0_seq=[0 TSObj.finalTimeCum(1:length(TSObj.finalTimeCum)-1)];
-TSObj.tf=TSObj.finalTimeCum(length(TSObj.finalTimeCum));
+% tfseq=TSObj.t_final_cum;
+t0_seq=[0 TSObj.t_final_cum(1:length(TSObj.t_final_cum)-1)];
+TSObj.tf=TSObj.t_final_cum(length(TSObj.t_final_cum));
 
 %Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99
 TSObj.UU.lowerlip=zeros(round(200*TSObj.tf),12); % 30
@@ -33,7 +33,7 @@ TSObj.tongue_lar_initial = TSObj.cont.tongue_lar_mri;
 TSObj.udot3_init();
 
 % Si simulation normal
-for ind = 1:length(TSObj.finalTimeCum)
+for ind = 1:length(TSObj.t_final_cum)
     TSObj.i_Sim = ind;
     if TSObj.i_Sim==1
         TSObj.tfin=[];TSObj.Ufin=[];
@@ -66,7 +66,7 @@ for ind = 1:length(TSObj.finalTimeCum)
     TSObj.dist_rest_pos_lowlip=sqrt((TSObj.cont.lowerlip(2,:)-TSObj.Y_origin_ll).^2+(TSObj.cont.lowerlip(1,:)-TSObj.X_origin_ll).^2);%the initial distance of the lower lip to the center of rotation
     TSObj.t_initial=t0_seq(TSObj.i_Sim);
     TSObj.t_transition=t0_seq(TSObj.i_Sim)+TSObj.activationTime(TSObj.i_Sim);
-    TSObj.t_final=TSObj.finalTimeCum(TSObj.i_Sim);
+    TSObj.t_final=TSObj.t_final_cum(TSObj.i_Sim);
     TSObj.theta=TSObj.jaw_rotation(TSObj.i_Sim);
     TSObj.theta_ll=TSObj.ll_rotation(TSObj.i_Sim);
     TSObj.dist_lip=TSObj.lip_protrusion(TSObj.i_Sim);
@@ -76,12 +76,12 @@ for ind = 1:length(TSObj.finalTimeCum)
     %    pause
     %    hold on
     %
-    fprintf('Integrating from %d to %d\n',t0_seq(TSObj.i_Sim), TSObj.finalTimeCum(TSObj.i_Sim));
+    fprintf('Integrating from %d to %d\n',t0_seq(TSObj.i_Sim), TSObj.t_final_cum(TSObj.i_Sim));
     if 0    
     	disp('NOT ENTERING ODE45PLUS BECAUSE OF TOO MANY UNNRESOLVED ISSUES.')
     else
         disp(['Iteration ' num2str(ind) ' of ode45plus.']);
-    	[ts,Us]=TSObj.ode45plus(@TSObj.udot3_adapt_jaw, t0_seq(TSObj.i_Sim), TSObj.finalTimeCum(TSObj.i_Sim), TSObj.U0, 1e-3, (((3 * TSObj.fact) - 2) / 500));
+    	[ts,Us]=TSObj.ode45plus(@TSObj.udot3_adapt_jaw, t0_seq(TSObj.i_Sim), TSObj.t_final_cum(TSObj.i_Sim), TSObj.U0, 1e-3, (((3 * TSObj.fact) - 2) / 500));
     
     %       figure(300)
     % plot(X0,Y0,'bo')

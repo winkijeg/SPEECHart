@@ -188,13 +188,17 @@ for i=1:TSObj.MM
     for j=1:TSObj.NN
         
         TSObj.v1=(i-1)*TSObj.NNx2+2*j;
-        X(i,j)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
-        Y(i,j)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
-        TSObj.XY(TSObj.v1-1,1)=X(i,j);
-        TSObj.XY(TSObj.v1,1)=Y(i,j);
+%         X(i,j)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
+%         Y(i,j)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
+%         TSObj.XY(TSObj.v1-1,1)=X(i,j);
+%         TSObj.XY(TSObj.v1,1)=Y(i,j);
+%         X(i,j)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
+%         Y(i,j)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
+        TSObj.XY(TSObj.v1-1,1)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
+        TSObj.XY(TSObj.v1,1)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
     end
 end
-
+% keyboard;
 
 % ---------------------------------------------------------------
 % Calcul de lambda a l'instant t grace a la fonction COMLAMBDA
@@ -409,24 +413,35 @@ end              % fin du for j
 
 % Affichage du contour de la langue tous les 0.02 s
 if t>=TSObj.t_affiche                         %      |
-    fprintf('Affichage...\n');            %      |
+    fprintf('Displaying...\n');            %      |
     TSObj.t_affiche=TSObj.t_affiche+0.005;% <-----------------/
-    interval = min(find(TSObj.finalTimeCum >= t));
+    interval = min(find(TSObj.t_final_cum >= t));
     colIndex = rem(interval, length(TSObj.colors)) + 1;
     
     figure(1);
-    plot(X(1:TSObj.MM,TSObj.NN),    Y(1:TSObj.MM,TSObj.NN),['-' TSObj.colors(colIndex)]);
-    plot(X(TSObj.MM,1:TSObj.NN),    Y(TSObj.MM,1:TSObj.NN),['-' TSObj.colors(colIndex)]);
+    % I optimized X and Y away. Let's see what can be done more
+    % plot(X(1:TSObj.MM,TSObj.NN),    Y(1:TSObj.MM,TSObj.NN),['-' TSObj.colors(colIndex)]);
+    plot(TSObj.XY(TSObj.NN*2-1:TSObj.NN*2:end),...
+        TSObj.XY(TSObj.NN*2:TSObj.NN*2:end), ['-' TSObj.colors(colIndex)]);
+    %plot(X(TSObj.MM,1:TSObj.NN),    Y(TSObj.MM,1:TSObj.NN),['-' TSObj.colors(colIndex)]);
+    plot(TSObj.XY(1+(TSObj.MM-1)*TSObj.NN*2:2:end),...
+        TSObj.XY(2+(TSObj.MM-1)*TSObj.NN*2:2:end),['-' TSObj.colors(colIndex)]);
     plot(TSObj.cont.lowerteeth(1,:),TSObj.cont.lowerteeth(2,:),['-' TSObj.colors(colIndex)]);
     plot(TSObj.cont.lowerlip(1,:),TSObj.cont.lowerlip(2,:),['-' TSObj.colors(colIndex)]);
     plot(TSObj.cont.upperlip(1,:),TSObj.cont.upperlip(2,:),['-' TSObj.colors(colIndex)]);
-    plot(X(1:TSObj.MM,TSObj.NN),    Y(1:TSObj.MM,TSObj.NN),'r+');
-    plot(X(TSObj.MM,1:TSObj.NN),    Y(TSObj.MM,1:TSObj.NN),'r+');
+    %plot(X(1:TSObj.MM,TSObj.NN),    Y(1:TSObj.MM,TSObj.NN),'r+');
+    plot(TSObj.XY(TSObj.NN*2-1:TSObj.NN*2:end),...
+        TSObj.XY(TSObj.NN*2:TSObj.NN*2:end), 'r+');
+    % plot(X(TSObj.MM,1:TSObj.NN),    Y(TSObj.MM,1:TSObj.NN),'r+');
+    plot(TSObj.XY(1+(TSObj.MM-1)*TSObj.NN*2:2:end),...
+        TSObj.XY(2+(TSObj.MM-1)*TSObj.NN*2:2:end),'r+');
     plot(TSObj.cont.lar_ar(1,:),TSObj.cont.lar_ar(2,:),['-' TSObj.colors(colIndex)])
     plot(TSObj.cont.pharynx(1,1:end),TSObj.cont.pharynx(2,1:end),'k-')
     plot([TSObj.cont.pharynx(1,end) TSObj.cont.lar_ar(1,1)], [TSObj.cont.pharynx(2,end) TSObj.cont.lar_ar(2,1)],...
         ['-' TSObj.colors(colIndex)])
-    plot([X(1,TSObj.NN) TSObj.cont.tongue_lar_mri(1,1)],[Y(1,TSObj.NN) TSObj.cont.tongue_lar_mri(2,1)],'m')
+    % X(1,TSObj.NN) Y(1,TSObj.NN)
+    plot([TSObj.XY(2*TSObj.NN-1) TSObj.cont.tongue_lar_mri(1,1)],...
+        [TSObj.XY(2*TSObj.NN) TSObj.cont.tongue_lar_mri(2,1)],'m')
     plot(TSObj.cont.tongue_lar_mri(1,:), TSObj.cont.tongue_lar_mri(2,:),['-' TSObj.colors(colIndex)])
     %plot(TSObj.cont.tongue_lar_mri(1,:), TSObj.cont.tongue_lar_mri(2,:),'m-')
     plot(TSObj.X_origin,TSObj.Y_origin,'r*');
@@ -436,7 +451,7 @@ if t>=TSObj.t_affiche                         %      |
 end
 if t>=TSObj.t_verbose
     TSObj.t_verbose = TSObj.t_verbose+0.005;
-    TSObj.t_calcul=round(toc*(TSObj.finalTimeCum(length(TSObj.finalTimeCum)) / t - 1));
+    TSObj.t_calcul=round(toc*(TSObj.t_final_cum(length(TSObj.t_final_cum)) / t - 1));
     hour=floor(TSObj.t_calcul/3600);
     minute=floor((TSObj.t_calcul-3600*hour)/60);
     second=TSObj.t_calcul-3600*hour-60*minute;
