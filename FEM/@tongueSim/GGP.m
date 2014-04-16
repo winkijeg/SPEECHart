@@ -34,6 +34,7 @@ function GGP(TSObj, U);
 
 for k=1:1+3*TSObj.fact        % boucle sur le nombre de fibres
   longtot=0;
+  XY = TSObj.XY;
   for j=TSObj.Att.GGP(k,2):-1:TSObj.Att.GGP(k,1)+1
     v1=2*j; % %%
     long(j)=sqrt((TSObj.XY(v1-1)-TSObj.XY(v1-3))^2+(TSObj.XY(v1)-TSObj.XY(v1-2))^2);
@@ -57,17 +58,20 @@ for k=1:1+3*TSObj.fact        % boucle sur le nombre de fibres
     end
 
     % Calcul de la force TSObj.FXY appliquee aux noeuds
-    TSObj.FXY(TSObj.Att.GGP(k,4)-1)=TSObj.FXY(TSObj.Att.GGP(k,4)-1)-(TSObj.XY(TSObj.Att.GGP(k,4)-1)-TSObj.XY(TSObj.Att.GGP(k,4)-3))/long(TSObj.Att.GGP(k,2))*TSObj.Force.GGP(k);
-    TSObj.FXY(TSObj.Att.GGP(k,4))=TSObj.FXY(TSObj.Att.GGP(k,4))-(TSObj.XY(TSObj.Att.GGP(k,4))-TSObj.XY(TSObj.Att.GGP(k,4)-2))/long(TSObj.Att.GGP(k,2))*TSObj.Force.GGP(k);
+    FXY = TSObj.FXY; 
+    FXY(TSObj.Att.GGP(k,4)-1)=FXY(TSObj.Att.GGP(k,4)-1)-(XY(TSObj.Att.GGP(k,4)-1)-XY(TSObj.Att.GGP(k,4)-3))/long(TSObj.Att.GGP(k,2))*TSObj.Force.GGP(k);
+    FXY(TSObj.Att.GGP(k,4))=FXY(TSObj.Att.GGP(k,4))-(XY(TSObj.Att.GGP(k,4))-XY(TSObj.Att.GGP(k,4)-2))/long(TSObj.Att.GGP(k,2))*TSObj.Force.GGP(k);
     for j=TSObj.Att.GGP(k,2)-1:-1:TSObj.Att.GGP(k,1)+1
       v1=2*j; % %%
-      TSObj.FXY(v1-1)=TSObj.FXY(v1-1)-(TSObj.XY(v1-1)-TSObj.XY(v1+1))/long(j+1)*TSObj.Force.GGP(k);
-      TSObj.FXY(v1)=TSObj.FXY(v1)-(TSObj.XY(v1)-TSObj.XY(v1+2))/long(j+1)*TSObj.Force.GGP(k);
-      TSObj.FXY(v1-1)=TSObj.FXY(v1-1)-(TSObj.XY(v1-1)-TSObj.XY(v1-3))/long(j)*TSObj.Force.GGP(k);
-      TSObj.FXY(v1)=TSObj.FXY(v1)-(TSObj.XY(v1)-TSObj.XY(v1-2))/long(j)*TSObj.Force.GGP(k);
+      FXY(v1-1)=FXY(v1-1)-(XY(v1-1)-XY(v1+1))/long(j+1)*TSObj.Force.GGP(k);
+      FXY(v1)=FXY(v1)-(XY(v1)-XY(v1+2))/long(j+1)*TSObj.Force.GGP(k);
+      FXY(v1-1)=FXY(v1-1)-(XY(v1-1)-XY(v1-3))/long(j)*TSObj.Force.GGP(k);
+      FXY(v1)=FXY(v1)-(XY(v1)-XY(v1-2))/long(j)*TSObj.Force.GGP(k);
     end
+    TSObj.FXY = FXY;
   else 
     TSObj.Force.GGP(k)=0;
   end
+  clear FXY XY;
 end
 TSObj.ACTIV_T(TSObj.t_i,1)=Activ1;

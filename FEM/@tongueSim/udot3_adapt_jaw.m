@@ -136,7 +136,7 @@ if TSObj.kkk==0	%modified by Yohan & Majid; Nov 30, 99
     TSObj.UU.lowerlip=[];
     TSObj.UU.upperlip=[];
     TSObj.UU.lar_ar = [];
-    TSObj.UU.tongue_lar = [];
+    TSObj.UU.tongue_lar_mri = [];
     TSObj.UU.pharynx = [];
     TSObj.UU.lowerteeth=[];
     TSObj.length_ttout=0;
@@ -172,7 +172,7 @@ if length(TSObj.ttout)>TSObj.length_ttout
     TSObj.UU.upperlip(TSObj.length_ttout,:)=[TSObj.cont.upperlip(1,:) TSObj.cont.upperlip(2,:)];
     TSObj.UU.lowerteeth(TSObj.length_ttout,:)=[TSObj.cont.lowerteeth(1,:) TSObj.cont.lowerteeth(2,:)];
     TSObj.UU.lar_ar(TSObj.length_ttout,:)=[TSObj.cont.lar_ar(1,:) TSObj.cont.lar_ar(2,:)];
-    TSObj.UU.tongue_lar(TSObj.length_ttout,:)=[TSObj.cont.tongue_lar(1,:) TSObj.cont.tongue_lar(2,:)];
+    TSObj.UU.tongue_lar_mri(TSObj.length_ttout,:)=[TSObj.cont.tongue_lar_mri(1,:) TSObj.cont.tongue_lar_mri(2,:)];
     TSObj.UU.pharynx(TSObj.length_ttout,:)=[TSObj.cont.pharynx(1,:) TSObj.cont.pharynx(2,:)];
     X0_t = TSObj.restpos.X0'; % PP GB Avril 2011
     Y0_t = TSObj.restpos.Y0'; % PP GB Avril 2011
@@ -184,20 +184,25 @@ end
 % XY est calcule a partir des X0 et Y0 initiaux et du deplacement U.
 
 u=U(1:TSObj.NNxMMx2,1);
+XY = TSObj.XY;
+X0 = TSObj.restpos.X0; Y0 = TSObj.restpos.Y0;
 for i=1:TSObj.MM
     for j=1:TSObj.NN
         
-        TSObj.v1=(i-1)*TSObj.NNx2+2*j;
-%         X(i,j)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
-%         Y(i,j)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
-%         TSObj.XY(TSObj.v1-1,1)=X(i,j);
-%         TSObj.XY(TSObj.v1,1)=Y(i,j);
-%         X(i,j)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
-%         Y(i,j)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
-        TSObj.XY(TSObj.v1-1,1)=TSObj.restpos.X0(i,j)+u(TSObj.v1-1);
-        TSObj.XY(TSObj.v1,1)=TSObj.restpos.Y0(i,j)+u(TSObj.v1);
+        v1=(i-1)*TSObj.NNx2+2*j;
+%         X(i,j)=TSObj.restpos.X0(i,j)+u(v1-1);
+%         Y(i,j)=TSObj.restpos.Y0(i,j)+u(v1);
+%         TSObj.XY(v1-1,1)=X(i,j);
+%         TSObj.XY(v1,1)=Y(i,j);
+%         X(i,j)=TSObj.restpos.X0(i,j)+u(v1-1);
+%         Y(i,j)=TSObj.restpos.Y0(i,j)+u(v1);
+        XY(v1-1,1) = X0(i,j)+u(v1-1);
+        XY(v1,1) = Y0(i,j)+u(v1);
     end
 end
+TSObj.v1 = v1;
+TSObj.XY = XY;
+clear v1 XY X0 Y0;
 % keyboard;
 
 % ---------------------------------------------------------------
@@ -348,7 +353,7 @@ for j=TSObj.cont.nbpalais-1:-1:1           % boucle sur les segments du palais e
                     % Creation de la force de collision
                     if oldI~=imin-TSObj.NN
                         if TSObj.n_contact==0
-                            fprintf('First contact with node %d on segments %d to %d %%\n',2*i-1,j,round(100*t/TSObj.tf));
+                            fprintf('First contact with node %d on segments %d at  %d %%\n',2*i-1,j,round(100*t/TSObj.tf));
                             TSObj.nc=2*i;
                             TSObj.pc=j;
                             TSObj.first_contact=1;
@@ -402,7 +407,7 @@ for j=TSObj.cont.nbpalais-1:-1:1           % boucle sur les segments du palais e
                     end
                 end
             elseif (TSObj.aff_fin==0)&&(TSObj.pc==j)&&(TSObj.nc==2*i)&&(TSObj.n_contact~=0)&&(t>=TSObj.tf/2)
-                fprintf('Fin du contact a %d %%\n',round(100*t/TSObj.tf));
+                fprintf('End of contact at %d %%\n',round(100*t/TSObj.tf));
                 TSObj.aff_fin=1;
             end
         end          % fin du non parallele
