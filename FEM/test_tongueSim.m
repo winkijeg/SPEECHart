@@ -69,3 +69,5 @@ ts = tongueSim(path_model, spkStr, seq, seq, ...
 
 ts.plot();
 ts.simulate()
+ts.save();
+
