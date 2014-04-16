@@ -6,7 +6,7 @@ U=TSObj.Ufin;
 % interpolation des U pour prendre moins de place sur le disque
 % chaque 1/500 pour fact = 1
 % chaque 4/500 pour fact = 2
-disp('Enregistrement de U ...')
+disp('Saving U ...')
 
 % ------------------------------------------------------------------
 % FXY_T est calcule dans UDOT2 pour la trajectoire de la force en
