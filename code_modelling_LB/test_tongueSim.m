@@ -8,11 +8,11 @@ clear *
 close all
 
 %spkStr = 'pp_FF1';
-%spkStr = 'cs';
-spkStr = 'av';
+spkStr = 'cs';
+%spkStr = 'av';
 
-t_trans = 0.05;
-t_hold = 0.100;
+t_trans = [0.050 0.050];
+t_hold = [0.100 0.100];
 
 
 % original inputs; order is GGP GGA HYO STY VER SL IL
@@ -21,8 +21,8 @@ jaw_rot = [-3 8];
 lip_prot = [3 -5];
 ll_rot = [-4 6];
 hyoid_mov = [5 -3];
-deltaLambda_av = [-20  20  20 -15 0 200 0; 
-                   10 -10 -7   10 0 200 0];
+deltaLambda_av = [-20  20  20 -15 0 0 0;
+                    20 -20 -7   10 0 0 0];
 
 % % example 1 - /a/
 % seq = 'ra';
@@ -50,7 +50,7 @@ deltaLambda_av = [-20  20  20 -15 0 200 0;
 
 
 
-path_model = ['data/spec_' spkStr '_lasse/'];
+path_model = ['../data/models_obsolete/' spkStr];
 
 ts = tongueSim(path_model, spkStr, seq, seq, ...
     deltaLambda_av(:, 1)', ...
