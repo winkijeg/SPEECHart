@@ -976,9 +976,9 @@ for i=1:length(tf_seq)
     %    hold on
     %
     fprintf('Integrating from %d to %d\n',t0_seq(i), tf_seq(i));
-    [ts,Us]=ode45plus('udot3_adapt_jaw', t0_seq(i), tf_seq(i), U0, 1e-3, (((3 * fact) - 2) / 500));
+    [ts, Us] = ode45plus('udot3_adapt_jaw', t0_seq(i), tf_seq(i), U0, 1e-3, (((3 * fact) - 2) / 500));
     
-    %       figure(300)
+    % figure(300)
     % plot(X0,Y0,'bo')
     % color='rbmcygrbmcygrbmcygrbmcygkrbmcygrbmcyg';
     % length(ts)
@@ -991,9 +991,9 @@ for i=1:length(tf_seq)
     %    pause
     %    plot(X0_seq(length(ts),:),Y0_seq(length(ts),:),'ow', 'LInewidth',2)
     % pause
-    U0=Us(length(ts),:);
-    [tfin]=[tfin;ts];
-    [Ufin]=[Ufin;Us];
+    U0 = Us(length(ts), :);
+    tfin = [tfin; ts];
+    Ufin = [Ufin; Us];
 end
 %
 if ( length_ttout < (200 * tf) )
@@ -1010,10 +1010,8 @@ if ( length_ttout < (200 * tf) )
     Y0_seq = Y0_seq(1:length_ttout, 1:221);
 end
 
-%% I AM HERE
-
-t=tfin';
-U=Ufin;
+t = tfin';
+U = Ufin;
 
 % interpolation des U pour prendre moins de place sur le disque
 % chaque 1/500 pour fact = 1
