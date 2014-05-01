@@ -27,9 +27,6 @@ gamma = [ [902880  0  3953664  3855735  -1371249  277020]/7618050
   [ -2090  0    22528    21970    -15048  -27360]/752400 ]';
 pow = 1/5;
 
-if nargin < 5, tol = 1.e-6; end
-if nargin < 6, storestep = 0.1; end
-
 % Initialization
 t = t0;
 hmax = (tf - t)/16;
@@ -44,14 +41,7 @@ TSObj.ttout=[TSObj.ttout; t];
 
 % here the main loop starts ...
 
-% global kkk % RW 01/2011
-% global contactRW; % RW 01/2011
-contactRW = 0; % RW 01/2011
-% global kkk_max_flag % RW 01/2011
-kkk_max_flag = 0; % RW 01/2011
-kkk_max = 10000; % RW 01/2011
-
-while (t < tf) && (t + h > t) && (~contactRW) && (~kkk_max_flag) % The main loop
+while (t < tf) && (t + h > t) % The main loop
     
     %[h t]
     if t + h > tf
@@ -94,8 +84,6 @@ while (t < tf) && (t + h > t) && (~contactRW) && (~kkk_max_flag) % The main loop
             forcestep = 1;
         end
     end
-    
-    kkk_max_flag = (TSObj.kkk >= kkk_max); % RW 01/2011
     
 end % end main loop % RW 01/2011
 
