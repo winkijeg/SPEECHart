@@ -43,6 +43,6 @@ function K = calculate_K(r, s, XY, lambda2, mu2, pfix)
     D = dpsi(IDfix);
     E = dpsi(IE);
 
-    K = (1/abs(detJ))*(A.*(lambda2*B+2*mu2*C)+mu2*D.*E);
+    K = (1/abs(detJ)) * (A.*(lambda2*B+2*mu2*C)+mu2*D.*E);
     
 end
