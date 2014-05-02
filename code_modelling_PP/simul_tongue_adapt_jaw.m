@@ -677,7 +677,7 @@ end
 invMass = inv(Mass);
 
 % Compute the elasticity matrix
-A0 = elast_init(XY, lambda, mu, ordre, H, G, MM, NN);
+A0 = elast_init(XY, lambda, mu, ordre, H, G);
 
 % initialisation de la position de repos apres le premiere voyelle
 % dans le sequence
