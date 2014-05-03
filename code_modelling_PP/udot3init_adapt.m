@@ -16,7 +16,6 @@ global nc pc aff_fin             % Indices pour le contact
 global Att_GGP Att_GGA Att_Hyo   % Points d'attache des muscles
 global Att_Stylo Att_SL Att_IL   % Idem
 global Att_Vert                  % Idem
-global Pref DoPress              % La pression de reference
 
 global X0 Y0 X0Y0                % Modified by Yohan & Majid; Nov 30, 99
 
@@ -104,13 +103,6 @@ end
 Att_Vert(:,3) = Att_Vert(:,1) * 2;
 Att_Vert(:,4) = Att_Vert(:,2) * 2;
 
-% Choix de la pression de reference
-if (Pref == 0)
-  DoPress = 0;
-else
-  DoPress = 1;
-end
-
 % Added by Yohan & Majid; Nov 30, 99
 for i = 1:MM
    for j = 1:NN
@@ -121,4 +113,3 @@ for i = 1:MM
 end
 
 end
-
