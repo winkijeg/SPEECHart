@@ -1,5 +1,4 @@
 function Udot = udot3_adapt_jaw(t,U)
-% CV - 03/03/99
 % Modifications :
 %    - Optimisation des boucles et des calculs
 %    - Ajout d'une phase d'initialisation
@@ -42,13 +41,11 @@ function Udot = udot3_adapt_jaw(t,U)
 %    - Le calcul de la force de pesanteur se fait avec les valeurs
 %    'exactes' de masse de chaque noeud calculees dans Simulation4.m
 
-
 % Le temps t intervient pour le calcul des LAMBDA via le programme
 % matlab COMLAMBDA.m
 % Creation de l'equation differentielle :
 % M.U'' + f.U' +K(U,U',lambda).U = F(U,U',lambda) + P
 % qui est resolue par la commande ODE45 de MATLAB
-
 
 global A0;
 global X0;
@@ -57,52 +54,17 @@ global X0Y0;
 global NN;
 global MM;
 global fact;
-global lambda;
-global mu;
+
 global X;
 global Y;
 global XY;
 global FXY;
-global H;
-global G;
-global XS;
-global YS;
-global X1;
-global Y1;
-global X2;
-global Y2;
-global X3;
-global Y3;
+
 global tf;
-global nb_transitions;
-global tfin_closion;
-
-% Longueurs au repos des muscles
-global longrepos_GGP;
-global longrepos_GGA;
-global longrepos_Hyo;
-global longrepos_Stylo;
-global longrepos_SL;
-global longrepos_IL;
-global longrepos_Vert;
-
-global longrepos_GGA_max longrepos_GGP_max longrepos_Hyo_max longrepos_IL_max longrepos_SL_max longrepos_Stylo_max longrepos_Vert_max %PP Nov 06
-
-% Variables de sections des muscles
-global rho_GG;
-global rho_Hyo;
-global rho_Stylo;
-global rho_SL;
-global rho_IL;
-global rho_Vert;
 
 % Variables concernant le contact
-global Point_dent;
-global pente_D;
-global org_D;
 global Point_P;
 global pente_P;
-global nbpdent;
 global nbpalais;
 global org_P;
 global pente_L;
@@ -110,7 +72,6 @@ global org_L;
 global angle_reaction;
 
 % Variables concernant le poids
-global Mass;
 global invMass;
 
 % Variables contenant les lambdas des fibres
@@ -134,17 +95,6 @@ global ForceSL;
 global ForceIL;
 global ForceVert;
 
-% Variables definissant les points d'attache des muscles
-global Att_GGP;
-global Att_GGA;
-global Att_Hyo;
-global Att_Stylo;
-global Att_SL;
-global Att_IL;
-global Att_Vert;
-
-% Semaphore pour le calcul de la pression
-
 % Variables globales temporaires
 global aff_fin;
 global t_affiche;
@@ -161,11 +111,10 @@ global nc;
 global pc;
 global t_jaw;
 
-
 % Variables pre-initialisees
 global NNxMM NNx2 MMx2 NNxMMx2; % Des multiplications...
-global f1 f2 f3 f4 f5;          % Coefficients p. le calcul des forces
-global MU c;                    % Idem
+% global f1 f2 f3 f4 f5;          % Coefficients p. le calcul des forces
+% global MU c;                    % Idem
 global f F;                     % Constante et matrice de frottement
 global PXY;                     % Poids
 global v1 v2 v3;                % Variables temporaires
@@ -179,7 +128,7 @@ global U_lar_ar_mri U_tongue_lar_mri U_pharynx_mri
 global t_i ttout length_ttout X0_seq Y0_seq X_origin Y_origin U_X_origin U_Y_origin old_t;
 % ----------------------------------------------------------------------
 % Initialisations cycliques
-if kkk==0	%modified by Yohan & Majid; Nov 30, 99
+if kkk == 0	%modified by Yohan & Majid; Nov 30, 99
     first_contact = 0;
     t_jaw=0;
     U_lowlip=[];
@@ -194,8 +143,8 @@ if kkk==0	%modified by Yohan & Majid; Nov 30, 99
     old_t=t_initial;
 end
 
-kkk=kkk+1;
-t_i=round(1000*t)+1;
+kkk = kkk + 1;
+t_i = round(1000*t)+1;
 FXY = PXY;
 
 % Calculate the rotation and translation of the jaw -- MZ 12/27/99
@@ -279,7 +228,7 @@ IL(U);
 VERT(U);
 
 % Genio-Hyoidien : resistance a la racine de la langue
-for i=2:NN-1
+for i = 2:NN-1
     FXY(2*i-1)=(X0(1,i)-XY(2*i-1))*2;
     FXY(2*i)=(Y0(1,i)-XY(2*i))*2;
 end
@@ -353,19 +302,19 @@ end
 % langue.
 % Ces equations sont de la forme :
 % Y = pente_L(i) * X + org_L(i)
-imin=3*fact*NN+1+6*fact;
+imin = 3*fact*NN+1+6*fact;
 %imax=7*fact*NN+1+6*fact;
-imax=208; % PP Avril 04 - Pour prendre en compte aussi les contacts
+imax = 208; % PP Avril 04 - Pour prendre en compte aussi les contacts
 % au niveau de la pointe de la langue
-for i=imin:NN:imax
-    pente_L(i)=(XY(2*i)-XY(2*i+2*NN))/(XY(2*i-1)-XY(2*i-1+2*NN));
-    org_L(i)=XY(2*i)-pente_L(i)*XY(2*i-1);
+for i = imin:NN:imax
+    pente_L(i) = (XY(2*i)-XY(2*i+2*NN))/(XY(2*i-1)-XY(2*i-1+2*NN));
+    org_L(i) = XY(2*i)-pente_L(i)*XY(2*i-1);
     % Xcontact contient les coordonnees du point d'intersection
-    Xcontact(i)=0;
-    Ycontact(i)=0;
+    Xcontact(i) = 0;
+    Ycontact(i) = 0;
 end
 
-neucontact=0;       % tableau des indices des noeuds qui entrent en contact
+neucontact = 0;       % tableau des indices des noeuds qui entrent en contact
 
 % Detection de la collision
 for j=nbpalais-1:-1:1           % boucle sur les segments du palais et du velum
@@ -492,7 +441,6 @@ end
 
 % On calcule ici les coordonnees du premier noeud qui entre en contact pour
 % pouvoir l'enregistrer
-%if nb_contact~=0
 if first_contact==1  %modified by Yophan & Majid  Nov30, 99
     
     X_enr(t_i)=XY(nc-1);
@@ -503,97 +451,18 @@ if first_contact==1  %modified by Yophan & Majid  Nov30, 99
     else
         V_enr(t_i)=U(2*NNxMM+nc)*cos(angle_reaction)-U(2*NNxMM+nc-1)*abs(sin(angle_reaction));
     end
-    first_contact=0;
+    first_contact = 0;
 end
 
+% calculate new elasticity matrix as a function of muscle contraction
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% CONTACT AVEC LES DENTS (FACON 2)
-
-
-% ----------------------------------------------------------------------------
-% Calcul du contact avec les dents
-% L'equation de droite des dents est calculee dans Simulation4.m
-% On calcule les segments de droite de la langue qui pourraient
-% entrer en collision avec les dents
-% Pour l'explication des algorithmes, voir "contact langue palais"
-
-% imin=8*fact*NN+1+fact;
-% imax=8*fact*NN+1+5*fact;
-% for i=imin:imax
-%   if XY(2*i-1)~=XY(2*i+1)  % evite l'affichage de 'division par zero'
-%     pente_L(i)=(XY(2*i)-XY(2*i+2))/(XY(2*i-1)-XY(2*i+1));
-%   else
-%     pente_L(i)=1e9;
-%   end
-%   org_L(i)=XY(2*i)-pente_L(i)*XY(2*i-1);
-%   Xcontactd(i)=0;
-%   Ycontactd(i)=0;
-% end
-
-% for j=1:nbpdent-1
-%   for i=imin:imax
-%     if pente_L(i)~=pente_D(j)
-%       X_c=(org_L(i)-org_D(j))/(pente_D(j)-pente_L(i));
-%       if (X_c<=max(XY(2*i+1),XY(2*i-1)))&(X_c>=min(XY(2*i-1),XY(2*i+1)))&(X_c>=Point_dent(1,j+1))&(X_c<=Point_dent(1,j))
-% 	Y_c=org_L(i)+pente_L(i)*X_c;
-% 	if (Y_c<=Point_dent(2,j+1))&(Y_c>=Point_dent(2,j))&(Y_c<=XY(2*i+2))&(Y_c>=XY(2*i))
-% 	  Xcontactd(i)=X_c;
-% 	  Ycontactd(i)=Y_c;
-%           oldi=i-1;
-% 	  while (Xcontactd(oldi)==0)&(oldi>=imin)
-% 	    oldi=oldi-1;
-% 	  end
-% 	  if oldi~=imin-1
-% 	    pa=(Ycontactd(oldi)-Ycontactd(i))/(Xcontactd(oldi)-Xcontactd(i));
-% 	    surface_c=sqrt((Xcontactd(i)-Xcontactd(oldi))^2+(Ycontactd(i)-Ycontactd(oldi))^2);
-% 	    somme_dist=0;
-% 	    for nbn=oldi+1:i  % Si plusieurs noeuds depassent
-% 	      Xortho=(XY(2*nbn)+XY(2*nbn-1)/pa-Ycontactd(oldi)+pa*Xcontactd(oldi))/(pa+1/pa);
-% 	      Yortho=pa*(Xortho-Xcontactd(oldi))+Ycontactd(oldi);
-% 	      distance(nbn)=sqrt((XY(2*nbn-1)-Xortho)^2+(XY(2*nbn)-Yortho)^2);
-% 	      somme_dist=somme_dist+distance(nbn);
-% 	      angle_reaction(nbn)=-atan((Xortho-XY(2*nbn-1))/(XY(2*nbn)-Yortho));
-% 	    end
-% 	    for nbn=oldi+1:i
-% 	      force_reaction=30*surface_c*distance(nbn)*distance(nbn)/somme_dist;
-% 	      if force_reaction>40
-% 		force_reaction=40;
-% 	      end
-% 	      FXY(2*i-1)=FXY(2*i-1)+force_reaction*sin(angle_reaction(nbn));
-% 	      FXY(2*i)=FXY(2*i)+force_reaction*cos(angle_reaction(nbn));
-% 	    end
-% 	    Xcontactd(i)=0;
-% 	    Ycontactd(i)=0;
-% 	    Xcontactd(oldi)=0;
-% 	    Ycontactd(oldi)=0;
-% 	  end
-% 	end
-%       end
-%     end
-%   end
-% end
-
-% FINAL CONTACT AVEC LES DENTS (FACON 2)
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% -----------------------------------------------------------------------
-% Calcule la nouvelle matrice d'elasticite en fonction des muscles qui
-% se contractent
-global CALC_ELA;
-% fprintf('Facteur CAlC_ELA = %i\n',CALC_ELA)
+global CALC_ELA
 if CALC_ELA
-    % disp ('elast')
-    A0=elast2(sum(ForceGGA)/(3*fact),sum(ForceGGP)/(1+3*fact),sum(ForceHyo)/3,(ForceStylo1+ForceStylo2)/2,ForceSL,sum(ForceVert)/(3*fact),neucontact);
+    A0 = elast2(sum(ForceGGA)/(3*fact), sum(ForceGGP)/(1+3*fact),sum(ForceHyo)/3,(ForceStylo1+ForceStylo2)/2,ForceSL,sum(ForceVert)/(3*fact),neucontact);
 end
 % Pour GGA  1+3*fact remplace par 3*fact (6 fibres) Nov 99
 % Pour Vert 4 remplace par 3*fact
 
-% -----------------------------------------------------------------------------
 % Calcul de UDOT :
 
 U(NNx2-1,1)=0;
@@ -610,7 +479,8 @@ for j=1:NN:1+8*fact*NN
     U(2*j + 2*NNxMM,1)=0;
 end
 
-Udot=[U(2*NNxMM+1:4*NNxMM,1);invMass*(FXY-A0*U(1:2*NNxMM,1)-F*U(2*NNxMM+1:4*NNxMM,1))];
+Udot = [U(2*NNxMM+1:4*NNxMM,1); ...
+    invMass*(FXY-A0*U(1:2*NNxMM,1)-F*U(2*NNxMM+1:4*NNxMM,1))];
 
 for j=1:NN:1+8*fact*NN
     Udot(2*j-1 + 2*NNxMM,1)=0;
@@ -620,19 +490,18 @@ Udot(2*(NN-1)+1 + 2*NNxMM,1)=0;
 Udot(2*(NN-1)+2 + 2*NNxMM,1)=0;
 
 for j=1:NN:1+8*fact*NN
-    Udot(2*j-1,1)=0;
-    Udot(2*j,1)=0;
+    Udot(2*j-1,1) = 0;
+    Udot(2*j,1) = 0;
 end
-Udot(2*(NN-1)+1,1)=0;
-Udot(2*(NN-1)+2,1)=0;
-
-global TEMPS;
-global FXY_T;
-global ACCL_T;
+Udot(2*(NN-1)+1,1) = 0;
+Udot(2*(NN-1)+2,1) = 0;
 
 
-% Calcul de la matrice globale pour la trajectoire de la force-temps,
-% transforme a Simulation4.m et utilise en force_gr.m
+% Calcul de la matrice globale pour la trajectoire de la force-temps
+
+global TEMPS
+global FXY_T
+global ACCL_T
 
 TEMPS(t_i) = t;
 FXY_T(t_i, :) = FXY.';
@@ -642,3 +511,4 @@ FXY_T(t_i, :) = FXY.';
 % ACCL_T(:,t_i+1) = invMass*(FXY-A0*U(1:2*NN*MM,1)-F*U(2*NN*MMUDOT2.m+1:4*NN*MM,1));
 ACCL_T(t_i, :) = Udot(2*NNxMM+1:4*NNxMM).';
 
+end
