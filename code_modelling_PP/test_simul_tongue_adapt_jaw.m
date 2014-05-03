@@ -3,7 +3,7 @@
 
 % written 09/2013 (Ralf)
 
-clear *
+clear all
 
 %spkStr = 'pp_FF1';
 spkStr = 'cs';
