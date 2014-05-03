@@ -20,13 +20,13 @@ global ttout; % to know which t is being stored; MZ 12/30/99
 alpha = [1/4  3/8  12/13  1  1/2]';
 
 beta  = [ [    1      0      0     0      0    0]/4
-  [    3      9      0     0      0    0]/32
-  [ 1932  -7200   7296     0      0    0]/2197
-  [ 8341 -32832  29440  -845      0    0]/4104
-  [-6080  41040 -28352  9295  -5643    0]/20520 ]';
+    [    3      9      0     0      0    0]/32
+    [ 1932  -7200   7296     0      0    0]/2197
+    [ 8341 -32832  29440  -845      0    0]/4104
+    [-6080  41040 -28352  9295  -5643    0]/20520 ]';
 
 gamma = [ [902880  0  3953664  3855735  -1371249  277020]/7618050
-  [ -2090  0    22528    21970    -15048  -27360]/752400 ]';
+    [ -2090  0    22528    21970    -15048  -27360]/752400 ]';
 
 pow = 1/5;
 
@@ -52,9 +52,9 @@ while (t < tf) && (t + h > t) % The main loop
     
     %[h t]
     if t + h > tf
-        h = tf - t
+        h = tf - t;
     end
-  
+    
     % Compute the slopes
     temp = feval(ypfun,t,y);
     f(:,1) = temp(:);
@@ -62,27 +62,27 @@ while (t < tf) && (t + h > t) % The main loop
         temp = feval(ypfun, t+alpha(j)*h, y+h*f*beta(:,j));
         f(:,j+1) = temp(:);
     end
-  
+    
     % Estimate the error and the acceptable error
     delta = norm(h*f*gamma(:,2),'inf');
     tau = tol * max(norm(y, 'inf'), 1.0);
-  
+    
     % Update the solution only if the error is acceptable
     if ((delta <= tau) || forcestep )
         forcestep = 0;
         t = t + h;
         y = y + (h * f * gamma(:,1));
         % Problems may arise if storestep is not big enough vs. h
-        % ie l may "run after t" 
+        % ie l may "run after t"
         if t > l
             disp ([num2str(t) 'ms'])
             l = l + storestep ;
             tout = [tout ; t];
             yout = [yout ; y.'];
-            ttout=[ttout; t];
+            ttout = [ttout; t];
         end
     end
-  
+    
     % Update the step size
     if delta ~= 0.0
         h = min(hmax, 0.8*h*(tau/delta)^pow);
@@ -98,6 +98,9 @@ end % end main loop % RW 01/2011
 
 
 if (t < tf)
-  disp('Singularity likely.')
-  t
+    disp('Singularity likely.')
+    t
 end
+
+end
+
