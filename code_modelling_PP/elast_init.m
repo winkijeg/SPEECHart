@@ -52,7 +52,7 @@ for nbStep = 1:nSteps
             
             valTmp = calculate_K(G(order,i), G(order,j), xy, lambda, mu, pfix);
             KK = KK + (H(order, i) * H(order, j) * valTmp);
-        
+            
         end
         
     end
