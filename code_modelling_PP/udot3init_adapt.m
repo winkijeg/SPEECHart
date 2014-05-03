@@ -3,7 +3,6 @@ function udot3init_adapt()
 
 % Variables globales d'entree
 global MM NN                     % Taille du modele
-global fact                      % Resolution du modele
 global Mass                      % Masse des noeuds
 
 % Variables globales de sortie
@@ -19,11 +18,12 @@ global Att_Vert                  % Idem
 
 global X0 Y0 X0Y0                % Modified by Yohan & Majid; Nov 30, 99
 
-
 NNxMM = MM * NN;
 NNx2 = NN * 2;
 MMx2 = MM * 2;
 NNxMMx2 = 2 * NNxMM;
+
+fact = 2; % to be removed at any time after node number substitution
 
 % Valeurs des constantes
 % On sait que : F = M.(f1+f2.atan(f3+f4.l'/longrepos)+f5.l'/longrepos)  
