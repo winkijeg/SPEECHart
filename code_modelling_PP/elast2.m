@@ -7,31 +7,32 @@ function elast2 = elast2(activGGA, activGGP, activHyo, activStylo, ...
 % valeurs initiales.
 
 % Parametres d'entree :
-% -  Les activation des muscles 
+% -  Les activation des muscles
 % -  ncontact qui est un vecteur contenant 0 et les indices des noeuds qui
 %    entrent en contact avec le palais : les coefficients de la
 %    matrice d'elasticite dependent en effet des points fixes de
 %    l'element considere.
 
-    global X0Y0
-    global NN
-    global MM
-    global fact
-    global lambda
-    global mu
-    global ordre
-    global IA
-    global IB
-    global IC
-    global ID
-    global IE
+global X0Y0
+global NN
+global MM
+global lambda
+global mu
+global ordre
+global IA
+global IB
+global IC
+global ID
+global IE
 
-    AA = zeros(1,(2*NN*MM)^2);
+fact = 2; % to be removed after compilation of elast_c.c without fact
 
-    activtot = [activGGA, activGGP, activHyo, activStylo, activSL, activVert];
-    AA = elast_c(NN, MM, fact, ordre, lambda, mu, IA, IB, IC, ID, IE, ...
-        activtot, X0Y0, ncontact);
-    
-    elast2 = reshape(AA, 2*NN*MM, 2*NN*MM);
-    
+%AA = zeros(1,(2*NN*MM)^2);
+
+activtot = [activGGA, activGGP, activHyo, activStylo, activSL, activVert];
+AA = elast_c(NN, MM, fact, ordre, lambda, mu, IA, IB, IC, ID, IE, ...
+    activtot, X0Y0, ncontact);
+
+elast2 = reshape(AA, 2*NN*MM, 2*NN*MM);
+
 end
