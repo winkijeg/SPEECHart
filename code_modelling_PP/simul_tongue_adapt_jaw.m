@@ -158,10 +158,10 @@ couleurs = 'rkbygcmr';
 % Variables globales temporaires
 % global temporary variables
 global aff_fin;
-aff_fin=0;
-global t_affiche;
-global t_verbose;
-global nb_contact;
+aff_fin = 0;
+global t_affiche
+global t_verbose
+global nb_contact
 global S_enr;
 global X_enr;
 global Yn_enr;
@@ -170,7 +170,6 @@ global F_enr;
 global P_enr;
 global V_enr;
 global t_calcul;
-global Pref
 global VOY_DEF;
 
 %
@@ -212,8 +211,6 @@ SEQUENCE
 global CALC_ELA;
 CALC_ELA = 1;                 % Calcul a chaque fois
 %
-
-Pref = 0; % Do not account for pressure PP Sept08
 
 %
 tic
