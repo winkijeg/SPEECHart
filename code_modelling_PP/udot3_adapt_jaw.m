@@ -144,7 +144,6 @@ global Att_IL;
 global Att_Vert;
 
 % Semaphore pour le calcul de la pression
-global DoPress;
 
 % Variables globales temporaires
 global aff_fin;
@@ -278,9 +277,7 @@ HYO(U);
 SL(U);
 IL(U);
 VERT(U);
-if DoPress
-    PRESS(t);
-end
+
 % Genio-Hyoidien : resistance a la racine de la langue
 for i=2:NN-1
     FXY(2*i-1)=(X0(1,i)-XY(2*i-1))*2;
