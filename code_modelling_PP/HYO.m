@@ -1,32 +1,23 @@
-function HYO(U);
-% HYO.m
-% Calculs des forces exercees par le Hyoglossus (Hyo)
-% Il y a 3 fibres
+function HYO(U)
+% Calculs des forces exercees par le Hyoglossus (Hyo) (3 fibres)
 
-% Cree le     11/03/99 - CV
-% Modifie le  11/03/99 - CV
+% Variables globales d'entree 
+global NNxMMx2;                 % Offset de U' dans U
+global Att_Hyo;                 % Points d'attache du Hyo 
+global X1 Y1 X2 Y2 X3 Y3;       % Idem, hors langue
+global XY;                      % Position des noeuds 
+global LAMBDA_Hyo1 LAMBDA_Hyo2; % Pour calculer l'activation du Hyo
+global LAMBDA_Hyo3 MU;          % Idem
+global rho_Hyo c f1 f2 f3 f4 f5;% Pour calculer la force du Hyo
+global longrepos_Hyo;           % Idem 
+global t_i;                     % 'Temps entier' pout ACTIV_T
 
-% -------------------------------------------------------------------+
-% Variables globales d'entree                                        |
-global NNxMMx2;                 % Offset de U' dans U                |
-global fact;                    % Resolution du modele               |
-global Att_Hyo;                 % Points d'attache du Hyo            |
-global X1 Y1 X2 Y2 X3 Y3;       % Idem, hors langue                  |
-global XY;                      % Position des noeuds                |
-global LAMBDA_Hyo1 LAMBDA_Hyo2; % Pour calculer l'activation du Hyo  |
-global LAMBDA_Hyo3 MU;          % Idem                               |
-global rho_Hyo c f1 f2 f3 f4 f5;% Pour calculer la force du Hyo      |
-global longrepos_Hyo;           % Idem                               |
-global t_i;                     % 'Temps entier' pout ACTIV_T        |
-% -------------------------------------------------------------------+
-% Variables globales d'entree/sortie                                 |
-global FXY;                     % Force exercee en chaque noeud      |
-global ACTIV_T;                 % Activation des muscles             |
-% -------------------------------------------------------------------+
-% Variables globales de sortie                                       |
-global ForceHyo;                % Force exercee par chaque fibre     |
-% -------------------------------------------------------------------+
-% global fac_Hyo   %%% ESSAI
+% Variables globales d'entree/sortie 
+global FXY;                     % Force exercee en chaque noeud 
+global ACTIV_T;                 % Activation des muscles 
+
+% Variables globales de sortie 
+global ForceHyo;                % Force exercee par chaque fibre
 
 % Premiere fibre Hyo
 long1=sqrt((XY(Att_Hyo(1,2)-1)-X1)^2+(XY(Att_Hyo(1,2))-Y1)^2);
@@ -90,5 +81,7 @@ if Activ1>0
   FXY(Att_Hyo(4,2))=FXY(Att_Hyo(4,2))-(XY(Att_Hyo(4,2))-Y3)/long_Hyo3*ForceHyo(3);
 else 
   ForceHyo(3)=0;
+end
+
 end
 
