@@ -76,10 +76,6 @@ global Y3;
 global tf;
 global nb_transitions;
 global tfin_closion;
-global contact;               % Variable indiquant si le contact a deja
-% eu lieu (initialisée à 0 dans udot3init.m et utilisée
-% dans press.m uniquement) (PP Mars 2000)
-
 
 % Longueurs au repos des muscles
 global longrepos_GGP;
