@@ -1,19 +1,13 @@
 function LAMBDA = comLambda_adapt_jaw(t)
-% no clue what happens (so far)
+% to be produced ...
 
-global TEMPS_FINAL_CUM
-global TEMPS_ACTIVATION
+global TEMPS_FINAL_CUM TEMPS_ACTIVATION
 
 global MATRICE_LAMBDA
 
 % minimum length of muscle fibers
-global longmin_GGP
-global longmin_GGA
-global longmin_Hyo
-global longmin_Stylo
-global longmin_SL
-global longmin_IL
-global longmin_Vert
+global longmin_GGP longmin_GGA longmin_Hyo longmin_Stylo longmin_SL longmin_IL longmin_Vert
+
 global longrepos_GGA_max
 global longrepos_GGP_max
 global longrepos_Hyo_max
@@ -22,11 +16,10 @@ global longrepos_SL_max
 global longrepos_Stylo_max
 global longrepos_Vert_max
 
-% We will calculate the value of lambda for each muscle (lam_musc) and
+% calculate the value of lambda for each muscle and
 % afterwards (to calculate the value for each fiber) we will interpolate
 % between the length at rest and minimum length for each fiber
 
-% the time interval where we are ...
 interval = min(find(TEMPS_FINAL_CUM >= t));
 
 t_cum = [0, TEMPS_FINAL_CUM];
@@ -70,7 +63,6 @@ else
     
 end
 
-% variable values ??of lambda (temporary Evolution) -------------------
 global LAMBDA_T
 global t_i
 
@@ -83,13 +75,7 @@ LAMBDA_T(t_i, 6) = lam_IL;
 LAMBDA_T(t_i, 7) = lam_Vert;
 
 % proportionality factor between the muscle fibers --------------------
-global fac_GGP
-global fac_GGA
-global fac_Hyo
-global fac_Stylo
-global fac_SL
-global fac_IL
-global fac_Vert
+global fac_GGP fac_GGA fac_Hyo fac_Stylo fac_SL fac_IL fac_Vert
 
 % amplitude variations (min max) set for the lambdas -----------------
 global delta_lambda_tot_GGP
