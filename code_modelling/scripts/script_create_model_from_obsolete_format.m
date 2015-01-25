@@ -18,7 +18,7 @@ fn_mat_model = [spkName '_model.mat'];
 [path_root, ~, ~] = ...
     initPaths('', spkName);
 path_data_obsolete = [path_root 'data/models_obsolete/' spkName '/'];
-path_mat_model = [path_root 'data//models_obsolete/' spkName '/'];
+path_mat_model = [path_root 'data/models_obsolete/' spkName '/'];
 
 
 % collect data from data_palais_repos_xx.mat
@@ -72,7 +72,8 @@ mat.tongGrid.x = reshape(X0', 1, nNodes);
 mat.tongGrid.y = reshape(Y0', 1, nNodes);
 
 % - save mat-file of the model (one file format) ------------------------------
-save ([path_mat_model fn_mat_model], '-struct', 'mat')
+%save ([path_mat_model fn_mat_model], '-struct', 'mat')
 
 % create model ----------------------------------------------------------------
-myModel = SpeakerModel(mat)
+myModel = SpeakerModel(mat);
+myModel.exportModelObsolete()
