@@ -10,10 +10,20 @@ function matsOut = exportModelObsolete(obj)
     matsOut.data_palais_repos.X2 = obj.landmarks.hyoB(1);
     matsOut.data_palais_repos.X3 = obj.landmarks.hyoC(1);
     matsOut.data_palais_repos.XS = obj.landmarks.styloidProcess(1);
+    matsOut.data_palais_repos.XANS = obj.landmarks.ANS(1);
+    matsOut.data_palais_repos.XPNS = obj.landmarks.PNS(1);
+    matsOut.data_palais_repos.XTongInsL = obj.landmarks.tongInsL(1);
+    matsOut.data_palais_repos.XTongInsH = obj.landmarks.tongInsH(1);
+
     matsOut.data_palais_repos.Y1 = obj.landmarks.hyoA(2);
     matsOut.data_palais_repos.Y2 = obj.landmarks.hyoB(2);
     matsOut.data_palais_repos.Y3 = obj.landmarks.hyoC(2);
     matsOut.data_palais_repos.YS = obj.landmarks.styloidProcess(2);
+    matsOut.data_palais_repos.YANS = obj.landmarks.ANS(2);
+    matsOut.data_palais_repos.YPNS = obj.landmarks.PNS(2);
+    matsOut.data_palais_repos.YTongInsL = obj.landmarks.tongInsL(2);
+    matsOut.data_palais_repos.YTongInsH = obj.landmarks.tongInsH(2);
+    
 %     matsOut.data_palais_repos.ecart_meanx = 
 %     matsOut.data_palais_repos.ecart_meany = 
     
