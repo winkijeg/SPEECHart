@@ -3,16 +3,19 @@
 clearvars
 
 spkName = 'cs';
+princInvest = 'XX';
 
 nNodes = 221;
+
+[rootPath, ~, ~] = initPaths(princInvest, spkName);
 
 fn_structuresRepos_obs = ['data_palais_repos_' spkName '.mat'];
 fn_tongueRepos_obs = ['XY_repos_' spkName '.mat'];
 fn_result_stoke_obs = ['result_stocke_' spkName '.mat'];
 
-path_data_obs = ['code_sprechart_obs/' spkName '/'];
+path_data_obs = [rootPath 'data/models_obsolete/' spkName '/'];
+path_mat_model = [rootPath '/data/models/'];
 
-path_mat_model = ['e:/projects/project_refactoring/data/' spkName '/model/'];
 fn_mat_model = [spkName '_model.mat'];
 
 
