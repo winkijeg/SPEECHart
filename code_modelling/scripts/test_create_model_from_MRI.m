@@ -4,12 +4,17 @@ clearvars
 close all
 
 princInvestigator = 'PP';
-speakerName = 'FM1';
+speakerName = 'FF1';
 phonLab = '@';
+
+speakerID_out = 'av';
 
 % specify path names
 [path_root, ~, pathImaging] = ...
     initPaths(princInvestigator, speakerName);
+
+path_out = [path_root 'data/models_obsolete/' speakerID_out '/'];
+
 % read and construct the generic model object
 strucGeneric = load([path_root 'code_modelling\@ModelProducer\ypm_model.mat']);
 modelGeneric = SpeakerModel(strucGeneric);
@@ -24,10 +29,10 @@ mySpkImg = SpeakerImaging(strucImagingIn);
 
 % create modelFactory-object
 myModelProducer = ModelProducer(dataSpkMRI, gridZoning);
-dataModel = matchModel(myModelProducer);
+modelData = matchModel(myModelProducer);
 
 % create the model object
-mySpkModel = SpeakerModel(dataModel);
+mySpkModel = SpeakerModel(modelData);
 
 % plotting ............................................................
 figure
@@ -44,13 +49,26 @@ plotStructures(mySpkModel, 'b')
 drawTongSurface(mySpkModel.tongGrid, 'r')
 %plotTongueMesh(mySpkModel, 'r')
 
+
+% save model data (mat-file-format)
+fn_out_model = [path_out speakerID_out '_model.mat'];
+
+save(fn_out_model, '-struct', 'modelData')
+
+
 % convert Model into obsolete format to simulate with the original code
-matsOut = exportModelObsolete(mySpkModel);
+% matsOut = exportModelObsolete(mySpkModel);
+% 
+% data_palais_repos = matsOut.data_palais_repos;
+% result_stocke = matsOut.result_stocke;
+% XY_repos = matsOut.XY_repos;
+% 
+% fn_out_palais_repos = [path_out 'data_palais_repos_' speakerID_out '.mat'];
+% fn_result_stocke = [path_out 'result_stocke_' speakerID_out '.mat'];
+% fn_XY_repos = [path_out 'XY_repos_' speakerID_out '.mat'];
+% 
+% save(fn_out_palais_repos, '-struct','data_palais_repos');
+% save(fn_result_stocke, '-struct', 'result_stocke');
+% save(fn_XY_repos, '-struct', 'XY_repos');
 
-data_palais_repos = matsOut.data_palais_repos;
-result_stocke = matsOut.result_stocke;
-XY_repos = matsOut.XY_repos;
 
-save('data_palais_repos_pp_FF1Refact.mat', '-struct','data_palais_repos')
-save('result_stocke_pp_FF1Refact.mat', '-struct', 'result_stocke')
-save('XY_repos_pp_FF1Refact.mat', '-struct', 'XY_repos')
