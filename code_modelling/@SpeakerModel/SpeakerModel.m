@@ -43,7 +43,10 @@ classdef SpeakerModel
 
         [] = plotStructures(obj, col);
         [] = plotLandmarks(obj, col);
+        [] = plotSingleLandmark(obj, nameOfLandmark, col);
         [] = plotTongueMesh(obj, col);
+        
+        obj = setCondylePoint(obj, xPos, yPos)
         
         muscle = getSingleMuscle(obj, muscleName);
         
