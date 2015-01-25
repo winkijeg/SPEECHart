@@ -7,7 +7,7 @@ close all
 
 princInvestigator = 'PP';
 speakerName = 'FM1';
-phonLab = 'a';
+phonLab = '@';
 
 % flag: true means contour spline interpolation, false uses raw contour data
 flagBspline = true;
@@ -25,6 +25,8 @@ struc = formatRawDataToSpeakerImaging( pathImaging, princInvestigator, ...
 
 % create SpeakerImaging object
 mySpk = SpeakerImaging(struc);
+
+
 
 mySpk = resampleMidSagittSlice(mySpk, 0.25, 0.25);
 mySpk = normalizeMidSagittSlice(mySpk);
@@ -48,12 +50,12 @@ plotMeasureMorphology(mySpk, 'palateAngle', 'y', cAxes3)
 
 
 % constriction measures specific to /a/
-mySpk = determineMeasuresConstriction(mySpk);
-plotMeasureConstriction(mySpk, 'relConstrHeight', 'r', cAxesImg)
+% mySpk = determineMeasuresConstriction(mySpk);
+% plotMeasureConstriction(mySpk, 'relConstrHeight', 'r', cAxesImg)
 
 % tongue shape measures specific to /a/
-mySpk = determineMeasuresTongueShape(mySpk);
-plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'm', cAxes4)
-plotMeasureTongueShape(mySpk, 'quadCoeff', 'g', cAxes4)
-plotMeasureTongueShape(mySpk, 'tongLength', 'r', cAxes4)
+% mySpk = determineMeasuresTongueShape(mySpk);
+% plotMeasureTongueShape(mySpk, 'curvatureInversRadius', 'm', cAxes4)
+% plotMeasureTongueShape(mySpk, 'quadCoeff', 'g', cAxes4)
+% plotMeasureTongueShape(mySpk, 'tongLength', 'r', cAxes4)
     
