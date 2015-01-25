@@ -5,8 +5,10 @@
 
 clear all
 
+[path_root, ~,~] = initPaths('dummy1', 'dummy2')
+
 %spkStr = 'pp_FF1';
-spkStr = 'cs';
+spkStr = 'cx';
 %spkStr = 'av';
 
 t_trans = [0.050 0.050];
@@ -18,8 +20,12 @@ jaw_rot = [-3 8];
 lip_prot = [3 -5];
 ll_rot = [-4 6];
 hyoid_mov = [5 -3];
-deltaLambda_av = [-20  20  20 -15 0 0 0;
-                    20 -20 -7   10 0 0 0];
+
+deltaLambda_av = [0 0 0 0 0 0 0;
+                  0 0 7 0 0 0 0];
+
+% deltaLambda_av = [-20  20  20 -15 0 0 0;
+%                     20 -20 -7 10 0 0 0];
 
 % % example 1 - /a/
 % seq = 'ra';
@@ -46,7 +52,7 @@ deltaLambda_av = [-20  20  20 -15 0 0 0;
 % deltaLambda_av = [20 20 7 -20 0 0 0];
 
 
-path_model = ['../data/models_obsolete/' spkStr '/'];
+path_model = [path_root 'data/models_obsolete/' spkStr '/'];
 %path_model = ['spec_' spkStr '/'];
 
 simul_tongue_adapt_jaw(path_model, spkStr, seq, seq, ...
