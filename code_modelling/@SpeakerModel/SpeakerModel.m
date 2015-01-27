@@ -43,7 +43,7 @@ classdef SpeakerModel
 
         [] = plotStructures(obj, col);
         [] = plotLandmarks(obj, col);
-        [] = plotSingleLandmark(obj, nameOfLandmark, col);
+        [] = plotSingleLandmark(obj, nameOfLandmark, col, repString);
         [] = plotTongueMesh(obj, col);
         
         obj = setCondylePoint(obj, xPos, yPos)
