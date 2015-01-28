@@ -8,6 +8,13 @@ classdef Utterance
         timeOfFrames = [];
         nFrames = [];
         durationTotal = NaN;
+        
+        % to be modeled later ...
+        lowLipPosX = [];
+        lowLipPosY = [];
+        
+        lowIncisorPosX = [];
+        lowIncisorPosY = [];
 
     end
 
@@ -48,20 +55,21 @@ classdef Utterance
             % has been programmed ...
             nFramesInvalid = sum(matFile.t == 0);
             timeOfFramesOrigValid = ...
-                matFile.t(nFramesInvalid+1:nFramesOriginal)
-            nFramesOrigValid = nFramesOriginal - nFramesInvalid
+                matFile.t(nFramesInvalid+1:nFramesOriginal);
             
-            % extract first half of points/ secon half contains ...
+            nFramesOrigValid = nFramesOriginal - nFramesInvalid;
+            
+            % extract first half of points/ second half contains ...
             % velocity of nodes
-            positionsTmp = matFile.U(nFramesInvalid+1:nFramesOriginal, ...
+            positionsTongueTmp = matFile.U(nFramesInvalid+1:nFramesOriginal, ...
                 1:2*obj.nNodes);
             
-            posDevX = positionsTmp(:, 1:2:2*obj.nNodes);
-            posDevY = positionsTmp(:, 2:2:2*obj.nNodes);
+            posTongDevX = positionsTongueTmp(:, 1:2:2*obj.nNodes);
+            posTomgDevY = positionsTongueTmp(:, 2:2:2*obj.nNodes);
                 
             % add neutral and deviation
-            positionX = repmat(x0, nFramesOrigValid, 1) + posDevX;
-            positionY = repmat(y0, nFramesOrigValid, 1) + posDevY;
+            posTongX = repmat(x0, nFramesOrigValid, 1) + posTongDevX;
+            posTongY = repmat(y0, nFramesOrigValid, 1) + posTomgDevY;
 
             % read data related to force .............................
             forceValsXDirOrig = ...
@@ -74,8 +82,20 @@ classdef Utterance
             % convert from original scale to Newton
             forceValsXDirNewton = forceValsXDirOrig * 0.001 * 35;
             forceValsYDirNewton = forceValsYDirOrig * 0.001 * 35;
+           
+            % read data related to jaw movement
+            positionsLowLipTmp = matFile.U_lowlip(nFramesInvalid+1:nFramesOriginal, 1:30);
+            posLowLipX = positionsLowLipTmp(:, 1:15);
+            posLowLipY = positionsLowLipTmp(:, 16:30);
             
-            % now resampling takes place ...
+            positionsLowIncisorTmp = matFile.U_dents_inf(nFramesInvalid+1:nFramesOriginal, 1:34);
+            posLowIncisorX = positionsLowIncisorTmp(:, 1:17);
+            posLowIncisorY = positionsLowIncisorTmp(:, 18:34);
+            
+            
+            
+            
+            % resample trajectories .................................
             frameDuration = 1/fs;
             endTimeOfLastFrame = max(matFile.t);
 
@@ -84,11 +104,11 @@ classdef Utterance
                 endTimeOfLastFrame;
                   
             % resample position data
-            positionXResampled = ...
-                interp1(timeOfFramesOrigValid, positionX, ...
+            positionTongXResampled = ...
+                interp1(timeOfFramesOrigValid, posTongX, ...
                 timeOfFramesResampled);
-            positionYResampled = ...
-                interp1(timeOfFramesOrigValid, positionY, ...
+            positionTongYResampled = ...
+                interp1(timeOfFramesOrigValid, posTongY, ...
                 timeOfFramesResampled);
             
             % resample force data
@@ -99,26 +119,48 @@ classdef Utterance
                 interp1(timeOfFramesOrigValid, forceValsYDirNewton, ...
                 timeOfFramesResampled);
       
+            % resample lower lip and lower teeth data
+            posLowLipXResampled = interp1(timeOfFramesOrigValid, posLowLipX, ...
+                timeOfFramesResampled);
+            posLowLipYResampled = interp1(timeOfFramesOrigValid, posLowLipY, ...
+                timeOfFramesResampled);
+
+            
+            posLowIncisorXResampled = interp1(timeOfFramesOrigValid, posLowIncisorX, ...
+                timeOfFramesResampled);
+            posLowIncisorYResampled = interp1(timeOfFramesOrigValid, posLowIncisorY, ...
+                timeOfFramesResampled);
+            
+            
+            
+            
             nFramesResampled = length(timeOfFramesResampled);
-        
-            % memory allocation
+            % memory allocation for creating objects
             obj.positionFrames(nFramesResampled) = PositionFrame();
             obj.forceFrames(nFramesResampled) = ForceFrame();
             for k = 1:nFramesResampled
                 
                 obj.positionFrames(k) = ...
                     PositionFrame(timeOfFramesResampled(k), ...
-                    positionXResampled(k, :), positionYResampled(k, :));
+                    positionTongXResampled(k, :), positionTongYResampled(k, :));
                 
                 obj.forceFrames(k) = ...
                     ForceFrame(timeOfFramesResampled(k), ...
                     forceXDirResampled(k, :), forceYDirResampled(k, :));
             end
             
+            
+            
             % assign values that are manipulated by resampling ... 
             obj.timeOfFrames = timeOfFramesResampled;
             obj.nFrames = length(timeOfFramesResampled);
             obj.durationTotal = timeOfFramesResampled(nFramesResampled);
+            
+            obj.lowLipPosX = posLowLipXResampled;
+            obj.lowLipPosY = posLowLipYResampled;
+            
+            obj.lowIncisorPosX = posLowIncisorXResampled;
+            obj.lowIncisorPosY = posLowIncisorYResampled;
             
         end
         
