@@ -13,7 +13,7 @@ CALC_ELA = 1;   % calculated each time!
 [path_root, ~,~] = initPaths('dummy1', 'dummy2');
 
 %spkStr = 'pp_FF1';
-spkStr = 'cx';
+spkStr = 'cs';
 %spkStr = 'av';
 
 t_trans = [0.050];
