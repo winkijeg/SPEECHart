@@ -1,11 +1,21 @@
 function [] = plotStructures(obj, col)
+% plot rigid structures
 
-    structNames = fieldnames(obj.structures);
+    def_structures = {'upperIncisorPalate', 'velum', 'backPharyngealWall'};
+
+    structNames = def_structures;
     numberOfStructs = length(structNames);
     
     for k = 1:numberOfStructs
         
-        ptTmp = obj.structures.(structNames{k});
+        
+        
+        % to be removed in the future ...........
+        if (strcmp(structNames{k}, 'upperIncisorPalate'))
+            ptTmp = obj.structures.(structNames{k})(1:2, 8:end);
+        else
+            ptTmp = obj.structures.(structNames{k});
+        end
         
         plot(ptTmp(1, :), ptTmp(2, :), col)
     end
