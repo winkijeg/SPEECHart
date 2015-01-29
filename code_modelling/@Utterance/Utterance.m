@@ -15,6 +15,9 @@ classdef Utterance
         
         lowIncisorPosX = [];
         lowIncisorPosY = [];
+        
+        condylePosX = [];
+        condylePosY = [];
 
     end
 
@@ -53,7 +56,7 @@ classdef Utterance
             
             % invalid first frames are the consequence of the way synthesis
             % has been programmed ...
-            nFramesInvalid = sum(matFile.t == 0);
+            nFramesInvalid = sum(matFile.t == 0)-1;
             timeOfFramesOrigValid = ...
                 matFile.t(nFramesInvalid+1:nFramesOriginal);
             
@@ -92,6 +95,8 @@ classdef Utterance
             posLowIncisorX = positionsLowIncisorTmp(:, 1:17);
             posLowIncisorY = positionsLowIncisorTmp(:, 18:34);
             
+            posCondyleX = matFile.U_X_origin(1, nFramesInvalid+1:nFramesOriginal)';
+            posCondyleY = matFile.U_Y_origin(1, nFramesInvalid+1:nFramesOriginal)';
             
             
             
@@ -100,8 +105,7 @@ classdef Utterance
             endTimeOfLastFrame = max(matFile.t);
 
             % Sample time points for the new frames
-            timeOfFramesResampled = frameDuration:frameDuration: ...
-                endTimeOfLastFrame;
+            timeOfFramesResampled = 0:frameDuration:endTimeOfLastFrame;
                   
             % resample position data
             positionTongXResampled = ...
@@ -131,8 +135,11 @@ classdef Utterance
             posLowIncisorYResampled = interp1(timeOfFramesOrigValid, posLowIncisorY, ...
                 timeOfFramesResampled);
             
-            
-            
+            posCondyleXResampled = interp1(timeOfFramesOrigValid, posCondyleX, ...
+                timeOfFramesResampled);
+            posCondyleYResampled = interp1(timeOfFramesOrigValid, posCondyleY, ...
+                timeOfFramesResampled);
+             
             
             nFramesResampled = length(timeOfFramesResampled);
             % memory allocation for creating objects
@@ -162,6 +169,9 @@ classdef Utterance
             obj.lowIncisorPosX = posLowIncisorXResampled;
             obj.lowIncisorPosY = posLowIncisorYResampled;
             
+            obj.condylePosX(:, 1) = posCondyleXResampled;
+            obj.condylePosY(:, 1) = posCondyleYResampled;
+            
         end
         
         % returns the frame number at a given time instant, i.e. 0.180 [ms]
@@ -176,6 +186,9 @@ classdef Utterance
             
         end
     
+        val = determineJawOpeningAngle(obj, t1, t2)
+        
+        [] = plotSingleStructure(obj, structName, targetFrame, colorStr)
         
     end
     
