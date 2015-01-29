@@ -32,43 +32,43 @@ myModelProducer = ModelProducer(dataSpkMRI, gridZoning);
 modelData = matchModel(myModelProducer);
 
 % create the model object
-mySpkModel = SpeakerModel(modelData);
+myModel = SpeakerModel(modelData);
 
 % plotting ............................................................
 figure
-initPlotFigure(mySpkModel, true)
+initPlotFigure(myModel, true)
 
 plotStructures(modelGeneric, 'k--')
 plotLandmarks(modelGeneric, 'k')
 drawTongSurface(modelGeneric.tongGrid, 'r')
 %plotTongueMesh(modelGeneric, 'k')
 
-initPlotFigure(mySpkModel, true)
-plotLandmarks(mySpkModel, 'b')
-plotStructures(mySpkModel, 'b')
-drawTongSurface(mySpkModel.tongGrid, 'r')
+initPlotFigure(myModel, true)
+plotLandmarks(myModel, 'b')
+plotStructures(myModel, 'b')
+drawTongSurface(myModel.tongGrid, 'r')
 %plotTongueMesh(mySpkModel, 'r')
 
 
 % save model data (mat-file-format)
 fn_out_model = [path_out speakerID_out '_model.mat'];
 
-save(fn_out_model, '-struct', 'modelData')
-
+% save(fn_out_model, '-struct', 'modelData')
+save(fn_out_model, 'myModel')
 
 % convert Model into obsolete format to simulate with the original code
-% matsOut = exportModelObsolete(mySpkModel);
-% 
-% data_palais_repos = matsOut.data_palais_repos;
-% result_stocke = matsOut.result_stocke;
-% XY_repos = matsOut.XY_repos;
-% 
-% fn_out_palais_repos = [path_out 'data_palais_repos_' speakerID_out '.mat'];
-% fn_result_stocke = [path_out 'result_stocke_' speakerID_out '.mat'];
-% fn_XY_repos = [path_out 'XY_repos_' speakerID_out '.mat'];
-% 
-% save(fn_out_palais_repos, '-struct','data_palais_repos');
-% save(fn_result_stocke, '-struct', 'result_stocke');
-% save(fn_XY_repos, '-struct', 'XY_repos');
+matsOut = exportModelObsolete(myModel);
+
+data_palais_repos = matsOut.data_palais_repos;
+result_stocke = matsOut.result_stocke;
+XY_repos = matsOut.XY_repos;
+
+fn_out_palais_repos = [path_out 'data_palais_repos_' speakerID_out '.mat'];
+fn_result_stocke = [path_out 'result_stocke_' speakerID_out '.mat'];
+fn_XY_repos = [path_out 'XY_repos_' speakerID_out '.mat'];
+
+save(fn_out_palais_repos, '-struct','data_palais_repos');
+save(fn_result_stocke, '-struct', 'result_stocke');
+save(fn_XY_repos, '-struct', 'XY_repos');
 
 
