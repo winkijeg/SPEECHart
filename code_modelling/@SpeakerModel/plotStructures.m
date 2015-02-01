@@ -1,7 +1,8 @@
 function [] = plotStructures(obj, col)
 % plot rigid structures
 
-    def_structures = {'upperIncisorPalate', 'velum', 'backPharyngealWall'};
+    def_structures = {'upperIncisorPalate', 'velum', ...
+        'backPharyngealWall', 'tongueLarynx'};
 
     structNames = def_structures;
     numberOfStructs = length(structNames);
