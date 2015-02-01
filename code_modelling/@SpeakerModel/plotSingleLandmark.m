@@ -1,5 +1,5 @@
 function [] = plotSingleLandmark(obj, nameOfLandmark, col, repString)
-% plot (and label) a single landmark of the model
+% plot (and label) a single landmark of the vocal tract model
 %
 % an optional 4th input argument allows for label string substitution 
 % before plotting
