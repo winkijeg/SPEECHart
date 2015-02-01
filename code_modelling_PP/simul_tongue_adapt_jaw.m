@@ -50,8 +50,6 @@ function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, ...
 global dents_inf lar_ar_mri tongue_lar_mri lowlip palate pharynx_mri
 global tongue_lar upperlip velum
 
-global CALC_ELA
-
 global sujet rest_file contour_file result_stocke_file MATRICE_LAMBDA
 
 global X_origin_initial Y_origin_initial X_repos Y_repos
@@ -913,7 +911,7 @@ file_mat = [spkStr, '_', out_file];
 jaw_rotation = jaw_rotation*180/pi;
 ll_rotation = ll_rotation*180/pi;
 
-list_data_sauv = ' sujet U t ttout CALC_ELA fact MM NN SEQUENCE TEMPS_FINAL TEMPS_HOLD TEMPS_FINAL_CUM TEMPS_ACTIVATION MATRICE_LAMBDA nb_transitions';
+list_data_sauv = ' sujet U t ttout fact MM NN SEQUENCE TEMPS_FINAL TEMPS_HOLD TEMPS_FINAL_CUM TEMPS_ACTIVATION MATRICE_LAMBDA nb_transitions';
 list_data_sauv = [list_data_sauv ' jaw_rotation lip_protrusion ll_rotation hyoid_movment FXY_TRAJ ACCL_TRAJ ACTIV_TRAJ LAMBDA_TRAJ X0 Y0'];
 list_data_sauv = [list_data_sauv ' U_dents_inf U_lowlip U_upperlip U_pharynx_mri U_lar_ar_mri U_tongue_lar_mri X0_seq Y0_seq U_X_origin U_Y_origin'];
 command = ['save ' file_mat list_data_sauv];
