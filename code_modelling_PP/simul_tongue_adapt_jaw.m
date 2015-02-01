@@ -229,14 +229,13 @@ MM = 9;	   % MM : number of rows
 % Rho is the Force!
 K_m = 0.22;    % in N/mm2, value obtained from Van Lunteren & al. 1990 
 
-CSA_GG = 308/(6*fact+1);
+CSA_GG = 23.7;
 rho_GG = CSA_GG * K_m;
 
-CSA_Hyo = 296/3;
+CSA_Hyo = 98.7;
 rho_Hyo = CSA_Hyo*K_m;
 
-% CSA_Stylo=110/2;
-CSA_Stylo = 40/2; % Modifs Pascal Mars 2000 a la suite du scratch de aka
+CSA_Stylo = 20;
 rho_Stylo = CSA_Stylo * K_m;
 
 CSA_SL = 65;
@@ -245,7 +244,7 @@ rho_SL = CSA_SL * K_m;
 CSA_IL = 88;
 rho_IL = CSA_IL * K_m;
 
-CSA_Vert = 66/(3*fact);
+CSA_Vert = 11;
 rho_Vert = CSA_Vert * K_m;
 
 % --------------------------------------------------------
@@ -471,20 +470,19 @@ IE = [5*ones(1,8),1*ones(1,8),6*ones(1,8),2*ones(1,8),7*ones(1,8),3*ones(1,8),8*
 global ordre
 
 ordre = 2;
-H(1,1) = 2.;
-H(2,1) = 1.;
-H(2,2) = 1.;
+H(1,1) = 2.0;
+H(2,1) = 1.0;
+H(2,2) = 1.0;
 H(3,1) = 0.555556;
 H(3,2) = 0.888889;
 H(3,3) = 0.555556;
 
-G(1,1) = 0.;
+G(1,1) = 0.0;
 G(2,1) = -0.577350;
 G(2,2) = 0.577350;
 G(3,1) = -0.774597;
-G(3,2) = 0.;
+G(3,2) = 0.0;
 G(3,3) = 0.774597;
-
 
 % --------------------------------------------------------
 % Creation of the force vector FXY which is applied to the nodes.
@@ -699,24 +697,11 @@ end
 %     plot(Point_P(2*i-1),Point_P(2*i),'k*');
 % end
 
-% plot(dents_inf(1,:),dents_inf(2,:),'k-');
-% plot(palate(1,:),palate(2,:),'k-');
-% plot(velum(1,:),velum(2,:),'k-');
 X_origin_initial = X_condyle; % PP Juli 2011
 Y_origin_initial = Y_condyle; % PP Juli 2011
-% plot(X_origin_initial,Y_origin_initial,'ro'); % GB Mars 2011
-% plot(lar_ar_mri(1,:),lar_ar_mri(2,:),'k-'); % GB Mars 2011
-% plot(pharynx_mri(1,:),pharynx_mri(2,:),'k-'); % GB Mars 2011
-% plot(tongue_lar_mri(1,:), tongue_lar_mri(2,:),'r')
-
-% --------------------------------------------------------
-% Resolution de l'equa diff par Runge Kutta  (fonction ODE45 de Matlab)
-% Resolution de l'equa diff qui donne les tableaux tfin et Ufin
-% ODE45 calcule lui-meme les differents t de t0 a tf*nb_voyelles
-
 
 disp('calculate differential equation ...')
-U0 = [U(size(t)*[0;1],1:2*NN*MM)]';
+U0 = [U(size(t)*[0;1], 1:2*NN*MM)]';
 U0(2*NN*MM+1:4*NN*MM,1) = zeros(2*NN*MM,1);
 
 global nb_contact
@@ -767,31 +752,17 @@ ACTIV_T = 0;
 global LAMBDA_T;
 LAMBDA_T = 0;
 
-% LAMBDA_T va etre une matrice avec la valeur de lambda en fonction du temps
-% pour une fibre de chaque muscle
-% LAMBDA_T(KKK, :) = [GGP(kkk), GGA(), Stylo(), Hyo(), SL(), IL(), Vert()]
-
-% !!!!!! MATLAB 4 <=> MATLAB 5 !!!!!!!!!
-% MATLAB 5 :
-
-% CV - 03/03/99
-% Utilisation de la version udot3.m, ce qui necessite l'appel
-% de udot3init.m
-
-%tf=TEMPS_FINAL_CUM(length(TEMPS_FINAL_CUM));
-
 tf_seq = TEMPS_FINAL_CUM;
 t0_seq = [0 TEMPS_FINAL_CUM(1:length(TEMPS_FINAL_CUM)-1)];
 tf = tf_seq(length(tf_seq));
 
-%Jaw rotation and its effect on the tongue and the lower lip -- mz 12/27/99
+% jaw rotation and its effect on the tongue and the lower lip
 U_lowlip = zeros(round(200*tf), 12); % 30
 U_upperlip = zeros(round(200*tf), 12); % 46
 U_dents_inf = zeros(round(200*tf), 10); % 34     %% GB Mars 2011
 U_pharynx_mri = zeros(round(200*tf), 13);
 U_lar_ar_mri = zeros(round(200*tf), 12);
 U_tongue_lar_mri = zeros(round(200*tf), 17);
-% U_mandibule=zeros(round(200*tf),20);
 X0_seq = zeros(round(200*tf), 221);
 Y0_seq = zeros(round(200*tf), 221);
 ttout = 0;
@@ -834,16 +805,18 @@ for i = 1:length(tf_seq)
     %the initial angle alpha of the lower incisor
     alpha_rest_pos_dents_inf = atan2((X_origin-dents_inf(1,:)), ...
         (Y_origin-dents_inf(2,:)));
-    %the initial distance of the lower incisor to the center of rotation
+    % the initial distance of the lower incisor to the center of rotation
     dist_rest_pos_dents_inf = sqrt((dents_inf(2,:)-Y_origin).^2 + (dents_inf(1,:)-X_origin).^2);
     
     X_origin_ll = X_origin;
     Y_origin_ll = Y_origin;
     lowlip_initial = lowlip;
-    alpha_rest_pos_lowlip = atan2((X_origin_ll-lowlip(1,:)), (Y_origin_ll-lowlip(2,:)));%the initial angle alpha of the lower lip
-    dist_rest_pos_lowlip = sqrt((lowlip(2,:)-Y_origin_ll).^2+(lowlip(1,:)-X_origin_ll).^2);%the initial distance of the lower lip to the center of rotation
+    % the initial angle alpha of the lower lip
+    alpha_rest_pos_lowlip = atan2((X_origin_ll-lowlip(1,:)), (Y_origin_ll-lowlip(2,:)));
+    %the initial distance of the lower lip to the center of rotation
+    dist_rest_pos_lowlip = sqrt((lowlip(2,:)-Y_origin_ll).^2+(lowlip(1,:)-X_origin_ll).^2);
     t_initial = t0_seq(i);
-    t_transition = t0_seq(i)+TEMPS_ACTIVATION(i);
+    t_transition = t0_seq(i) + TEMPS_ACTIVATION(i);
     t_final = tf_seq(i);
     theta = jaw_rotation(i);
     theta_ll = ll_rotation(i);
