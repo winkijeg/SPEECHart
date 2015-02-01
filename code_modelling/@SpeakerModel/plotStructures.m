@@ -1,5 +1,5 @@
 function [] = plotStructures(obj, col)
-% plot rigid structures
+% plot rigid structures of the vocal tract model
 
     def_structures = {'upperIncisorPalate', 'velum', ...
         'backPharyngealWall', 'tongueLarynx'};
@@ -9,16 +9,9 @@ function [] = plotStructures(obj, col)
     
     for k = 1:numberOfStructs
         
-        
-        
-        % to be removed in the future ...........
-        if (strcmp(structNames{k}, 'upperIncisorPalate'))
-            ptTmp = obj.structures.(structNames{k})(1:2, 8:end);
-        else
-            ptTmp = obj.structures.(structNames{k});
-        end
-        
+        ptTmp = obj.structures.(structNames{k});
         plot(ptTmp(1, :), ptTmp(2, :), col)
+        
     end
     
 end
