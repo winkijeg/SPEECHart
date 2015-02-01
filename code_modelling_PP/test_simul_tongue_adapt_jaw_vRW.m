@@ -6,27 +6,24 @@
 clearvars -global
 close all
 
-global CALC_ELA
-CALC_ELA = 1;   % calculated each time!
-
-
 [path_root, ~,~] = initPaths('dummy1', 'dummy2');
 
 %spkStr = 'pp_FF1';
 spkStr = 'cs';
 %spkStr = 'av';
 
-t_trans = [0.050];
-t_hold = [0.100];
+t_trans = [0.050 0.050];
+t_hold = [0.100 0.100];
 
-seq = 'ra';
-jaw_rot = [9];
-lip_prot = [0];
-ll_rot = [0];
-hyoid_mov = [0];
+seq = 'rai';
+jaw_rot = [9 0];
+lip_prot = [0 0];
+ll_rot = [0 0];
+hyoid_mov = [0 0];
 
 % original inputs; order is GGP GGA HYO STY VER SL IL
-deltaLambda_av = [0 0 0 0 0 0 0];
+deltaLambda_av = [0 0 0 0 0 0 0;
+    -20 0 0 0 0 0 0];
 
 % deltaLambda_av = [-20  20  20 -15 0 0 0;
 %                     20 -20 -7 10 0 0 0];

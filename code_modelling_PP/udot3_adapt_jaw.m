@@ -360,15 +360,9 @@ if first_contact == 1
 end
 
 % calculate new elasticity matrix as a function of muscle contraction
-global CALC_ELA
+A0 = elast2(sum(ForceGGA)/6, sum(ForceGGP)/7, sum(ForceHyo)/3, ...
+    (ForceStylo1+ForceStylo2)/2, ForceSL , sum(ForceVert)/6, neucontact);
 
-if CALC_ELA
-    A0 = elast2(sum(ForceGGA)/6, sum(ForceGGP)/7, sum(ForceHyo)/3, ...
-        (ForceStylo1+ForceStylo2)/2, ForceSL , sum(ForceVert)/6, ...
-        neucontact);
-end
-
-% Calcul de UDOT -------------------------------------------------------
 U(NNx2-1,1) = 0;
 U(NNx2,1) = 0;
 for j = 1:13:209
