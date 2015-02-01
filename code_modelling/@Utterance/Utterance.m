@@ -49,8 +49,8 @@ classdef Utterance
             
             % up from now neutral position and deviations have the same format
             % extract relevant neutral positions 
-            x0 = reshape(matFile.X0', 1, obj.nNodes);
-            y0 = reshape(matFile.Y0', 1, obj.nNodes);
+%             x0 = reshape(matFile.X0', 1, obj.nNodes);
+%             y0 = reshape(matFile.Y0', 1, obj.nNodes);
 
             nFramesOriginal = length(matFile.t);
             
@@ -64,16 +64,19 @@ classdef Utterance
             
             % extract first half of points/ second half contains ...
             % velocity of nodes
-            positionsTongueTmp = matFile.U(nFramesInvalid+1:nFramesOriginal, ...
-                1:2*obj.nNodes);
-            
-            posTongDevX = positionsTongueTmp(:, 1:2:2*obj.nNodes);
-            posTomgDevY = positionsTongueTmp(:, 2:2:2*obj.nNodes);
-                
-            % add neutral and deviation
-            posTongX = repmat(x0, nFramesOrigValid, 1) + posTongDevX;
-            posTongY = repmat(y0, nFramesOrigValid, 1) + posTomgDevY;
+%             positionsTongueTmp = matFile.U(nFramesInvalid+1:nFramesOriginal, ...
+%                 1:2*obj.nNodes);
+%             
+%             posTongDevX = positionsTongueTmp(:, 1:2:2*obj.nNodes);
+%             posTomgDevY = positionsTongueTmp(:, 2:2:2*obj.nNodes);
+%                 
+%             % add neutral and deviation
+%             posTongX = repmat(x0, nFramesOrigValid, 1) + posTongDevX;
+%             posTongY = repmat(y0, nFramesOrigValid, 1) + posTomgDevY;
 
+            posTongX = matFile.X0_seq(nFramesInvalid+1:nFramesOriginal,1:221);
+            posTongY = matFile.Y0_seq(nFramesInvalid+1:nFramesOriginal,1:221);
+            
             % read data related to force .............................
             forceValsXDirOrig = ...
                 matFile.FXY_TRAJ(nFramesInvalid+1:nFramesOriginal, ...
