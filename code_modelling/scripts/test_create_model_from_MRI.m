@@ -4,10 +4,10 @@ clearvars
 close all
 
 princInvestigator = 'PP';
-speakerName = 'FF1';
+speakerName = 'FM1';
 phonLab = '@';
 
-speakerID_out = 'av';
+speakerID_out = 'cs';
 
 % specify path names
 [path_root, ~, pathImaging] = ...
