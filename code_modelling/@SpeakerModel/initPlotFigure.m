@@ -1,4 +1,4 @@
-function [] = initPlotFigure(obj, imageFlag)
+function h = initPlotFigure(obj, imageFlag)
 
     % range of x and y values seen in the new pic
     xDim = 165; % [mm]
@@ -13,10 +13,10 @@ function [] = initPlotFigure(obj, imageFlag)
     ylim = [ptCenter(2) - yDim/2 ptCenter(2) + yDim/2];
     
     if imageFlag == true
-%         imshow(obj.sliceData, 'XData', obj.xdataSlice, 'YData', obj.ydataSlice);
+%         h = imshow(obj.sliceData, 'XData', obj.xdataSlice, 'YData', obj.ydataSlice);
 %         set(gca,'Color',[0 0 0], 'YDir', 'normal');
     else
-        figure;
+        h = figure;
     end
     
     axis on;
