@@ -83,17 +83,17 @@ save ([path_mat_model fn_mat_model], '-struct', 'mat')
 myModel = SpeakerModel(mat);
 
 % save in obsolete format (3 mat-files)  ------------------------------------
-matsObsolete = exportModelObsolete(myModel);
-
-mat_data_palais_repos = matsObsolete.data_palais_repos;
-save ([path_mat_model fn_structuresRepos_obs], '-struct', 'mat_data_palais_repos');
-
-mat_XY_repos = matsObsolete.XY_repos;
-save ([path_mat_model fn_tongueRepos_obs], '-struct', 'mat_XY_repos');
-
-mat_result_stocke = matsObsolete.result_stocke;
-save ([path_mat_model fn_result_stoke_obs], '-struct', 'mat_result_stocke');
-
+% matsObsolete = exportModelObsolete(myModel);
+% 
+% mat_data_palais_repos = matsObsolete.data_palais_repos;
+% save ([path_mat_model fn_structuresRepos_obs], '-struct', 'mat_data_palais_repos');
+% 
+% mat_XY_repos = matsObsolete.XY_repos;
+% save ([path_mat_model fn_tongueRepos_obs], '-struct', 'mat_XY_repos');
+% 
+% mat_result_stocke = matsObsolete.result_stocke;
+% save ([path_mat_model fn_result_stoke_obs], '-struct', 'mat_result_stocke');
+% 
 % just to verify that everything went well ...................
 initPlotFigure(myModel, false);
 
