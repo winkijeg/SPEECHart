@@ -39,7 +39,7 @@ classdef SpeakerModel
             
         end
         
-        [] = initPlotFigure(myModel, false);
+        h = initPlotFigure(obj, image_flag);
 
         [] = plotStructures(obj, col);
         [] = plotLandmarks(obj, col);
@@ -51,6 +51,8 @@ classdef SpeakerModel
         muscle = getSingleMuscle(obj, muscleName);
         
         matsOut = exportModelObsolete(obj)
+        
+        [] = writeUttToMPEG4(obj, utterance, fname)
         
     end
     
