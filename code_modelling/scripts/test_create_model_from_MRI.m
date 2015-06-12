@@ -47,7 +47,7 @@ initPlotFigure(myModel, true)
 plotLandmarks(myModel, 'b')
 plotStructures(myModel, 'b')
 drawTongSurface(myModel.tongGrid, 'r')
-%plotTongueMesh(mySpkModel, 'r')
+plotTongueMesh(myModel, 'r')
 
 
 % save model data (mat-file-format)
