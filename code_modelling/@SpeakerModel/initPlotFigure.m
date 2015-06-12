@@ -13,8 +13,8 @@ function h = initPlotFigure(obj, imageFlag)
     ylim = [ptCenter(2) - yDim/2 ptCenter(2) + yDim/2];
     
     if imageFlag == true
-%         h = imshow(obj.sliceData, 'XData', obj.xdataSlice, 'YData', obj.ydataSlice);
-%         set(gca,'Color',[0 0 0], 'YDir', 'normal');
+        %h = imshow(obj.sliceData, 'XData', obj.xdataSlice, 'YData', obj.ydataSlice);
+        %set(gca,'Color',[0 0 0], 'YDir', 'normal');
     else
         h = figure;
     end
