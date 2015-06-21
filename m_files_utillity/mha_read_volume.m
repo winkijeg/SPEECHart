@@ -1,12 +1,14 @@
 function V = mha_read_volume(info)
-% reads data of an 3D metaImage from info structure (SPRECHart)
+% function for reading the volume of a Insight Meta-Image (.mha, .mhd) file
+%
+% Copyright (c) 2010, Dirk-Jan Kroon / All rights reserved.
+% 
+% modified 06/2015 by winkler.phonetics@googlemail.com
 % 
 % examples:
 %    info = mha_read_header('test.mha')
 %    V = mha_read_volume(info);
 %    imshow(squeeze(V(:,:,round(end/2))),[]);
-
-% written 2010 by RW (SPRECHart)
 
 switch(lower(info.DataFile))
     case 'local'
@@ -74,14 +76,16 @@ end
 fclose(fid);
 V_tmp = reshape(V,info.Dimensions);
 V = permute(V_tmp, [2 1 3]);
+end
 
 
 function M = zlib_decompress(Z, DataType)
-import com.mathworks.mlwidgets.io.InterruptibleStreamCopier
+    import com.mathworks.mlwidgets.io.InterruptibleStreamCopier
 
-a = java.io.ByteArrayInputStream(Z);
-b = java.util.zip.InflaterInputStream(a);
-isc = InterruptibleStreamCopier.getInterruptibleStreamCopier;
-c = java.io.ByteArrayOutputStream;
-isc.copyStream(b,c);
-M = typecast(c.toByteArray,DataType);
+    a = java.io.ByteArrayInputStream(Z);
+    b = java.util.zip.InflaterInputStream(a);
+    isc = InterruptibleStreamCopier.getInterruptibleStreamCopier;
+    c = java.io.ByteArrayOutputStream;
+    isc.copyStream(b,c);
+    M = typecast(c.toByteArray,DataType);
+end
