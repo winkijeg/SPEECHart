@@ -1,7 +1,9 @@
 function info = mha_read_header(filename)
-% reads header info of an 3D metaImage (SPRECHart)
+% function for reading the header of a Insight Meta-Image (.mha,.mhd) file
+%
+% Copyright (c) 2010, Dirk-Jan Kroon / All rights reserved.
 % 
-% info  = mha_read_header(filename);
+% modified 06/2015 by winkler.phonetics@googlemail.com
 %
 % examples:
 %   info = mha_read_header('volume.mha');
