@@ -32,6 +32,8 @@ classdef SpeakerImaging
     properties (Access = private)
         
         
+        
+        
     end
     
     
