@@ -10,7 +10,7 @@ function gridZoning = calcGridIndicesOfAnatomicalRegions(obj)
 
 grd = obj.semipolarGrid;
 
-% anatomical landmarks necessary to zone the contours
+% anatomical landmarks necessary to split up the contours
 ptTongStart = obj.landmarks.VallSin;
 ptTongEnd = obj.landmarks.TongTip;
 
