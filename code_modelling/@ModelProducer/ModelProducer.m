@@ -24,23 +24,26 @@ classdef ModelProducer
     
     methods
         
-        function obj = ModelProducer(dataSpkMRI, gridZoning)
+        function obj = ModelProducer(modelData)
             
             matModelGeneric = load('ypm_model.mat');
             obj.modelGeneric = SpeakerModel(matModelGeneric);
             
-            obj.landmarks.styloidProcess = dataSpkMRI.styloidProcess;
-            obj.landmarks.condyle = dataSpkMRI.condyle;
-            obj.landmarks.tongInsL = dataSpkMRI.tongInsL;
-            obj.landmarks.tongInsH = dataSpkMRI.tongInsH;
-            obj.landmarks.ANS = dataSpkMRI.ANS;
-            obj.landmarks.PNS = dataSpkMRI.PNS;
-            obj.landmarks.origin = dataSpkMRI.origin;
+            obj.landmarks.styloidProcess = modelData.styloidProcess;
+            obj.landmarks.condyle = modelData.condyle;
+            obj.landmarks.tongInsL = modelData.tongInsL;
+            obj.landmarks.tongInsH = modelData.tongInsH;
+            obj.landmarks.ANS = modelData.ANS;
+            obj.landmarks.PNS = modelData.PNS;
+            obj.landmarks.origin = modelData.origin;
             
-            obj.contours.innerPt = dataSpkMRI.innerPt;
-            obj.contours.outerPt = dataSpkMRI.outerPt;
+            obj.contours.innerPt = modelData.innerPt;
+            obj.contours.outerPt = modelData.outerPt;
             
-            obj.gridZoning = gridZoning;
+            obj.gridZoning.tongue = modelData.idxTongue;
+            obj.gridZoning.pharynx = modelData.idxPharynx;
+            obj.gridZoning.velum = modelData.idxVelum;
+            obj.gridZoning.palate = modelData.idxPalate;
         
             % calculate initial rotation of mri data
             [obj.tMatGeom, obj.tformImg] = calcTransformationImgToModel(obj);
