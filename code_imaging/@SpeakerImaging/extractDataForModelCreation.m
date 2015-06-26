@@ -1,4 +1,4 @@
-function [struc, gridZoning] = extractDataForModelCreation(obj)
+function struc = extractDataForModelCreation(obj)
 % extract mri data relevant for model creation (by adaptation to generic model)
 
     struc.styloidProcess = obj.landmarks.Stylo;
@@ -15,9 +15,14 @@ function [struc, gridZoning] = extractDataForModelCreation(obj)
     tongSurface = obj.filteredContours.innerPt(1:2, from:to);
     struc.origin = mean(tongSurface, 2);
 
+    
+    
     struc.outerPt(1:2, :) = obj.filteredContours.outerPt;
     struc.innerPt(1:2, :) = obj.filteredContours.innerPt;
 
-    gridZoning = obj.gridZoning;
+    struc.idxTongue = obj.gridZoning.tongue;
+    struc.idxPharynx = obj.gridZoning.pharynx;
+    struc.idxVelum = obj.gridZoning.velum;
+    struc.idxPalate = obj.gridZoning.palate;
 
 end
