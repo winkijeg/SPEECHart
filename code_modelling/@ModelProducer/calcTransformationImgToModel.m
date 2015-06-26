@@ -1,8 +1,8 @@
 function [tMatGeom, tformImg] = calcTransformationImgToModel( obj )
 % calculate transform from MRI coordinate space to generic coordinates (model)
-%   this function returns two matrices:
-%   tMat: to be used with geometric coordinates
-%   tform: to be used with image transformation
+%   function returns two matrices:
+%   - tMat: to be used with geometric coordinates
+%   - tform: to be used with image transformation
 
     pt_ANS_generic = obj.modelGeneric.landmarks.ANS;
     pt_PNS_generic = obj.modelGeneric.landmarks.PNS;
