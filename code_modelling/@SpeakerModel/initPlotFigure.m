@@ -4,9 +4,6 @@ function h = initPlotFigure(obj, imageFlag)
     xDim = 165; % [mm]
     yDim = xDim; % [mm]
 
-    % ipt prefs
-    iptsetpref('ImshowAxesVisible', 'Off')
-    iptsetpref('ImshowBorder', 'loose')
     
     ptCenter = obj.landmarks.origin;
     xlim = [ptCenter(1) - xDim/2 ptCenter(1) + xDim/2];
