@@ -52,17 +52,19 @@ function [tMatGeom, tformImg] = calcTransformationImgToModel( obj )
     tMatGeom = tMat3;
     
     % create matrix in order to transform the MRI image
-    t1 = [1 0 0; 0 1 0; offset_AP offset_IS 1];
-    tform1 = maketform('affine', t1);
-
-    t2 = [cos(angle_RotationRad) sin(angle_RotationRad) 0; ...
-        -sin(angle_RotationRad) cos(angle_RotationRad) 0; 0 0 1];
-    tform2 = maketform('affine', t2);
-
-    t3 = [1 0 0; 0 1 0; -tx -ty 1];
-    tform3 = maketform('affine', t3);
-
-    % assign matrix for MRI image
-    tformImg = maketform('composite', tform1);
+    % TODO: implement stuff regarding the image to be displayed
+%     t1 = [1 0 0; 0 1 0; offset_AP offset_IS 1];
+%     tform1 = maketform('affine', t1);
+% 
+%     t2 = [cos(angle_RotationRad) sin(angle_RotationRad) 0; ...
+%         -sin(angle_RotationRad) cos(angle_RotationRad) 0; 0 0 1];
+%     tform2 = maketform('affine', t2);
+% 
+%     t3 = [1 0 0; 0 1 0; -tx -ty 1];
+%     tform3 = maketform('affine', t3);
+% 
+%     % assign matrix for MRI image
+%     tformImg = maketform('composite', tform1);
+    tformImg = [];
 
 end
