@@ -4,14 +4,9 @@ classdef SpeakerModel
     properties
         
         landmarks = [];
-        
         structures = [];
-        
         tongGrid = PositionFrame();
-        
         muscleCollection = MuscleCollection();
-        
-  
         
     end
     
