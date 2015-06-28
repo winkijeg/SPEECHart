@@ -2,7 +2,6 @@ function modelData = getDataForModelCreation( obj )
 % extract MRI data relevant for model creation (by adaptation to generic model)
 
     modelData.styloidProcess = obj.xyStyloidProcess;
-    modelData.condyle = [obj.xyStyloidProcess(1); obj.xyStyloidProcess(2)+8];
     modelData.tongInsL = obj.xyTongInsL;
     modelData.tongInsH = obj.xyTongInsH;
     % ANS-PNS line is used for transformation
