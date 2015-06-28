@@ -7,7 +7,7 @@ classdef SpeakerData
         
         speakerName = '';
         
-        % necessary for the motel itself
+        % necessary for the model design
         xyStyloidProcess = [];
         xyTongInsL = [];
         xyTongInsH = [];
