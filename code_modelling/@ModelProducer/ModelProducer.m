@@ -1,10 +1,9 @@
 classdef ModelProducer
     % produce a FEM-model based on mri data of a specific speaker
     
+    
     properties
         
-        nFibers = 17; % according to rows in the tongue mesh
-        nSamplePointsPerFiber = 13; % colums in the tongue mesh
         
         modelGeneric
         
@@ -22,6 +21,13 @@ classdef ModelProducer
         
     end
     
+    properties (Constant)
+        
+        nFibers = 17; % according to rows in the tongue mesh
+        nSamplePointsPerFiber = 13; % colums in the tongue mesh
+    
+    end
+    
     methods
         
         function obj = ModelProducer(modelData)
@@ -30,7 +36,8 @@ classdef ModelProducer
             obj.modelGeneric = SpeakerModel(matModelGeneric);
             
             obj.landmarks.styloidProcess = modelData.styloidProcess;
-            obj.landmarks.condyle = modelData.condyle;
+            obj.landmarks.condyle = ...
+                [modelData.styloidProcess(1); modelData.styloidProcess(2)+8];
             obj.landmarks.tongInsL = modelData.tongInsL;
             obj.landmarks.tongInsH = modelData.tongInsH;
             obj.landmarks.ANS = modelData.ANS;
