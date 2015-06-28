@@ -91,7 +91,7 @@ lowerIncisor = myModelProducer.modelGeneric.structures.lowerIncisor;
 
 % store data in a structure
 model.landmarks.styloidProcess = myModelProducer.landmarksTransformed.styloidProcess;
-model.landmarks.condyle = myModelProducer.landmarksTransformed.styloidProcess + [0; 8];
+model.landmarks.condyle = myModelProducer.landmarksTransformed.condyle;
 model.landmarks.ANS = myModelProducer.landmarksTransformed.ANS;
 model.landmarks.PNS = myModelProducer.landmarksTransformed.PNS;
 
