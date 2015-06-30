@@ -6,7 +6,8 @@ classdef Muscle
         
         nameLong = '';
         nameShort = '';
-        nFibers = NaN;
+        nFibers = [];
+        
         % every column represents one muscle fiber
         fiberNodeNumbers = [];
         
@@ -43,11 +44,11 @@ classdef Muscle
                         obj.fiberFixpoints(3, :) = {'hyoC', 89, []};
 
                         obj.externalInsertionPointPosition.hyoA = ...
-                            landmarks.hyoA;
+                            landmarks.xyHyoA;
                         obj.externalInsertionPointPosition.hyoB = ...
-                            landmarks.hyoB;
+                            landmarks.xyHyoB;
                         obj.externalInsertionPointPosition.hyoC = ...
-                            landmarks.hyoC;
+                            landmarks.xyHyoC;
 
                         obj.fiberNodeNumbers = [89 113 165]; % redundant ??
 
@@ -94,7 +95,7 @@ classdef Muscle
                         obj.fiberFixpoints(2, :) = {'styloidProcess', 113, 190};
 
                         obj.externalInsertionPointPosition.styloidProcess = ...
-                            landmarks.styloidProcess;
+                            landmarks.xyStyloidProcess;
 
 
                         %obj.fiberNodeNumbers = [87 190];
@@ -123,7 +124,7 @@ classdef Muscle
                         obj.fiberFixpoints(1, :) = {'hyoB', 109, 189, 217};
 
                         obj.externalInsertionPointPosition.hyoB = ...
-                            landmarks.hyoB;
+                            landmarks.xyHyoB;
 
 
                         % obj.fiberNodeNumbers = 217;
@@ -158,17 +159,9 @@ classdef Muscle
                         
         end
         
-        % method declarations .............................................
-        
         lengths = determineFiberLength(obj, tongueMesh);
 
-
-          
     end
-    
-        
-        
-    
     
 end
 
