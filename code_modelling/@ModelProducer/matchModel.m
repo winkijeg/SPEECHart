@@ -74,9 +74,9 @@ firstFiberMRI = [ptOriginFirstFiberMRI ptEndFirstFiberMRI];
 firstFiberGEN = [ptOriginFirstFiberGEN ptEndFirstFiberGEN];
 
 % Insertion points of the hyoglossus into the hyoid bone
-strucGen.hyoA = myModelProducer.modelGeneric.landmarks.hyoA;
-strucGen.hyoB = myModelProducer.modelGeneric.landmarks.hyoB;
-strucGen.hyoC = myModelProducer.modelGeneric.landmarks.hyoC;
+strucGen.hyoA = myModelProducer.modelGeneric.landmarks.xyHyoA;
+strucGen.hyoB = myModelProducer.modelGeneric.landmarks.xyHyoB;
+strucGen.hyoC = myModelProducer.modelGeneric.landmarks.xyHyoC;
 
 strucHyoTrans = matchHyoidBone(firstFiberGEN, firstFiberMRI, strucGen);
 
@@ -90,17 +90,17 @@ lowerLipGen = myModelProducer.modelGeneric.structures.lowerLip;
 lowerIncisor = myModelProducer.modelGeneric.structures.lowerIncisor;
 
 % store data in a structure
-model.landmarks.styloidProcess = myModelProducer.landmarksTransformed.styloidProcess;
-model.landmarks.condyle = myModelProducer.landmarksTransformed.condyle;
-model.landmarks.ANS = myModelProducer.landmarksTransformed.ANS;
-model.landmarks.PNS = myModelProducer.landmarksTransformed.PNS;
+model.landmarks.xyStyloidProcess = myModelProducer.landmarksTransformed.styloidProcess;
+model.landmarks.xyCondyle = myModelProducer.landmarksTransformed.condyle;
+model.landmarks.xyANS = myModelProducer.landmarksTransformed.ANS;
+model.landmarks.xyPNS = myModelProducer.landmarksTransformed.PNS;
 
-model.landmarks.hyo1 = hyo1_new;
-model.landmarks.hyo2 = hyo2_new;
-model.landmarks.hyo3 = hyo3_new;
-model.landmarks.origin = myModelProducer.modelGeneric.landmarks.origin;
-model.landmarks.tongInsL = tongInsL_mri;
-model.landmarks.tongInsH = myModelProducer.landmarksTransformed.tongInsH;
+model.landmarks.xyHyoA = hyo1_new;
+model.landmarks.xyHyoB = hyo2_new;
+model.landmarks.xyHyoC = hyo3_new;
+model.landmarks.xyOrigin = myModelProducer.modelGeneric.landmarks.xyOrigin;
+model.landmarks.xyTongInsL = tongInsL_mri;
+model.landmarks.xyTongInsH = myModelProducer.landmarksTransformed.tongInsH;
 
 % store data related to the adopted vocal tract contour
 % anatomical structures are not affected by adaptation
@@ -114,8 +114,8 @@ model.structures.lowerIncisor = teethLowerNew;
 model.structures.lowerLip = lowerLip;
 
 % Save the adopted tongue rest position
-model.tongGrid.x = reshape(X_repos_matched', 1, nMeshPoints);
-model.tongGrid.y = reshape(Y_repos_matched', 1, nMeshPoints);
+model.tongGrid.xVal = reshape(X_repos_matched', 1, nMeshPoints);
+model.tongGrid.yVal = reshape(Y_repos_matched', 1, nMeshPoints);
 
 end
 

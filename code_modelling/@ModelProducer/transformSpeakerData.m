@@ -4,13 +4,13 @@ function [landmarksTrans, contourTrans] = transformSpeakerData( obj )
     tMat = obj.tMatGeom;
 
     % trandform landmarks
-    tongInsL3D = [0; obj.landmarks.tongInsL];
-    tongInsH3D = [0; obj.landmarks.tongInsH];
-    styloidProcess3D = [0; obj.landmarks.styloidProcess];
-    condyle3D = [0; obj.landmarks.condyle];
-    ANS3D = [0; obj.landmarks.ANS];
-    PNS3D = [0; obj.landmarks.PNS];
-    origin3D = [0; obj.landmarks.origin];
+    tongInsL3D = [0; obj.landmarks.xyTongInsL];
+    tongInsH3D = [0; obj.landmarks.xyTongInsH];
+    styloidProcess3D = [0; obj.landmarks.xyStyloidProcess];
+    condyle3D = [0; obj.landmarks.xyCondyle];
+    ANS3D = [0; obj.landmarks.xyANS];
+    PNS3D = [0; obj.landmarks.xyPNS];
+    origin3D = [0; obj.landmarks.xyOrigin];
 
     tongInsLTrans = tmat_mxp(tMat, tongInsL3D);
     tongInsHTrans = tmat_mxp(tMat, tongInsH3D);
