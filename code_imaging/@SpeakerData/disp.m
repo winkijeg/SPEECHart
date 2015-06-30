@@ -38,7 +38,7 @@ function [] = disp( obj )
                 end
                 
                 if (nPoints > 1)
-                    strTmp = sprintf('\n%s  = %.0f points', propTmp, nPoints);
+                    strTmp = sprintf('%s  = %.0f points', propTmp, nPoints);
                     disp(strTmp)
                 end
             case 'struct'
