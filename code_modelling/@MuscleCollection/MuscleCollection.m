@@ -1,10 +1,9 @@
 classdef MuscleCollection
     % represents muscle specifications (7 muscles)
-    %   Detailed explanation goes here
     
     properties
         
-        nMuscles = NaN;
+        nMuscles;
         namesMuscle = {''}
         muscles = Muscle()
        
@@ -12,7 +11,7 @@ classdef MuscleCollection
     
     methods
         
-        function obj = MuscleCollection(muscleNames, tongueMesh, landmarks)
+        function obj = MuscleCollection(muscleNames, tongueGrid, landmarks)
 
             if nargin  ~= 0
                 obj.nMuscles = size(muscleNames, 2);
@@ -21,7 +20,7 @@ classdef MuscleCollection
                 obj.muscles(obj.nMuscles) = Muscle(); % memory allocation
                 for k = 1:obj.nMuscles
                 
-                    obj.muscles(k) = Muscle(muscleNames{k}, tongueMesh, ...
+                    obj.muscles(k) = Muscle(muscleNames{k}, tongueGrid, ...
                         landmarks);
             
                 end
