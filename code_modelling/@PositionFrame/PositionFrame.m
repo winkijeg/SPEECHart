@@ -4,12 +4,16 @@ classdef PositionFrame
     
     properties
         
-        timeOfFrame = NaN;
-        nNodes = 221;
-        positionNodes = PositionNode;
+        timeOfFrame = []
+        positionNodes@PositionNode
         
     end
     
+    properties (Constant)
+        
+        nNodes = 221
+        
+    end
         
         
     
