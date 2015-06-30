@@ -38,10 +38,11 @@ classdef SpeakerData
     properties (Dependent)
     
         % landmarks for shape measures
-        xyPharH_d
-        xyPharL_d
-        xyNPW_d
-        xyPPDPharL_d
+        landmarksDerived = struct(...
+            'xyPharH_d', [], ...
+            'xyPharL_d', [], ...
+            'xyNPW_d', [], ...
+            'xyPPDPharL_d', [])
         
         % for semi-polar grid
         xyCircleMidpoint
@@ -70,43 +71,37 @@ classdef SpeakerData
         modelData = getDataForModelCreation( obj )
         [] = disp( obj )
         
-        function xyPharH_d = get.xyPharH_d(obj)
+        function pts = get.landmarksDerived(obj)
             % ptPharHTmp_d (temporary) is the 4th point of the parallelogramm
             % ANS-AlvRidge-h3-PNS
             xyPharHTmp_d = -obj.xyANS + obj.xyAlvRidge + obj.xyPNS;
             % ptPharH_d is the intersection point between two lines: (1) back
             % pharyngeal wall and (2) the line passing p1 and is parralel to ANS-PNS
-            [~, xyPharH_d(:, 1)] = lines_exp_int_2d(...
+            [~, pts.xyPharH_d(:, 1)] = lines_exp_int_2d(...
                 obj.xyAlvRidge', xyPharHTmp_d', obj.xyPharH', obj.xyPharL');
-        end
-
-        function xyPharL_d = get.xyPharL_d(obj)
+            
             % ptPharLTmp_d (temporary) is the 4th point of the parallelogramm
             % ANS-Hyo-h4-PNS
             xyPharLTmp_d = -obj.xyANS + obj.xyVallSin + obj.xyPNS;
             % ptPharL_d is the intersection point between two lines: (1) back
             % pharyngeal wall and (2) the line passing Hyo and is parralel to ANS-PNS
-            [~, xyPharL_d(:, 1)] = lines_exp_int_2d(...
+            [~, pts.xyPharL_d(:, 1)] = lines_exp_int_2d(...
                 obj.xyVallSin', xyPharLTmp_d', obj.xyPharH', obj.xyPharL');
-        end
-
-        function xyNPW_d = get.xyNPW_d(obj)
+            
             % find two derived points (for morpological analysis)
             % (1) intersection point of palatal plane and pharynx wall
-            [~, xyNPW_d(:, 1)] = lines_exp_int_2d(...
-                obj.xyANS', obj.xyPNS', obj.xyPharL_d', obj.xyPharH_d');
-        end
-
-        function xyPPDPharL_d = get.xyPPDPharL_d(obj)
+            [~, pts.xyNPW_d(:, 1)] = lines_exp_int_2d(...
+                obj.xyANS', obj.xyPNS', pts.xyPharL_d', pts.xyPharH_d');
             % (2) shortest distance from pt_PharL_d to palatal plane
-            xyPPDPharL_d(:, 1) = line_exp_perp_2d(...
-                obj.xyANS', obj.xyPNS', obj.xyPharL_d');
+            pts.xyPPDPharL_d(:, 1) = line_exp_perp_2d(...
+                obj.xyANS', obj.xyPNS', pts.xyPharL_d');
+            
         end
-
+        
         function xyCircleMidpoint = get.xyCircleMidpoint(obj)
             % calculate midpointCircle, the center of a circle intersecting the
             % landmarks p_AlvRidge, p_Palate, p_PharH_d
-            pointsTmp = [obj.xyAlvRidge obj.xyPalate obj.xyPharH_d];
+            pointsTmp = [obj.xyAlvRidge obj.xyPalate obj.landmarksDerived.xyPharH_d];
             [~, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(...
                 pointsTmp);
         end
