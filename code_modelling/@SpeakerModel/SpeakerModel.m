@@ -3,10 +3,31 @@ classdef SpeakerModel
     
     properties
         
-        landmarks = [];
-        structures = [];
-        tongGrid = PositionFrame();
-        muscleCollection = MuscleCollection();
+        landmarks = struct(...
+            'xyStyloidProcess', [], ...
+            'xyCondyle', [], ...
+            'xyOrigin', [], ...
+            'xyHyoA', [], ...
+            'xyHyoB', [], ...
+            'xyHyoC', [], ...
+            'xyANS', [], ...
+            'xyPNS', [], ...
+            'xyTongInsL', [], ...
+            'xyTongInsH', [])
+        
+        structures = struct(...
+            'upperLip', [], ...
+            'upperIncisorPalate', [], ...
+            'velum', [], ...
+            'backPharyngealWall', [], ...
+            'larynxArytenoid', [], ...
+            'tongueLarynx', [], ...
+            'lowerIncisor', [], ...
+            'lowerLip', [])
+        
+        tongGrid@PositionFrame
+        
+        muscleCollection@MuscleCollection
         
     end
     
@@ -14,23 +35,15 @@ classdef SpeakerModel
         
         function obj = SpeakerModel(struc)
 
-            obj.landmarks.styloidProcess = struc.landmarks.styloidProcess;
-            obj.landmarks.condyle = struc.landmarks.condyle;
-            obj.landmarks.origin = struc.landmarks.origin;
-            obj.landmarks.hyoA = struc.landmarks.hyo1;
-            obj.landmarks.hyoB = struc.landmarks.hyo2;
-            obj.landmarks.hyoC = struc.landmarks.hyo3;
-            obj.landmarks.ANS = struc.landmarks.ANS;
-            obj.landmarks.PNS = struc.landmarks.PNS;
-            obj.landmarks.tongInsL = struc.landmarks.tongInsL;
-            obj.landmarks.tongInsH = struc.landmarks.tongInsH;
+            obj.landmarks = struc.landmarks;
             
             obj.structures = struc.structures;
             
-            obj.tongGrid = PositionFrame(0, struc.tongGrid.x, struc.tongGrid.y);
+            obj.tongGrid = PositionFrame(nan, ...
+                struc.tongGrid.xVal, struc.tongGrid.yVal);
             
-            obj.muscleCollection = MuscleCollection({'GGP', 'GGA', 'HYO', 'STY', 'VER', 'IL', 'SL'}, ...
-                obj.tongGrid, obj.landmarks);
+            obj.muscleCollection = MuscleCollection({'GGP', 'GGA', 'HYO', ...
+                'STY', 'VER', 'IL', 'SL'}, obj.tongGrid, obj.landmarks);
             
         end
         
@@ -48,6 +61,9 @@ classdef SpeakerModel
         matsOut = exportModelObsolete(obj)
         
         [] = writeUttToMPEG4(obj, utterance, fname)
+        
+        [] = exportToXML(mySpeakerModel, fileName);
+
         
     end
     
