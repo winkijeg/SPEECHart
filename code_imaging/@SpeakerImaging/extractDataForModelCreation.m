@@ -1,19 +1,19 @@
 function struc = extractDataForModelCreation(obj)
 % extract mri data relevant for model creation (by adaptation to generic model)
 
-    struc.styloidProcess = obj.landmarks.Stylo;
-    struc.condyle = [obj.landmarks.Stylo(1); obj.landmarks.Stylo(2)+8];
-    struc.tongInsL = obj.landmarks.TongInsL;
-    struc.tongInsH = obj.landmarks.TongInsH;
+    struc.xyStyloidProcess = obj.landmarks.Stylo;
+    struc.xyCondyle = [obj.landmarks.Stylo(1); obj.landmarks.Stylo(2)+8];
+    struc.xyTongInsL = obj.landmarks.TongInsL;
+    struc.xyTongInsH = obj.landmarks.TongInsH;
     % ANS-PNS line is used for transformation
-    struc.ANS = obj.landmarks.ANS;
-    struc.PNS = obj.landmarks.PNS;
+    struc.xyANS = obj.landmarks.ANS;
+    struc.xyPNS = obj.landmarks.PNS;
 
     % calculate "model origin" in mri coordinates 
     from = obj.gridZoning.tongue(1);
     to = obj.gridZoning.tongue(2);
     tongSurface = obj.filteredContours.innerPt(1:2, from:to);
-    struc.origin = mean(tongSurface, 2);
+    struc.xyOrigin = mean(tongSurface, 2);
 
     
     
