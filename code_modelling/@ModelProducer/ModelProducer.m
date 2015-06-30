@@ -17,8 +17,7 @@ classdef ModelProducer
         contoursTransformed
         landmarksTransformed
         anatomicalStructures
-        
-        
+
     end
     
     properties (Constant)
@@ -35,14 +34,15 @@ classdef ModelProducer
             matModelGeneric = load('ypm_model.mat');
             obj.modelGeneric = SpeakerModel(matModelGeneric);
             
-            obj.landmarks.styloidProcess = modelData.styloidProcess;
-            obj.landmarks.condyle = ...
-                [modelData.styloidProcess(1); modelData.styloidProcess(2)+8];
-            obj.landmarks.tongInsL = modelData.tongInsL;
-            obj.landmarks.tongInsH = modelData.tongInsH;
-            obj.landmarks.ANS = modelData.ANS;
-            obj.landmarks.PNS = modelData.PNS;
-            obj.landmarks.origin = modelData.origin;
+            obj.landmarks.xyStyloidProcess = modelData.xyStyloidProcess;
+            obj.landmarks.xyCondyle = ...
+                [modelData.xyStyloidProcess(1); ...
+                modelData.xyStyloidProcess(2)+8];
+            obj.landmarks.xyTongInsL = modelData.xyTongInsL;
+            obj.landmarks.xyTongInsH = modelData.xyTongInsH;
+            obj.landmarks.xyANS = modelData.xyANS;
+            obj.landmarks.xyPNS = modelData.xyPNS;
+            obj.landmarks.xyOrigin = modelData.xyOrigin;
             
             obj.contours.innerPt = modelData.innerPt;
             obj.contours.outerPt = modelData.outerPt;

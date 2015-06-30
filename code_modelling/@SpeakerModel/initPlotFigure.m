@@ -5,7 +5,7 @@ function h = initPlotFigure(obj, imageFlag)
     yDim = xDim; % [mm]
 
     
-    ptCenter = obj.landmarks.origin;
+    ptCenter = obj.landmarks.xyOrigin;
     xlim = [ptCenter(1) - xDim/2 ptCenter(1) + xDim/2];
     ylim = [ptCenter(2) - yDim/2 ptCenter(2) + yDim/2];
     

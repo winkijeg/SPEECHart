@@ -4,13 +4,13 @@ function [tMatGeom, tformImg] = calcTransformationImgToModel( obj )
 %   - tMat: to be used with geometric coordinates
 %   - tform: to be used with image transformation
 
-    pt_ANS_generic = obj.modelGeneric.landmarks.ANS;
-    pt_PNS_generic = obj.modelGeneric.landmarks.PNS;
-    pt_origin_generic = obj.modelGeneric.landmarks.origin;
+    pt_ANS_generic = obj.modelGeneric.landmarks.xyANS;
+    pt_PNS_generic = obj.modelGeneric.landmarks.xyPNS;
+    pt_origin_generic = obj.modelGeneric.landmarks.xyOrigin;
 
-    pt_ANS_mri = obj.landmarks.ANS;
-    pt_PNS_mri = obj.landmarks.PNS;
-    pt_origin_mri = obj.landmarks.origin;
+    pt_ANS_mri = obj.landmarks.xyANS;
+    pt_PNS_mri = obj.landmarks.xyPNS;
+    pt_origin_mri = obj.landmarks.xyOrigin;
 
     % determine ANS-PNS orientation in the generic (model) space
     angle_GenericRad = lines_exp_angle_nd(2, pt_PNS_generic', ...
