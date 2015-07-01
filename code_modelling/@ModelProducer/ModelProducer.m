@@ -4,6 +4,7 @@ classdef ModelProducer
     
     properties
         
+        modelName
         
         modelGeneric
         
@@ -29,9 +30,11 @@ classdef ModelProducer
     
     methods
         
-        function obj = ModelProducer(modelData)
+        function obj = ModelProducer( modelData )
             
-            matModelGeneric = load('ypm_model.mat');
+            obj.modelName = modelData.speakerName;
+            
+            matModelGeneric = xml_read('ypm_model_generic.xml');
             obj.modelGeneric = SpeakerModel(matModelGeneric);
             
             obj.landmarks.xyStyloidProcess = modelData.xyStyloidProcess;
@@ -66,7 +69,7 @@ classdef ModelProducer
             
         end
 
-        model = matchModel( myModelProducer );
+        model = matchModel( obj );
 
     end
     
