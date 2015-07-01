@@ -64,8 +64,6 @@ classdef SpeakerModel
         
         muscle = getSingleMuscle(obj, muscleName);
         
-        matsOut = exportModelObsolete(obj)
-        
         [] = writeUttToMPEG4(obj, utterance, fname)
         
         [] = exportToXML(mySpeakerModel, fileName);
