@@ -1,13 +1,13 @@
-function model = matchModel( myModelProducer )
+function matModel = matchModel( obj )
 % fits the generic model to the speaker-specific anatomy
 
 % variables necessary for generic and mri model
-nMuscleFibers = myModelProducer.nFibers;
-nSamplePointsPerFiber = myModelProducer.nSamplePointsPerFiber;
+nMuscleFibers = obj.nFibers;
+nSamplePointsPerFiber = obj.nSamplePointsPerFiber;
 nMeshPoints = nMuscleFibers * nSamplePointsPerFiber;
 
 % read the generic tongue mesh and restruct data for model matching
-tongueMesh_generic = myModelProducer.modelGeneric.tongGrid;
+tongueMesh_generic = obj.modelGeneric.tongGrid;
 vals_tmp = getPositionOfNodeNumbers(tongueMesh_generic, 1:nMeshPoints);
 
 X_repos_generic = reshape(vals_tmp(1, :), nSamplePointsPerFiber, nMuscleFibers)';
@@ -20,8 +20,8 @@ clear tongueMesh_generic valTmp;
 tongInsL_generic = [X_repos_generic(1, 1); Y_repos_generic(1, 1)];
 tongInsH_generic = [X_repos_generic(nMuscleFibers, 1); Y_repos_generic(nMuscleFibers, 1)];
 
-tongInsL_mri = myModelProducer.landmarksTransformed.tongInsL;
-tongInsH_mri = myModelProducer.landmarksTransformed.tongInsH;
+tongInsL_mri = obj.landmarksTransformed.tongInsL;
+tongInsH_mri = obj.landmarksTransformed.tongInsH;
 
 % calculate scale factor used for matching of -----------------------------
 % - lower lip and lower incisor
@@ -31,7 +31,7 @@ scaleFactor = calculateMatchingScaleFactor(tongInsH_mri, ...
 
 
 % step 1: match mri tongue surface ----------------------------------------
-tongSurface_mri = myModelProducer.anatomicalStructures.tongueSurface;
+tongSurface_mri = obj.anatomicalStructures.tongueSurface;
 tongSurface_matched = matchTongueSurface(tongSurface_generic, tongSurface_mri);
 
 clear tongSurface_mri;
@@ -55,13 +55,13 @@ Y_repos_matched(1:17, 1) = originsAdapted(2, :);
 
 % match upper lip --------------------------------------
 ptAttachLowerLips = teethLowerNew(1:2, 7);
-lowerLip = matchLowerLip(myModelProducer, ptAttachLowerLips, scaleFactor);
+lowerLip = matchLowerLip(obj, ptAttachLowerLips, scaleFactor);
 
 % match upper incisor and upper lip --------------------------------------
-palateMRI = myModelProducer.anatomicalStructures.palate;
+palateMRI = obj.anatomicalStructures.palate;
 
-[upperIncisorPalate, ptAttachLip] = matchUpperIncisor(myModelProducer, palateMRI, scaleFactor);
-upperLip = matchUpperLip(myModelProducer, ptAttachLip, scaleFactor);
+[upperIncisorPalate, ptAttachLip] = matchUpperIncisor(obj, palateMRI, scaleFactor);
+upperLip = matchUpperLip(obj, ptAttachLip, scaleFactor);
 
 % calculate the 3 hyoglossus insertion points on the hyoid bone -----------
 ptOriginFirstFiberGEN = [X_repos_generic(1, 1); Y_repos_generic(1, 1)];
@@ -74,9 +74,9 @@ firstFiberMRI = [ptOriginFirstFiberMRI ptEndFirstFiberMRI];
 firstFiberGEN = [ptOriginFirstFiberGEN ptEndFirstFiberGEN];
 
 % Insertion points of the hyoglossus into the hyoid bone
-strucGen.hyoA = myModelProducer.modelGeneric.landmarks.xyHyoA;
-strucGen.hyoB = myModelProducer.modelGeneric.landmarks.xyHyoB;
-strucGen.hyoC = myModelProducer.modelGeneric.landmarks.xyHyoC;
+strucGen.hyoA = obj.modelGeneric.landmarks.xyHyoA;
+strucGen.hyoB = obj.modelGeneric.landmarks.xyHyoB;
+strucGen.hyoC = obj.modelGeneric.landmarks.xyHyoC;
 
 strucHyoTrans = matchHyoidBone(firstFiberGEN, firstFiberMRI, strucGen);
 
@@ -86,36 +86,39 @@ hyo3_new = strucHyoTrans.hyoC;
 
 
 % assign values -----------------------------------------------------
-lowerLipGen = myModelProducer.modelGeneric.structures.lowerLip;
-lowerIncisor = myModelProducer.modelGeneric.structures.lowerIncisor;
+lowerLipGen = obj.modelGeneric.structures.lowerLip;
+lowerIncisor = obj.modelGeneric.structures.lowerIncisor;
 
 % store data in a structure
-model.landmarks.xyStyloidProcess = myModelProducer.landmarksTransformed.styloidProcess;
-model.landmarks.xyCondyle = myModelProducer.landmarksTransformed.condyle;
-model.landmarks.xyANS = myModelProducer.landmarksTransformed.ANS;
-model.landmarks.xyPNS = myModelProducer.landmarksTransformed.PNS;
+matModel.modelName = obj.modelName;
+matModel.modelUUID = char(java.util.UUID.randomUUID);
 
-model.landmarks.xyHyoA = hyo1_new;
-model.landmarks.xyHyoB = hyo2_new;
-model.landmarks.xyHyoC = hyo3_new;
-model.landmarks.xyOrigin = myModelProducer.modelGeneric.landmarks.xyOrigin;
-model.landmarks.xyTongInsL = tongInsL_mri;
-model.landmarks.xyTongInsH = myModelProducer.landmarksTransformed.tongInsH;
+matModel.landmarks.xyStyloidProcess = obj.landmarksTransformed.styloidProcess;
+matModel.landmarks.xyCondyle = obj.landmarksTransformed.condyle;
+matModel.landmarks.xyANS = obj.landmarksTransformed.ANS;
+matModel.landmarks.xyPNS = obj.landmarksTransformed.PNS;
+
+matModel.landmarks.xyHyoA = hyo1_new;
+matModel.landmarks.xyHyoB = hyo2_new;
+matModel.landmarks.xyHyoC = hyo3_new;
+matModel.landmarks.xyOrigin = obj.modelGeneric.landmarks.xyOrigin;
+matModel.landmarks.xyTongInsL = tongInsL_mri;
+matModel.landmarks.xyTongInsH = obj.landmarksTransformed.tongInsH;
 
 % store data related to the adopted vocal tract contour
 % anatomical structures are not affected by adaptation
-model.structures.upperLip = upperLip;
-model.structures.upperIncisorPalate = upperIncisorPalate;
-model.structures.velum = myModelProducer.anatomicalStructures.velum;
-model.structures.backPharyngealWall = myModelProducer.anatomicalStructures.backPharyngealWall;
-model.structures.larynxArytenoid = myModelProducer.anatomicalStructures.larynxArytenoid;
-model.structures.tongueLarynx = myModelProducer.anatomicalStructures.tongueLarynx;
-model.structures.lowerIncisor = teethLowerNew;
-model.structures.lowerLip = lowerLip;
+matModel.structures.upperLip = upperLip;
+matModel.structures.upperIncisorPalate = upperIncisorPalate;
+matModel.structures.velum = obj.anatomicalStructures.velum;
+matModel.structures.backPharyngealWall = obj.anatomicalStructures.backPharyngealWall;
+matModel.structures.larynxArytenoid = obj.anatomicalStructures.larynxArytenoid;
+matModel.structures.tongueLarynx = obj.anatomicalStructures.tongueLarynx;
+matModel.structures.lowerIncisor = teethLowerNew;
+matModel.structures.lowerLip = lowerLip;
 
 % Save the adopted tongue rest position
-model.tongGrid.xVal = reshape(X_repos_matched', 1, nMeshPoints);
-model.tongGrid.yVal = reshape(Y_repos_matched', 1, nMeshPoints);
+matModel.tongGrid.xVal = reshape(X_repos_matched', 1, nMeshPoints);
+matModel.tongGrid.yVal = reshape(Y_repos_matched', 1, nMeshPoints);
 
 end
 

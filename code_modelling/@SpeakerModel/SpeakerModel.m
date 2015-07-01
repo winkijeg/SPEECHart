@@ -3,6 +3,9 @@ classdef SpeakerModel
     
     properties
         
+        modelName
+        modelUUID
+        
         landmarks = struct(...
             'xyStyloidProcess', [], ...
             'xyCondyle', [], ...
@@ -34,6 +37,9 @@ classdef SpeakerModel
     methods
         
         function obj = SpeakerModel(struc)
+            
+            obj.modelName = struc.modelName;
+            obj.modelUUID = struc.modelUUID;
 
             obj.landmarks = struc.landmarks;
             
