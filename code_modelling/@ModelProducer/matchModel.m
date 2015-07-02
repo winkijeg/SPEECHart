@@ -55,7 +55,7 @@ Y_repos_matched(1:17, 1) = originsAdapted(2, :);
 
 % match upper lip --------------------------------------
 ptAttachLowerLips = teethLowerNew(1:2, 7);
-lowerLip = matchLowerLip(obj, ptAttachLowerLips, scaleFactor);
+lowerLip = ModelProducer.matchLowerLip(ptAttachLowerLips, scaleFactor);
 
 % match upper incisor and upper lip --------------------------------------
 palateMRI = obj.anatomicalStructures.palate;
