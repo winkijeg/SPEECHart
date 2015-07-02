@@ -12,7 +12,7 @@ function simul_tongue_adapt_jaw(path_model, spkStr, seq, out_file, ...
 %   out_file:       Name of the output file
 %   deltaLamb_GGP:  GGP commands in mm for all phonemes of the sequence 
 %                   except the initial rest position - These values are 
-%                   referenced to the value at rest (negatif=activation)
+%                   referenced to the value at rest (negatif = activation)
 %
 %   delta_lambda_gga:   GGA commands (see details for GGP)
 %   delta_lambda_hyo:   HYO commands (see details for GGP)
