@@ -1,29 +1,31 @@
-function anatomicalStructures = convertContoursIntoStructures( obj )
-% create anatomical structures from inner and outer contours
+function structures = convertContoursIntoStructures( obj )
+% convert contours into anatomical structures used by the VT model
 
-gridZoning = obj.gridZoning;
+    gridZoning = obj.gridZoning;
 
-innerPt = obj.contoursTransformed.innerPt;
-outerPt = obj.contoursTransformed.outerPt;
+    innerPt = obj.contoursTransformed.innerPt;
+    outerPt = obj.contoursTransformed.outerPt;
 
-% segment the inner contour
-anatomicalStructures.tongueSurface = ...
-    innerPt(:, gridZoning.tongue(1):gridZoning.tongue(2));
+    % segment the inner contour
+    structures.tongueSurface = ...
+        innerPt(:, gridZoning.tongue(1):gridZoning.tongue(2));
 
-tongueLarynxTmp = innerPt(:, 1:gridZoning.palate(2));
-anatomicalStructures.tongueLarynx = fliplr(tongueLarynxTmp);
+    tongueLarynxTmp = innerPt(:, 1:gridZoning.palate(2));
+    structures.tongueLarynx = fliplr(tongueLarynxTmp);
 
-% segment the outer contour
-larynxArytenoidTmp = outerPt(:, 1:gridZoning.pharynx(1));
-anatomicalStructures.larynxArytenoid = fliplr(larynxArytenoidTmp);
+    % segment the outer contour
+    larynxArytenoidTmp = outerPt(:, 1:gridZoning.pharynx(1));
+    structures.larynxArytenoid = fliplr(larynxArytenoidTmp);
 
-backPharyngealWallTmp = outerPt(:, gridZoning.pharynx(1):gridZoning.pharynx(2));
-anatomicalStructures.backPharyngealWall = fliplr(backPharyngealWallTmp);
+    backPharyngealWallTmp = ...
+        outerPt(:, gridZoning.pharynx(1):gridZoning.pharynx(2));
+    structures.backPharyngealWall = fliplr(backPharyngealWallTmp);
 
-% todo : replace velum by a standard velum at some time 
-velumTmp = outerPt(:, gridZoning.velum(1):gridZoning.velum(2));
-anatomicalStructures.velum = fliplr(velumTmp);
+    % TODO: replace velum by a standard velum at some time 
+    velumTmp = outerPt(:, gridZoning.velum(1):gridZoning.velum(2));
+    structures.velum = fliplr(velumTmp);
 
-anatomicalStructures.palate = outerPt(1:2, gridZoning.palate(1):gridZoning.palate(2));
+    structures.palate = ...
+        outerPt(1:2, gridZoning.palate(1):gridZoning.palate(2));
 
 end
