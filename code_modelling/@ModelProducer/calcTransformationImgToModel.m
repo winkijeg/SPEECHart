@@ -1,6 +1,6 @@
 function [tMatGeom, tformImg] = calcTransformationImgToModel( obj )
-% calculate transform from MRI coordinate space to generic coordinates (model)
-%   function returns two matrices:
+% calculate transformation matrix from MRI coordinate space to model space
+%   this method returns two matrices:
 %   - tMat: to be used with geometric coordinates
 %   - tform: to be used with image transformation
 
