@@ -1,19 +1,16 @@
 classdef ModelProducer
-    % produce a FEM-model based on mri data of a specific speaker
+% construct a VT model based on mri data of a specific speaker
+%   The
     
     
     properties
         
         modelName
         
-        modelGeneric
-        
+        % 
         landmarks
         contours
         gridZoning
-
-        tMatGeom
-        tformImg
 
         contoursTransformed
         landmarksTransformed
@@ -23,8 +20,18 @@ classdef ModelProducer
     
     properties (Constant)
         
-        nFibers = 17; % according to rows in the tongue mesh
-        nSamplePointsPerFiber = 13; % colums in the tongue mesh
+        nFibers = 17; % number of ROWS in the tongue mesh
+        nSamplePointsPerFiber = 13; % numbner of COLUMNS in the tongue mesh
+    
+    end
+    
+    properties (SetAccess = private)
+
+        modelGeneric
+
+        tMatGeom    % transformation matrix from MRI to model space
+        tformImg
+        
     
     end
     
@@ -32,10 +39,12 @@ classdef ModelProducer
         
         function obj = ModelProducer( modelData )
             
-            obj.modelName = modelData.speakerName;
-            
+            % read generic model from disk and assign to the object
             matModelGeneric = xml_read('ypm_model_generic.xml');
             obj.modelGeneric = SpeakerModel(matModelGeneric);
+            
+            % assign specific MRI-data to the object
+            obj.modelName = modelData.speakerName;
             
             obj.landmarks.xyStyloidProcess = modelData.xyStyloidProcess;
             obj.landmarks.xyCondyle = ...
@@ -55,10 +64,11 @@ classdef ModelProducer
             obj.gridZoning.velum = modelData.idxVelum;
             obj.gridZoning.palate = modelData.idxPalate;
         
-            % calculate initial rotation of mri data
+            
+            % calculate transformation matrix from mri to model space
             [obj.tMatGeom, obj.tformImg] = calcTransformationImgToModel(obj);
             
-            % rotate mri data of specific speaker
+            % transform landmarks and contours from MRI to model space
             [lmTrans, contsTrans] = transformSpeakerData(obj);
             obj.landmarksTransformed = lmTrans;
             obj.contoursTransformed = contsTrans;
@@ -83,5 +93,12 @@ classdef ModelProducer
         [lowerIncisor, scaleFactor] = matchlowerIncisor(obj, ptAttachIncisor);
         
     end
+    
+    methods (Static)
+        
+        lowerLip = matchLowerLip(ptAttachIncisor, distRatio)
+        
+    end
+    
         
 end
