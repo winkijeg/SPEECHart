@@ -5,8 +5,8 @@
 void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 {
   /**** Input and output parameters ****/
-  int NN,MM,fact,ordre,nbcontact;
-  double lambda,mu;
+  int ordre, nbcontact;
+  double lambda, mu;
   double *activ;                          /* activity of each muscles */
   double *ncontact;
   double *IA, *IB, *IC, *ID, *IE;         /* index field */
@@ -26,25 +26,27 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
   int debut,indice[64];
 
   /****** Input parameters ******/
-  NN=mxGetScalar(prhs[0]);
-  MM=mxGetScalar(prhs[1]);
-  fact=mxGetScalar(prhs[2]);
-  ordre=mxGetScalar(prhs[3]);
-  lambda=mxGetScalar(prhs[4]);
-  mu=mxGetScalar(prhs[5]);
-  IA=mxGetPr(prhs[6]);
-  IB=mxGetPr(prhs[7]);
-  IC=mxGetPr(prhs[8]);
-  ID=mxGetPr(prhs[9]);
-  IE=mxGetPr(prhs[10]);
-  activ=mxGetPr(prhs[11]);
-  XY=mxGetPr(prhs[12]);  
-  ncontact=mxGetPr(prhs[13]);
-  nbcontact=mxGetN(prhs[13]);
+  ordre = mxGetScalar(prhs[0]);
+  lambda = mxGetScalar(prhs[1]);
+  mu = mxGetScalar(prhs[2]);
+  IA = mxGetPr(prhs[3]);
+  IB = mxGetPr(prhs[4]);
+  IC = mxGetPr(prhs[5]);
+  ID = mxGetPr(prhs[6]);
+  IE = mxGetPr(prhs[7]);
+  activ = mxGetPr(prhs[8]);
+  XY = mxGetPr(prhs[9]);  
+  ncontact = mxGetPr(prhs[10]);
+  nbcontact = mxGetN(prhs[10]);
+
+  /* new values that are not variable but constant */
+  int fact = 2;
+  int NN = 13;
+  int MM = 17;
 
   /****** Output parameters ******/
-  plhs[0]=mxCreateDoubleMatrix(1,4*NN*NN*MM*MM,mxREAL);
-  AA=mxGetPr(plhs[0]);
+  plhs[0] = mxCreateDoubleMatrix(1,4*NN*NN*MM*MM,mxREAL);
+  AA = mxGetPr(plhs[0]);
 
   /************************************/
   /*        The C subroutine         */
@@ -53,28 +55,28 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
   /*** Convert real into integer ***/
   for (i=0; i<64; i++)
     {
-      IAi[i]=(int)IA[i];
-      IBi[i]=(int)IB[i];
-      ICi[i]=(int)IC[i];
-      IDi[i]=(int)ID[i];
-      IEi[i]=(int)IE[i];
+      IAi[i] = (int)IA[i];
+      IBi[i] = (int)IB[i];
+      ICi[i] = (int)IC[i];
+      IDi[i] = (int)ID[i];
+      IEi[i] = (int)IE[i];
     }
 
   /*** initialisation ***/
 
-  H[1][1]=2.;
-  H[2][1]=1.;
-  H[2][2]=1.;
-  H[3][1]=0.555556;
-  H[3][2]=0.888889;
-  H[3][3]=0.555556;
+  H[1][1] = 2.;
+  H[2][1] = 1.;
+  H[2][2] = 1.;
+  H[3][1] = 0.555556;
+  H[3][2] = 0.888889;
+  H[3][3] = 0.555556;
 
-  G[1][1]=0.;
-  G[2][1]=-0.577350;
-  G[2][2]=0.577350;
-  G[3][1]=-0.774597;
-  G[3][2]=0.;
-  G[3][3]=0.774597;
+  G[1][1] = 0.;
+  G[2][1] = -0.577350;
+  G[2][2] = 0.577350;
+  G[3][1] = -0.774597;
+  G[3][2] = 0.;
+  G[3][3] = 0.774597;
 
   for (i=0; i<(4*NN*NN*MM*MM); i++)   AA[i]=0;
   saut=-2;
@@ -102,8 +104,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
     /* Nov 99 */
     /* ajuste pour avoir  6 fibres et 221 noeuds */
 	{
-	  lambda2=lambda2+lambda*(activ[0]/2.5)*4; /* modif. Dec 99 */
-	  mu2=mu2+mu*(activ[0]/2.5)*4;             /* modif. Dec 99 */
+	  lambda2 = lambda2 + lambda*(activ[0]/2.5)*4; /* modif. Dec 99 */
+	  mu2 = mu2 + mu*(activ[0]/2.5)*4;             /* modif. Dec 99 */
 	}
       
       /* GGP */
@@ -118,8 +120,8 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
         if ((activ[2]>0)&&(((jj>3*fact*(NN-1))&&(jj<(7*fact-1)*(NN-1))&&(3*fact<(jj%(NN-1)))&&((jj%(NN-1))<=4*fact))||((jj>=((6*fact-1)*(NN-1)))&&(jj<(7*fact-1)*(NN-1))&&(4*fact<(jj%(NN-1)))&&((jj%(NN-1))<5*fact))||((jj>=3*fact*(NN-1))&&(jj<3*fact*(NN-1)+(NN-1))&&(4*fact<(jj%(NN-1)))&&((jj%(NN-1))<=5*fact))||((jj>=3*fact*(NN-1)+(NN-1))&&(jj<4*fact*(NN-1))&&(4*fact<(jj%(NN-1)))&&((jj%(NN-1))<5*fact))))
 	 /* Modifs Dec 99 YP-PP */
 	{
-	  lambda2=lambda2+lambda*(activ[2]/7)*15; /* modif. Dec 99 */
-	  mu2=mu2+mu*(activ[2]/7)*15;             /* modif. Dec 99 */
+	  lambda2 = lambda2+lambda*(activ[2]/7)*15; /* modif. Dec 99 */
+	  mu2 = mu2+mu*(activ[2]/7)*15;             /* modif. Dec 99 */
 	}
       
       /* STYLO */
