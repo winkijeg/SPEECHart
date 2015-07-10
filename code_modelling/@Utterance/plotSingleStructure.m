@@ -1,5 +1,10 @@
-function [] = plotSingleStructure(obj, structName, targetFrame, colorStr)
-%plot single structures at a given time point
+function h = plotSingleStructure(obj, structName, targetFrame, colorStr)
+    %plot single nonrigid structure for a given frame
+    %   nonrigid structures are
+    %   - larynxArytenoid
+    %   - tongueLarynx
+    %   - lowerIncisor
+    %   - lowerLip
 
     targetStrX = [structName 'PosX'];
     targetStrY = [structName 'PosY'];
@@ -7,7 +12,7 @@ function [] = plotSingleStructure(obj, structName, targetFrame, colorStr)
     posX = obj.(targetStrX)(targetFrame, :);
     posY = obj.(targetStrY)(targetFrame, :);
     
-    plot(posX, posY, colorStr)
+    h = plot(posX, posY, colorStr);
     
 end
 

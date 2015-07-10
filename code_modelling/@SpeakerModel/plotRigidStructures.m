@@ -1,8 +1,7 @@
-function [] = plotStructures(obj, col)
+function [] = plotRigidStructures(obj, col)
 % plot rigid structures of the vocal tract model
 
-    def_structures = {'upperIncisorPalate', 'velum', ...
-        'backPharyngealWall'};
+    def_structures = {'upperIncisorPalate', 'velum', 'backPharyngealWall'};
 
     structNames = def_structures;
     numberOfStructs = length(structNames);
