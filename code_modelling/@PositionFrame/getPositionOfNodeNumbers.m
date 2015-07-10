@@ -1,10 +1,7 @@
 function points = getPositionOfNodeNumbers(obj, nodeNumbers)
-%UNTITLED8 Summary of this function goes here
-%   Detailed explanation goes here
+%return position of a subset of nodes, specified by nodenumbers
 
-    xVals = [obj.positionNodes.positionX];
-    yVals = [obj.positionNodes.positionY];
-    
-    points = [xVals(1, nodeNumbers); yVals(1, nodeNumbers)];
+    points = [obj.xValNodes(1, nodeNumbers); ...
+        obj.yValNodes(1, nodeNumbers)];
 
 end
