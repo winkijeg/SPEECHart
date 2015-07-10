@@ -21,7 +21,7 @@ global ACTIV_T                  % muscle activation
 global ForceVert                % force exerted by each fiber
 
 
-for k = 1:6     % loop the number of fibers
+for k = 1:6     % number of fibers
     
     longtot = 0;
     for j = Att_Vert(k,2):-1:Att_Vert(k,1)+1
