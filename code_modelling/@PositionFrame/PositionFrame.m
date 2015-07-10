@@ -1,11 +1,12 @@
 classdef PositionFrame
-    % represents position of all nodes at a (given) time 
-    %   Detailed explanation goes here
+    % represents position of all nodes at a (given) time
     
     properties
         
-        timeOfFrame = []
-        positionNodes@PositionNode
+        timeOfFrame@double
+        
+        xValNodes@double
+        yValNodes@double
         
     end
     
@@ -24,25 +25,22 @@ classdef PositionFrame
             if nargin ~= 0
             
                 obj.timeOfFrame = timeOfFrame;
-                obj.positionNodes(obj.nNodes) = PositionNode; % memory allocation
-            
-                for k = 1:obj.nNodes
-                    obj.positionNodes(k) = PositionNode(xVals(k), yVals(k));
-                end
-                
+                obj.xValNodes(1, 1:obj.nNodes) = xVals;
+                obj.yValNodes(1, 1:obj.nNodes) = yVals;
+
             end
             
         end
         
         % method declarations .............................................
         
-        [] = drawMesh(obj, col);
-        [] = drawNodeNumbers(obj);
-        [] = drawTongSurface(obj, col);
-        [] = drawMuscleNodes(obj, muscle);
+        h = drawMesh(obj, col);
+        h = drawNodeNumbers(obj, col);
+        h = drawTongSurface(obj, col);
+        h = drawMuscleNodes(obj, muscle, col);
         
-        pts = getPositionOfNodeNumbers(obj, nodeNumbers);
-        pts = getPositionOfTongSurface(obj);
+        xyVals = getPositionOfNodeNumbers(obj, nodeNumbers);
+        xyVals = getPositionOfTongSurface(obj);
          
     end
     
