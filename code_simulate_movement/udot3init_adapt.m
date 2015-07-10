@@ -82,12 +82,12 @@ Att_Hyo(4,1)=3*fact*NN+1+5*fact;
 Att_Hyo(:,2)=Att_Hyo(:,1)*2;
 
 % SL
-Att_SL(1,1)=fact*(2*NN+6)+1;       % Modifs YP-PP Dec 99
-Att_SL(1,2)=NNxMM;      % Modifs YP-PP Dec 99
-Att_SL(2,1)=fact*(2*NN+6);         % Modifs YP-PP Dec 99
-Att_SL(2,2)=NNxMM-1;      % Modifs YP-PP Dec 9
-Att_SL(:,3)=Att_SL(:,1)*2;      % Modifs YP-PP Dec 99
-Att_SL(:,4)=Att_SL(:,2)*2;      % Modifs YP-PP Dec 99
+Att_SL(1,1) = fact*(2*NN+6)+1;       % Modifs YP-PP Dec 99
+Att_SL(1,2) = NNxMM;      % Modifs YP-PP Dec 99
+Att_SL(2,1) = fact*(2*NN+6);         % Modifs YP-PP Dec 99
+Att_SL(2,2) = NNxMM-1;      % Modifs YP-PP Dec 9
+Att_SL(:,3) = Att_SL(:,1)*2;      % Modifs YP-PP Dec 99
+Att_SL(:,4) = Att_SL(:,2)*2;      % Modifs YP-PP Dec 99
 
 % IL
 Att_IL(1,1) = 4*fact*NN+2*fact+1;     % i=31 (109 pour le modele a 221);
