@@ -3,9 +3,11 @@ classdef MuscleCollection
     
     properties
         
-        nMuscles;
-        namesMuscle = {''}
-        muscles = Muscle()
+        nMuscles@uint8
+        
+        namesMuscle@cell
+        
+        muscles@Muscle
        
     end
     
@@ -14,7 +16,7 @@ classdef MuscleCollection
         function obj = MuscleCollection(muscleNames, tongueGrid, landmarks)
 
             if nargin  ~= 0
-                obj.nMuscles = size(muscleNames, 2);
+                obj.nMuscles = uint8(size(muscleNames, 2));
                 obj.namesMuscle = muscleNames;
             
                 obj.muscles(obj.nMuscles) = Muscle(); % memory allocation
