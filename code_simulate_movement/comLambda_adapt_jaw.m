@@ -8,12 +8,8 @@ global MATRICE_LAMBDA
 % minimum length of muscle fibers
 global longmin_GGP longmin_GGA longmin_Hyo longmin_Stylo longmin_SL longmin_IL longmin_Vert
 
-global longrepos_GGA_max
-global longrepos_GGP_max
-global longrepos_Hyo_max
-global longrepos_IL_max
-global longrepos_SL_max
-global longrepos_Stylo_max
+global longrepos_GGA_max longrepos_GGP_max longrepos_Hyo_max
+global longrepos_IL_max longrepos_SL_max longrepos_Stylo_max
 global longrepos_Vert_max
 
 % calculate the value of lambda for each muscle and
