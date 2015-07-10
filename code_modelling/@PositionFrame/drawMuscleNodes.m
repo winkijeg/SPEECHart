@@ -1,11 +1,13 @@
-function [] = drawMuscleNodes(obj, muscle)
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
+function h = drawMuscleNodes(obj, muscle, colStr)
+    %draw muscle node within one frame
 
-    indicesMuscleNodes = muscle.fiberNodeNumbers;
-    xPos = [obj.positionNodes(indicesMuscleNodes).positionX];
-    yPos = [obj.positionNodes(indicesMuscleNodes).positionY];
+    nFibers = muscle.nFibers;
+
+    indicesMuscleNodes = [muscle.fiberFixpoints{1:nFibers,:}];
+    
+    xPos = obj.xValNodes(indicesMuscleNodes);
+    yPos = obj.yValNodes(indicesMuscleNodes);
             
-    plot(xPos, yPos, 'o', 'MarkerSize', 3);
+    h = plot(xPos, yPos, [colStr 'o'], 'MarkerSize', 3);
     
 end
