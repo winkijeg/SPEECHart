@@ -24,7 +24,9 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
   double lambda2,mu2,tmpdet,detJ,stotmp1,stotmp2,stotmp3,stotmp4;
   double s,r,dpsidr[4],dpsids[4],dpsi[9];
   int debut,indice[64];
-
+  
+  int fact, NN, MM;
+  
   /****** Input parameters ******/
   ordre = mxGetScalar(prhs[0]);
   lambda = mxGetScalar(prhs[1]);
@@ -38,11 +40,6 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
   XY = mxGetPr(prhs[9]);  
   ncontact = mxGetPr(prhs[10]);
   nbcontact = mxGetN(prhs[10]);
-
-  /* new values that are not variable but constant */
-  int fact = 2;
-  int NN = 13;
-  int MM = 17;
 
   /****** Output parameters ******/
   plhs[0] = mxCreateDoubleMatrix(1,4*NN*NN*MM*MM,mxREAL);
@@ -63,6 +60,12 @@ void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
     }
 
   /*** initialisation ***/
+
+
+  fact = 2;
+  NN = 13;
+  MM = 17;
+
 
   H[1][1] = 2.;
   H[2][1] = 1.;
