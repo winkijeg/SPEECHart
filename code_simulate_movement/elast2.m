@@ -23,8 +23,12 @@ global IE
 
 nNodes = 221;
 
+NN = 13;
+MM = 17;
+fact = 2;
+
 activtot = [activGGA, activGGP, activHyo, activStylo, activSL, activVert];
-AA = elast_c(ordre, lambda, mu, IA, IB, IC, ID, IE, activtot, X0Y0, ncontact);
+AA = elast_c(NN, MM, fact, ordre, lambda, mu, IA, IB, IC, ID, IE, activtot, X0Y0, ncontact);
 
 elast2 = reshape(AA, 2*nNodes, 2*nNodes);
 
