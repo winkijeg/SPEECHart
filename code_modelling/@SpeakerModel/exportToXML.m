@@ -8,8 +8,8 @@ function [] = exportToXML( obj, fileName )
     modelData.structures = obj.structures;
     
     % convert PositionFrame into struct
-    modelData.tongGrid.xVal = [obj.tongGrid.positionNodes(:).positionX];
-    modelData.tongGrid.yVal = [obj.tongGrid.positionNodes(:).positionY];
+    modelData.tongGrid.xVal = obj.tongGrid.xValNodes;
+    modelData.tongGrid.yVal = obj.tongGrid.yValNodes;
 
     xml_write(fileName, modelData);
 
