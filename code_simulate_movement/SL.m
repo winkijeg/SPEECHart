@@ -19,21 +19,25 @@ global ACTIV_T;                 % Activation des muscles             |
 global ForceSL;                 % Force exercee par chaque fibre     |
 
 %Att_SL
-for k = 1:2
+for k = 1:2 % RW canged ....
+    
     long_SL(k) = 0;
+    
     for j=Att_SL(k,1)+NN:NN:Att_SL(k,2) % Modifs YP-PP Dec 99
         v1=2*j; % %%
         long(j)=sqrt((XY(v1-1)-XY(v1-NNx2-1))^2+(XY(v1)-XY(v1-NNx2))^2);
         long_SL(k)=long_SL(k)+long(j);  % Modifs YP-PP Dec 99
     end
-    LongdotSL(k)=((XY(Att_SL(k,4)-1)-XY(Att_SL(k,3)-1))*U(NNxMMx2+Att_SL(k,4)-1)+(XY(Att_SL(k,4))-XY(Att_SL(k,3)))*U(NNxMMx2+Att_SL(k,4)))/long_SL(k);
-    Activ1=(long_SL(k)-LAMBDA_SL+MU*LongdotSL(k));
-    if Activ1>0
+    
+    LongdotSL(k) = ((XY(Att_SL(k,4)-1)-XY(Att_SL(k,3)-1))*U(NNxMMx2+Att_SL(k,4)-1)+(XY(Att_SL(k,4))-XY(Att_SL(k,3)))*U(NNxMMx2+Att_SL(k,4)))/long_SL(k);
+    Activ1 = (long_SL(k)-LAMBDA_SL+MU*LongdotSL(k));
+    if Activ1 > 0
         ForceSL = rho_SL * (exp(c*Activ1)-1);
         ForceSL = ForceSL * (f1+f2*atan(f3+f4*LongdotSL(k)/longrepos_SL(k))+f5*LongdotSL(k)/longrepos_SL(k));
         if ForceSL > 20
             ForceSL = 20;
         end
+        
         for j = Att_SL(k,1)+NN:NN:Att_SL(k,2)-NN
             v1 = 2*j; % %%
             FXY(v1-1)=FXY(v1-1)-(XY(v1-1)-XY(v1+NNx2-1))/long(j+NN)*ForceSL;
@@ -43,14 +47,21 @@ for k = 1:2
         end
         FXY(Att_SL(k,4)-1)=FXY(Att_SL(k,4)-1)-(XY(Att_SL(k,4)-1)-XY(Att_SL(k,4)-NNx2-1))/long(Att_SL(k,2))*ForceSL;
         FXY(Att_SL(k,4))=FXY(Att_SL(k,4))-(XY(Att_SL(k,4))-XY(Att_SL(k,4)-NNx2))/long(Att_SL(k,2))*ForceSL;
+        
         % Modif Mars 2004 PP.
-        %On applique aussi une force sur l'origine du muscle dans la
-        %langue (noeuds 65=Att_SL(1,1) et 64 = tt_SL(2,1)), qui
-        %correspondent dans la matrice FXY aux positions
-        %(2*65-1)=Att_SL(1,3)-1 et (2*64-1)=Att_SL(2,3)-1 pour la force en x
-        % et aux positions
-        %(2*65)=Att_SL(1,3) et (2*64)=Att_SL(2,3) pour la force en y
-        % force en X
+        % On applique aussi une force sur l'origine du muscle dans la langue 
+        % (noeuds 65=Att_SL(1,1) et 64 = Att_SL(2,1)), qui correspondent dans 
+        % la matrice FXY aux positions (2*65-1) = Att_SL(1,3)-1 et 
+        % (2*64-1) = Att_SL(2,3)-1 pour la force en x et aux positions
+        % (2*65) = Att_SL(1,3) et (2*64) = Att_SL(2,3) pour la force en y
+        
+        % It also applies a force to the origin of the muscle in the tongue 
+        % (65 knots = Att_SL (1,1) and 64 Att_SL = (2,1)), which correspond 
+        % to the positions FXY matrix (2 * 65-1) Att_SL = (1,3) and -1 (2 * 64-1) = Att_SL (2,3) -1 
+        % for the force and x at positions (2 * 65) = Att_SL (1,3) and (2 * 64) Att_SL = (2,3) 
+        % to force in there
+        
+        
         FXY(Att_SL(k,3)-1) = FXY(Att_SL(k,3)-1)-(XY(Att_SL(k,3)-1)-XY(Att_SL(k,3)+NNx2-1))/long(Att_SL(k,1)+NN)*ForceSL;
         % force en Y
         FXY(Att_SL(k,3)) = FXY(Att_SL(k,3))-(XY(Att_SL(k,3))-XY(Att_SL(k,3)+NNx2))/long(Att_SL(k,1)+NN)*ForceSL;
