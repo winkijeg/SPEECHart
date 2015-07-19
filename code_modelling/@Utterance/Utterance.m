@@ -113,13 +113,15 @@ classdef Utterance
             obj.lowIncisorPosX = positionsLowIncisorTmp(:, 1:17);
             obj.lowIncisorPosY = positionsLowIncisorTmp(:, 18:34);
 
-            positionslarynxArytenoidTmp = matFile.U_lar_ar_mri(nFramesInvalid+1:nFramesOriginal, 1:18);
-            obj.larynxArytenoidPosX = positionslarynxArytenoidTmp(:, 1:9);
-            obj.larynxArytenoidPosY = positionslarynxArytenoidTmp(:, 10:18);
+            nPointslarynxArytenoid = size(matFile.U_lar_ar_mri, 2)/2;
+            positionslarynxArytenoidTmp = matFile.U_lar_ar_mri(nFramesInvalid+1:nFramesOriginal, 1:2*nPointslarynxArytenoid);
+            obj.larynxArytenoidPosX = positionslarynxArytenoidTmp(:, 1:nPointslarynxArytenoid);
+            obj.larynxArytenoidPosY = positionslarynxArytenoidTmp(:, nPointslarynxArytenoid+1:2*nPointslarynxArytenoid);
             
-            positionstongueLarynxTmp = matFile.U_tongue_lar_mri(nFramesInvalid+1:nFramesOriginal, 1:24);
-            obj.tongueLarynxPosX = positionstongueLarynxTmp(:, 1:12);
-            obj.tongueLarynxPosY = positionstongueLarynxTmp(:, 13:24);
+            nPointsTongueLarynx = size(matFile.U_tongue_lar_mri, 2)/2;
+            positionstongueLarynxTmp = matFile.U_tongue_lar_mri(nFramesInvalid+1:nFramesOriginal, 1:2*nPointsTongueLarynx);
+            obj.tongueLarynxPosX = positionstongueLarynxTmp(:, 1:nPointsTongueLarynx);
+            obj.tongueLarynxPosY = positionstongueLarynxTmp(:, nPointsTongueLarynx+1:2*nPointsTongueLarynx);
             
             obj.condylePosX = matFile.U_X_origin(1, nFramesInvalid+1:nFramesOriginal)';
             obj.condylePosY = matFile.U_Y_origin(1, nFramesInvalid+1:nFramesOriginal)';
