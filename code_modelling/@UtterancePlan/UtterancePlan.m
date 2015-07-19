@@ -82,6 +82,8 @@ classdef UtterancePlan
             
         end
         
+        [] = plot(obj, featureString, plotStr)
+        
         
     end
     
