@@ -13,7 +13,7 @@ classdef UtterancePlan
     
     properties
         
-        phonemes@char           % target phonemes after initial tongue rest position
+        target@char             % target (phonemes) after following initial tongue rest position
         
         durTransition@double    % duration between phonemes (incl. initial rest position)
         durHold@double          % duration for all phonemes (excdept initial rest position)
@@ -32,7 +32,7 @@ classdef UtterancePlan
         lipProtrusion@double    % successive horizontal lip displacement [mm]; positiv == protrusion
         % These commands are not made in reference to the position at rest but to the position for the preceding phoneme.
         
-        lowLipRotation@double      % successive lip rotation angles [degrees]; positiv == opening
+        lipRotation@double      % successive lip rotation angles [degrees]; positiv == opening
         % These commands are not made in reference to the position at rest but to the position for the preceding phoneme
         
         hyoid_mov@double        % successive vertical epipharynx displacement [mm]; positiv == lowering
@@ -42,7 +42,7 @@ classdef UtterancePlan
     
     methods
         
-        function obj = UtterancePlan(phonemes)
+        function obj = UtterancePlan(targets)
             % Take a phoneme string as single argument, i.e. UtterancePlan('ai')
             %   the constructor then produces an utterance specification by 
             %   itializing the properties to standard values
@@ -56,8 +56,8 @@ classdef UtterancePlan
             
             if (nargin >= 1)
                 
-                obj.phonemes = phonemes;
-                nPhonemes = length(phonemes);
+                obj.target = targets;
+                nPhonemes = length(targets);
                 
                 % standard values for time course of the utterance
                 obj.durTransition = ones(1, nPhonemes) * 0.050;
@@ -75,7 +75,7 @@ classdef UtterancePlan
                 % standard values for the remaining articulators
                 obj.jawRotation = zeros(1, nPhonemes);
                 obj.lipProtrusion = zeros(1, nPhonemes);
-                obj.lowLipRotation = zeros(1, nPhonemes);
+                obj.lipRotation = zeros(1, nPhonemes);
                 obj.hyoid_mov = zeros(1, nPhonemes);
             
             end
