@@ -4,7 +4,7 @@ function strucUtterance = simulateMovement(obj, uttPlan)
     modelName = obj.model.modelName;
     modelUUID = obj.model.modelUUID;
     
-    seq = ['r' uttPlan.phonemes];
+    seq = ['r' uttPlan.target];
     
     landmarks.xyStyloidProcess = obj.model.landmarks.xyStyloidProcess;
     landmarks.xyCondyle = obj.model.landmarks.xyCondyle;
@@ -55,7 +55,7 @@ function strucUtterance = simulateMovement(obj, uttPlan)
         uttPlan.durHold, ...
         uttPlan.jawRotation, ...
         uttPlan.lipProtrusion, ...
-        uttPlan.lowLipRotation, ...
+        uttPlan.lipRotation, ...
         uttPlan.hyoid_mov);
     
     strucUtterance.modelUUID = modelUUID;
