@@ -26,9 +26,6 @@ if numvarargs > 1
     error('myfuns:somefun2Alt:TooManyInputs', ...
         'requires at most 1 optional input');
 end
-optargs = {'nearest'};    % Set defaults for optional inputs
-optargs(1:numvarargs) = varargin;
-[method] = optargs{:};    % Place optional args in memorable variable names
 
 % Initialization.
 [imageHeight, imageWidth, ~] = size(image);
@@ -52,7 +49,7 @@ padY = abs(shiftY);
 padded = padarray(image, [padY padX]);
 
 % Rotate the image around the center.
-rot = imrotate(padded, angle, method, 'crop');
+rot = fast_rotate(padded, angle);
 
 % Crop the image.
 output = rot(padY+1-shiftY:end-padY-shiftY, padX+1-shiftX:end-padX-shiftX, :);

@@ -1,5 +1,9 @@
 % Test rotate around
 
+
+
+
+
 %% Set test parameters
 imageX = 300;
 imageY = 200;
@@ -8,7 +12,7 @@ pointY = 50;
 angle =  30;
 
 %% Create test image - black dot on white field
-image = ones(imageY, imageX);
+image = uint8(ones(imageY, imageX)) * 256;
 image(pointY, pointX) = 0;
 
 %% Rotate the image around the black dot
@@ -18,3 +22,4 @@ rotated = rotateAround(image, pointY, pointX, angle);
 imshow(rotated);
 hold on
 plot(pointX, pointY, 'or')
+plot(10, 20, 'og')

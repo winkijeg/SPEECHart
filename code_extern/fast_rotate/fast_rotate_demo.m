@@ -5,20 +5,15 @@
 % Tested on Windows XP and Ubuntu 7 with Matlab 7, VC6 and gcc++.
 %
 
-I = imread('circuit.tif');
+myImg = imread('circuit.tif');
+
 
 tic
-for(ii=1:10)
-    a=imrotate(I,ii,'crop');
-end
-disp(['imrotate - ' num2str(toc/ii) ' seconds per picture']);
-
-tic
-for(ii=1:10)
-    b=fast_rotate(I,ii);
+for (ii = 1:10)
+    b = fast_rotate(myImg,ii);
 end
 disp(['fast_rotate - ' num2str(toc/ii) ' seconds per picture']);
 
-figure,imshow(a);
-figure,imshow(b);
+figure
+imshow(b);
 
