@@ -49,6 +49,7 @@ function matUtt = simul_tongue_adapt_jaw(landmarks, structures, tongueRest, ...
 %       [0.05 0.05], [0.150 0.150], [-3 +4], [-2 -2], [0 0], [0 0])
 
 
+
 % global temporary variables
 global aff_fin 
 aff_fin = 0;
@@ -90,12 +91,13 @@ lowlip = structures.lowerLip;
 global lowlip_initial
 lowlip_initial = lowlip;
     
-global jaw_rotation ll_rotation lip_protrusion hyoid_movment
 
-jaw_rotation = jaw_rot;
-ll_rotation = ll_rot;
+global jaw_rotation ll_rotation lip_protrusion hyoid_movment
+jaw_rotation = (pi/180).*jaw_rot;
+ll_rotation = (pi/180).*ll_rot;
 lip_protrusion = lip_prot;
 hyoid_movment = hyoid_mov;
+
 
 % -- the tongue ------------------------------------------------------
 global X0 Y0
@@ -452,11 +454,11 @@ ACCL_T = zeros(1, 2*nNodes);
 ACTIV_T = 0;
 LAMBDA_T = 0;
 
-
-global tf
-tf_seq = TEMPS_FINAL_CUM;
-t0_seq = [0 TEMPS_FINAL_CUM(1:length(TEMPS_FINAL_CUM)-1)];
-tf = tf_seq(length(tf_seq));
+% 
+global tf 
+t2_targets = TEMPS_FINAL_CUM;
+t1_targets = [0 TEMPS_FINAL_CUM(1:length(TEMPS_FINAL_CUM)-1)];
+tf = t2_targets(end);
 
 % movement variables: jaw rotation and its effect on the tongue and the lower lip
 global U_lowlip U_upperlip U_dents_inf U_pharynx_mri U_lar_ar_mri 
@@ -473,10 +475,7 @@ Y0_seq = zeros(round(200*tf), 221);
 ttout = 0;
 
 
-jaw_rotation = (pi/180).*jaw_rotation;
-ll_rotation = (pi/180).*ll_rotation;
-
-global X_origin Y_origin 
+global X_origin Y_origin
 
 X_origin = X_origin_initial;
 Y_origin = Y_origin_initial;
@@ -502,15 +501,21 @@ global alpha_rest_pos dist_rest_pos
 global alpha_rest_pos_dents_inf dist_rest_pos_dents_inf alpha_rest_pos_lowlip dist_rest_pos_lowlip
 
 
-for i = 1:length(tf_seq)
-    if (i == 1)
+nTarget = length(t2_targets);
+
+for nbTarget = 1:nTarget
+    
+    if (nbTarget == 1)
         tfin = [];
         Ufin = [];
         theta_start = 0;
         hyoid_start = 0;
+        
+        % hier fehlt irgendetwas ???? RW
+        
     else
-        theta_start = sum(jaw_rotation(1:i-1));
-        hyoid_start = sum(hyoid_movment(1:i-1));
+        theta_start = sum(jaw_rotation(1:nbTarget-1));
+        hyoid_start = sum(hyoid_movment(1:nbTarget-1));
     end
     
     % intitial tongue position
@@ -520,12 +525,12 @@ for i = 1:length(tf_seq)
     % the initial angle alpha for each node of the tongue
     alpha_rest_pos = atan2((X_origin-X0_rest_pos), (Y_origin-Y0_rest_pos));
     % the distance of each node of the tongue to the center of rotation
-    dist_rest_pos = sqrt( (Y0_rest_pos-Y_origin).^2 + ...
-                          (X0_rest_pos-X_origin).^2 );
+    dist_rest_pos = sqrt( (Y0_rest_pos-Y_origin).^2 + (X0_rest_pos-X_origin).^2 );
     
     %the initial angle alpha of the lower incisor
     alpha_rest_pos_dents_inf = atan2((X_origin-dents_inf(1,:)), ...
         (Y_origin-dents_inf(2,:)));
+    
     % the initial distance of the lower incisor to the center of rotation
     dist_rest_pos_dents_inf = sqrt((dents_inf(2,:)-Y_origin).^2 + (dents_inf(1,:)-X_origin).^2);
 
@@ -537,41 +542,56 @@ for i = 1:length(tf_seq)
     %the initial distance of the lower lip to the center of rotation
     dist_rest_pos_lowlip = sqrt((lowlip(2,:)-Y_origin_ll).^2+(lowlip(1,:)-X_origin_ll).^2);
     
-    t_initial = t0_seq(i);
-    t_transition = t0_seq(i) + TEMPS_ACTIVATION(i);
-    t_final = tf_seq(i);
-    theta = jaw_rotation(i);
-    theta_ll = ll_rotation(i);
-    dist_lip = lip_protrusion(i);
-    dist_hyoid = hyoid_movment(i);
+    t_initial = t1_targets(nbTarget);
+    t_transition = t1_targets(nbTarget) + TEMPS_ACTIVATION(nbTarget);
+    t_final = t2_targets(nbTarget);
+    theta = jaw_rotation(nbTarget);
+    theta_ll = ll_rotation(nbTarget);
+    dist_lip = lip_protrusion(nbTarget);
+    dist_hyoid = hyoid_movment(nbTarget);
 
     figure(1);
+    clf
     hold on
     axis('equal')
     
-    plot(upperlip(1,:),upperlip(2,:), 'k-' );
-    plot(palate(1,1:end), palate(2,1:end),'k-')
-    plot(velum(1,1:end), velum(2,1:end),'k-')
-    plot(pharynx_mri(1,1:end), pharynx_mri(2,1:end),'k-')
-    plot(lar_ar_mri(1,:), lar_ar_mri(2,:),'k-')
-    plot(tongue_lar_mri(1,:), tongue_lar_mri(2,:),'k-')
+    
+    plot(upperlip(1,:),upperlip(2,:), 'c-' );
+    plot(lowlip(1,:),lowlip(2,:), 'c-' );
+    plot(palate(1,1:end), palate(2,1:end),'c-')
+    plot(velum(1,1:end), velum(2,1:end),'c-')
+    plot(pharynx_mri(1,1:end), pharynx_mri(2,1:end),'c-')
+    %plot(lar_ar_mri(1,:), lar_ar_mri(2,:),'k-')
+    %plot(tongue_lar_mri(1,:), tongue_lar_mri(2,:),'k-')
 
     
     % plot tongue and lower jaw contours in rest position
-    plot(lowlip(1,:),lowlip(2,:), 'k--');
-    plot(dents_inf(1,:),dents_inf(2,:), 'k--');
+    %plot(dents_inf(1,:),dents_inf(2,:), 'k--');
     plot(X_origin, Y_origin, 'ko');
     drawnow
     
-    fprintf('Integrating from %1.4f to %1.4f seconds\n',t0_seq(i), tf_seq(i));
+    %pause
     
-    [ts, Us] = ode45plus('udot3_adapt_jaw', t0_seq(i), tf_seq(i), ...
+    fprintf('Integrating from %1.4f to %1.4f seconds\n', t1_targets(nbTarget), t2_targets(nbTarget));
+    
+    [ts, Us] = ode45plus('udot3_adapt_jaw', t1_targets(nbTarget), t2_targets(nbTarget), ...
         U0, 0.001, 0.008);
     
     U0 = Us(length(ts), :);
     tfin = [tfin; ts];
     Ufin = [Ufin; Us];
 end
+
+
+
+
+
+
+
+
+
+
+
 
 
 
