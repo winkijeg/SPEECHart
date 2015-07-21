@@ -3,8 +3,7 @@ function [new_X0, new_Y0] = jaw_trans(t)
 % Also included is the lowerlip rotation relative to the jaw, and lip (lower
 % and upper) protrusion
 
-global t_initial
-global t_final
+global t_initial t_final
 global theta
 global alpha_rest_pos
 global dist_rest_pos
@@ -65,9 +64,10 @@ hyoid_i_abs = dist_hyoid_i+hyoid_start;
 X_origin = X_origin_initial - 6 * (theta_i_abs) / 0.2618;
 Y_origin = Y_origin_initial - 2 * (theta_i_abs) / 0.2618;
 
+% add the lower lip rotation relative the jaw; lowlip(:,end) is the
+% point connected to the jaw, therefore it assumed fixed relative to jaw
 if theta_ll ~= 0
-    % add the lower lip rotation relative the jaw; lowlip(:,end) is the
-    % point connected to the jaw, therefore it assumed fixed relative to jaw
+    
     tan_angle = (lowlip_initial(2,end)-lowlip_initial(2,1:(end-1)))./(lowlip_initial(1,end)-lowlip_initial(1,1:(end-1)));%PP
     
     for indice = 1:length(lowlip_initial(1,:))-1
@@ -95,17 +95,22 @@ if theta_ll ~= 0
         
         if tan_angle(indice) ~= 0
             
-            upperlip(2,indice)=upperlip(2,end)+(upperlip(2,indice)-upperlip(2,end)).*(cos(theta_ll_i)+sin(theta_ll_i)./-tan_angle(indice));
+            upperlip(2,indice) = upperlip(2,end)+(upperlip(2,indice)-upperlip(2,end)).*(cos(theta_ll_i)+sin(theta_ll_i)./-tan_angle(indice));
             
         else
             
-            upperlip(2,indice)=upperlip(2,end)+ (upperlip(1,indice)-upperlip(1,end)).*sin(theta_ll_i);
+            upperlip(2,indice) = upperlip(2,end)+ (upperlip(1,indice)-upperlip(1,end)).*sin(theta_ll_i);
             
         end
         
     end
     
 end
+
+
+
+
+
 
 
 if dist_lip ~= 0
@@ -160,15 +165,19 @@ if dist_hyoid ~= 0
     
 end
 
+
 if (theta_ll ~= 0 || dist_lip ~= 0) && theta ~= 0
     
     % update the initial angle alpha of the lower lip
     alpha_rest_pos_lowlip = atan2((X_origin_ll-lowlip_initial(1,:)), ...
         (Y_origin_ll-lowlip_initial(2,:)));
+    
     % update the initial distance of the lower lip
-    dist_rest_pos_lowlip = sqrt((lowlip_initial(2,:)-Y_origin_ll).^2 + (lowlip_initial(1,:)-X_origin_ll).^2);
+    dist_rest_pos_lowlip = sqrt((lowlip_initial(2,:)-Y_origin_ll).^2 + ...
+        (lowlip_initial(1,:)-X_origin_ll).^2);
     
 end
+
 
 if theta ~= 0
     
@@ -190,6 +199,7 @@ if theta ~= 0
     lowlip(2, :) = Y_origin-dist_rest_pos_lowlip.*cos(alpha_rest_pos_lowlip-theta_i);
     
 else
+    
     lowlip(1,:) = lowlip_initial(1,:);
     lowlip(2,:) = lowlip_initial(2,:);
     % do not change the X0 and Y0 if there is no jaw rotation
