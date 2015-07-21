@@ -24,7 +24,7 @@ for nbFrame = 1:obj.nFrames
         set(h_mesh, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
         set(h_muscle, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
         
-        delete (h_nodeNumbers);
+        %delete (h_nodeNumbers);
   
     end
     
@@ -49,7 +49,7 @@ for nbFrame = 1:obj.nFrames
     h_muscle = obj.positionFrames(nbFrame).drawMuscleNodes(myMuscle, 'g');
     
     
-    h_nodeNumbers = obj.positionFrames(nbFrame).drawNodeNumbers('k');
+    %h_nodeNumbers = obj.positionFrames(nbFrame).drawNodeNumbers('k');
     
     
     
