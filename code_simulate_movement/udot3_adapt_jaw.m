@@ -19,8 +19,7 @@ global LAMBDA_GGP LAMBDA_GGA LAMBDA_Stylo1 LAMBDA_Stylo2 LAMBDA_Hyo1
 global LAMBDA_Hyo2 LAMBDA_Hyo3 LAMBDA_SL LAMBDA_IL LAMBDA_Vert
 
 % Variables recevant les forces de chaque muscle
-global ForceGGA ForceGGP ForceHyo ForceStylo1 ForceStylo2 ForceSL
-global ForceVert;
+global ForceGGA ForceGGP ForceHyo ForceStylo1 ForceStylo2 ForceSL ForceVert
 
 % Variables globales temporaires
 global aff_fin t_affiche t_verbose nb_contact
@@ -59,11 +58,11 @@ if (kkk == 0)
 end
 
 kkk = kkk + 1;
-t_i = round(1000*t)+1;
+t_i = round(1000*t) + 1;
 FXY = PXY;
 
 % Calculate the rotation and translation of the jaw
-if ((t-t_jaw >= 0.001) && (t <=t_final) && ...
+if ((t-t_jaw >= 0.001) && (t <= t_final) && ...
         (theta~=0 || theta_ll~=0 || dist_lip~=0 || dist_hyoid~=0))
     
     [new_X0, new_Y0] = jaw_trans(t);
@@ -322,20 +321,24 @@ if t >= t_affiche
     % the red line between tongue and larynx
     plot([X(1,13) tongue_lar_mri(1,1)], [Y(1,13) tongue_lar_mri(2,1)],'r-')
 
-    % plot tongue
+    % plot tongue surface
     plot(X(1:MM,NN),Y(1:MM,NN), 'k-');
     plot(X(MM,1:NN),Y(MM,1:NN), 'k-');
-    plot(lowlip(1,:),lowlip(2,:), 'k-');
+    
+    plot(lowlip(1,:),lowlip(2,:), 'ko-');
+    plot(upperlip(1,:),upperlip(2,:), 'k-');
+    
     plot(dents_inf(1,:),dents_inf(2,:), 'k-');
     plot(X_origin, Y_origin, 'ko');
 
     plot([pharynx_mri(1,end) lar_ar_mri(1,1)], [pharynx_mri(2,end) lar_ar_mri(2,1)], 'c-')
 
     drawnow
+    
 end
 
 if t >= t_verbose
-    t_verbose = t_verbose+0.005;
+    t_verbose = t_verbose + 0.005;
     t_calcul = round(toc*(TEMPS_FINAL_CUM(length(TEMPS_FINAL_CUM)) / t - 1));
     hour = floor(t_calcul/3600);
     minute = floor((t_calcul-3600*hour)/60);
