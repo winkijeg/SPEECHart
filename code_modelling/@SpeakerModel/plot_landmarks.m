@@ -24,8 +24,8 @@ function [] = plot_landmarks(obj,landmarks, col, h_axes)
     
     for nbLandmark = 1:nLandmarks
 
-        lab_tmp = fieldNamesStr{nbLandmark};
-        ptTmp = obj.landmarks.(lab_tmp)';
+        lab_tmp = fieldNamesStr{nbLandmark}(3:end);
+        ptTmp = obj.landmarks.(['xy' lab_tmp])';
     
         plot(h_axes, ptTmp(1), ptTmp(2), [col 'o'], 'MarkerFaceColor', col);
         text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', col, 'Parent', h_axes);
