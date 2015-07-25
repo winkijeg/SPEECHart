@@ -5,8 +5,8 @@ function pts = getPositionOfTongSurface(obj)
         156 169 182 195 208 221];
     
             
-        xPos = [obj.positionNodes(indicesSurfaceNodes).positionX];
-        yPos = [obj.positionNodes(indicesSurfaceNodes).positionY];
+        xPos = obj.xValNodes(indicesSurfaceNodes);
+        yPos = obj.yValNodes(indicesSurfaceNodes);
         
         pts(1:2, :) = [xPos; yPos];
         

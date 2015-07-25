@@ -1,4 +1,4 @@
-function h = drawMuscleNodes(obj, muscle, colStr)
+function h = drawMuscleNodes(obj, muscle, colStr, h_axes)
     %draw muscle node within one frame
 
     nFibers = muscle.nFibers;
@@ -8,6 +8,6 @@ function h = drawMuscleNodes(obj, muscle, colStr)
     xPos = obj.xValNodes(indicesMuscleNodes);
     yPos = obj.yValNodes(indicesMuscleNodes);
             
-    h = plot(xPos, yPos, [colStr 'o'], 'MarkerSize', 3);
+    h = plot(h_axes, xPos, yPos, [colStr 'o'], 'MarkerSize', 3);
     
 end
