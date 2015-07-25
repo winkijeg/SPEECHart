@@ -146,21 +146,6 @@ classdef Muscle
 
                         % obj.fiberNodeNumbers = [142 155 168 181 194 207];
 
-                    case 'IL'
-                        obj.nameLong = 'Inferior longitudinales';
-                        obj.nameShort = 'IL';
-                        obj.nFibers = 1;
-                        obj.expectedLambdaVariation = 2*20;
-                        obj.fiberCrossSectionalArea = 88.0;
-
-                        obj.fiberFixpoints(1, :) = {'hyoB', 109, 189, 217};
-
-                        obj.externalInsertionPointPosition.hyoB = ...
-                            landmarks.xyHyoB;
-
-
-                        % obj.fiberNodeNumbers = 217;
-
                     case 'SL'
                         obj.nameLong = 'Superior longitudinales';
                         obj.nameShort = 'SL';
@@ -175,6 +160,22 @@ classdef Muscle
                         obj.externalInsertionPointPosition = [];
 
                         % obj.fiberNodeNumbers = [64 65 220 221];
+
+
+                    case 'IL'
+                        obj.nameLong = 'Inferior longitudinales';
+                        obj.nameShort = 'IL';
+                        obj.nFibers = 1;
+                        obj.expectedLambdaVariation = 2*20;
+                        obj.fiberCrossSectionalArea = 88.0;
+
+                        obj.fiberFixpoints(1, :) = {'hyoB', 109, 189, 217};
+
+                        obj.externalInsertionPointPosition.hyoB = ...
+                            landmarks.xyHyoB;
+
+
+                        % obj.fiberNodeNumbers = 217;
 
                     otherwise
                         error('muscle name unknown ...')
