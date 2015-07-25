@@ -5,33 +5,33 @@ classdef SpeakerData
     
     properties
         
-        speakerName = '';
+        speakerName
         
         % necessary for the model design
-        xyStyloidProcess = [];
-        xyTongInsL = [];
-        xyTongInsH = [];
-        xyANS = [];
-        xyPNS = [];
+        xyStyloidProcess@double
+        xyTongInsL@double
+        xyTongInsH@double
+        xyANS@double
+        xyPNS@double
         
         % necessary for shape measures --------------------
-        xyVallSin = [];
-        xyAlvRidge = [];
-        xyPharH = [];
-        xyPharL = [];
+        xyVallSin@double
+        xyAlvRidge@double
+        xyPharH@double
+        xyPharL@double
         
         % necessary for semi-polar grid
-        xyPalate = [];
-        xyLx = [];
-        xyLipU = [];
-        xyLipL = [];
+        xyPalate@double
+        xyLx@double
+        xyLipU@double
+        xyLipL@double
         
         % necessary for split up the contours into anatomical regions
-        xyTongTip = [];
-        xyVelum = [];
+        xyTongTip@double
+        xyVelum@double
         
-        xyInnerTrace = []; % tongue surface in MRI slice
-        xyOuterTrace = []; % pharynx and palate trace from MRI slice
+        xyInnerTrace@double % tongue surface in MRI slice
+        xyOuterTrace@double % pharynx and palate trace from MRI slice
       
     end
     
@@ -45,10 +45,10 @@ classdef SpeakerData
             'xyPPDPharL_d', [])
         
         % for semi-polar grid
-        xyCircleMidpoint
+        xyCircleMidpoint@double
         
         % the semi-polar grid
-        grid
+        grid@SemiPolarGrid
         
         % indices after splitting up contours
         idxTongue
@@ -61,49 +61,90 @@ classdef SpeakerData
     
     methods
         
-%         function obj = SpeakerData(struc)
-%
-%             
-%             obj.speakerName = 
-%             
-%         end
+        function obj = SpeakerData(mySpeakerData)
+
+            obj.speakerName = mySpeakerData.speakerName;
+            obj.xyStyloidProcess = mySpeakerData.landmarks.styloidProcess;
+            obj.xyANS = mySpeakerData.landmarks.ANS;
+            obj.xyPNS = mySpeakerData.landmarks.PNS;
+            obj.xyTongInsL = mySpeakerData.landmarks.tongInsL;
+            obj.xyTongInsH = mySpeakerData.landmarks.tongInsH;
+
+            obj.xyInnerTrace = mySpeakerData.contours.innerPt;
+            obj.xyOuterTrace = mySpeakerData.contours.outerPt;
+
+            obj.xyVallSin = mySpeakerData.landmarks.VallSin;
+            obj.xyAlvRidge = mySpeakerData.landmarks.AlvRidge;
+            obj.xyPharH = mySpeakerData.landmarks.PharH;
+            obj.xyPharL = mySpeakerData.landmarks.PharL;
+
+            obj.xyPalate = mySpeakerData.landmarks.Palate;
+            obj.xyLx = mySpeakerData.landmarks.Lx;
+            obj.xyLipU = mySpeakerData.landmarks.LipU;
+            obj.xyLipL = mySpeakerData.landmarks.LipL;
+            obj.xyTongTip = mySpeakerData.landmarks.TongTip;
+            obj.xyVelum = mySpeakerData.landmarks.Velum;
+
+        end
 
         modelData = getDataForModelCreation( obj )
-        [] = disp( obj )
+        h_axes = initPlotFigure(obj, flagImage)
+        [] = plot_grid ( obj, col, grdLines, h_axes )
+        [] = plot_landmarks(obj, landmarks, col, h_axes)
+        [] = plot_landmarks_derived( obj, col, h_axes )
+        [] = plot_contours(obj, col, h_axes)
+        [] = plot_contours_modelParts(obj, col, lineWidth, h_axes)
         
         function pts = get.landmarksDerived(obj)
-            % ptPharHTmp_d (temporary) is the 4th point of the parallelogramm
-            % ANS-AlvRidge-h3-PNS
-            xyPharHTmp_d = -obj.xyANS + obj.xyAlvRidge + obj.xyPNS;
-            % ptPharH_d is the intersection point between two lines: (1) back
-            % pharyngeal wall and (2) the line passing p1 and is parralel to ANS-PNS
-            [~, pts.xyPharH_d(:, 1)] = lines_exp_int_2d(...
-                obj.xyAlvRidge', xyPharHTmp_d', obj.xyPharH', obj.xyPharL');
             
-            % ptPharLTmp_d (temporary) is the 4th point of the parallelogramm
-            % ANS-Hyo-h4-PNS
-            xyPharLTmp_d = -obj.xyANS + obj.xyVallSin + obj.xyPNS;
-            % ptPharL_d is the intersection point between two lines: (1) back
-            % pharyngeal wall and (2) the line passing Hyo and is parralel to ANS-PNS
-            [~, pts.xyPharL_d(:, 1)] = lines_exp_int_2d(...
-                obj.xyVallSin', xyPharLTmp_d', obj.xyPharH', obj.xyPharL');
-            
-            % find two derived points (for morpological analysis)
-            % (1) intersection point of palatal plane and pharynx wall
-            [~, pts.xyNPW_d(:, 1)] = lines_exp_int_2d(...
-                obj.xyANS', obj.xyPNS', pts.xyPharL_d', pts.xyPharH_d');
-            % (2) shortest distance from pt_PharL_d to palatal plane
-            pts.xyPPDPharL_d(:, 1) = line_exp_perp_2d(...
-                obj.xyANS', obj.xyPNS', pts.xyPharL_d');
+            if ~(isempty(obj.xyANS) || isempty(obj.xyAlvRidge) || isempty(obj.xyPNS))
+                
+                % ptPharHTmp_d (temporary) is the 4th point of the parallelogramm
+                % ANS-AlvRidge-h3-PNS
+                xyPharHTmp_d = -obj.xyANS + obj.xyAlvRidge + obj.xyPNS;
+                % ptPharH_d is the intersection point between two lines: (1) back
+                % pharyngeal wall and (2) the line passing p1 and is parralel to ANS-PNS
+                [~, pts.xyPharH_d(:, 1)] = lines_exp_int_2d(...
+                    obj.xyAlvRidge', xyPharHTmp_d', obj.xyPharH', obj.xyPharL');
+
+                % ptPharLTmp_d (temporary) is the 4th point of the parallelogramm
+                % ANS-Hyo-h4-PNS
+                xyPharLTmp_d = -obj.xyANS + obj.xyVallSin + obj.xyPNS;
+                % ptPharL_d is the intersection point between two lines: (1) back
+                % pharyngeal wall and (2) the line passing Hyo and is parralel to ANS-PNS
+                [~, pts.xyPharL_d(:, 1)] = lines_exp_int_2d(...
+                    obj.xyVallSin', xyPharLTmp_d', obj.xyPharH', obj.xyPharL');
+
+                % find two derived points (for morpological analysis)
+                % (1) intersection point of palatal plane and pharynx wall
+                [~, pts.xyNPW_d(:, 1)] = lines_exp_int_2d(...
+                    obj.xyANS', obj.xyPNS', pts.xyPharL_d', pts.xyPharH_d');
+                % (2) shortest distance from pt_PharL_d to palatal plane
+                pts.xyPPDPharL_d(:, 1) = line_exp_perp_2d(...
+                    obj.xyANS', obj.xyPNS', pts.xyPharL_d');
+            else
+                
+                pts.xyPharH_d = [];
+                pts.xyPharL_d = [];
+                pts.xyNPW_d = [];
+                pts.xyPPDPharL_d = [];
+                
+            end
             
         end
         
         function xyCircleMidpoint = get.xyCircleMidpoint(obj)
-            % calculate midpointCircle, the center of a circle intersecting the
-            % landmarks p_AlvRidge, p_Palate, p_PharH_d
-            pointsTmp = [obj.xyAlvRidge obj.xyPalate obj.landmarksDerived.xyPharH_d];
-            [~, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(...
-                pointsTmp);
+            
+            if ~(isempty(obj.xyAlvRidge) || isempty(obj.xyPalate) || isempty(obj.landmarksDerived.xyPharH_d))
+                % calculate midpointCircle, the center of a circle intersecting the
+                % landmarks p_AlvRidge, p_Palate, p_PharH_d
+                pointsTmp = [obj.xyAlvRidge obj.xyPalate obj.landmarksDerived.xyPharH_d];
+                [~, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(...
+                    pointsTmp);
+            else
+                xyCircleMidpoint = [];
+            end
+            
         end
          
         function grd = get.grid(obj)
@@ -123,7 +164,7 @@ classdef SpeakerData
 
         function idx = get.idxTongue(obj)
             % determine indices for tongue contour
-            % split inner contour into anatomical motivated parts
+            % split inner contour into anatomical motivated parts.
             % The tongue surface is represented by the contour 
             % between between two landmarks (VallSin - TongTip).
 

@@ -1,4 +1,4 @@
-function [] = plot(obj, col, grdLines, cAxes)
+function [] = plot(obj, col, grdLines, h_axes)
 % plot partially semipolar grid specified by the third argument
 %   i.e. 3:7 or only one gridline (i.e. 10)
 
@@ -6,10 +6,10 @@ function [] = plot(obj, col, grdLines, cAxes)
         grdLines = 1:obj.nGridlines;
     end
 
-    if ~exist('cAxes', 'var') || isempty(cAxes)
+    if ~exist('h_axes', 'var') || isempty(h_axes)
         figure;
         hold on;
-        cAxes = gca;
+        h_axes = gca;
     end
 
     nGrdLinesToPlot = length(grdLines);
@@ -24,7 +24,7 @@ function [] = plot(obj, col, grdLines, cAxes)
     
         line([innerXval(nbGridLine) outerXval(nbGridLine)], ...
             [innerYval(nbGridLine) outerYval(nbGridLine)], ...
-            'Color', col, 'Parent', cAxes)
+            'Color', col, 'Parent', h_axes);
     end
 
 end
