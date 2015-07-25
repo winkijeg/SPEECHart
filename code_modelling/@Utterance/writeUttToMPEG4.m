@@ -24,7 +24,7 @@ function [] = writeUttToMPEG4(obj, model, fname, h_axes)
             set(h_rigid5, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
             set(h_rigid6, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
 
-            % set(h_mesh, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
+            set(h_mesh, 'EdgeColor', [colorPastFrames colorPastFrames colorPastFrames])
             % set(h_muscle, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
 
             %delete (h_nodeNumbers);
@@ -47,7 +47,7 @@ function [] = writeUttToMPEG4(obj, model, fname, h_axes)
         h_rigid6 = obj.plotSingleStructure('condyle', nbFrame, ...
             [colStr '.'], h_axes);
 
-        %h_mesh = obj.positionFrames(nbFrame).drawMesh('r');
+        h_mesh = obj.tongue(nbFrame).drawMesh('k', h_axes);
 
         %h_muscle = obj.positionFrames(nbFrame).drawMuscleNodes(myMuscle, 'g');
 

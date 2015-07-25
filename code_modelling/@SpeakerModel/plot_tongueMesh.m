@@ -10,7 +10,7 @@ function h_mesh = plot_tongueMesh( obj, col, h_axes )
     end
 
 
-h_mesh = obj.tongue.drawMesh(col, h_axes);
+    h_mesh = obj.tongue.drawMesh(col, h_axes);
 
     
 end

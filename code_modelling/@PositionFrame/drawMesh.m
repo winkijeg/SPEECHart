@@ -9,6 +9,10 @@ function h = drawMesh(obj, col, h_axes)
         h_axes = gca;
     end
     
-    h = plot(h_axes, obj.xValNodes, obj.yValNodes, '.', 'Color', col);
+    X0 = reshape(obj.xValNodes, 13, 17)';
+    Y0 = reshape(obj.yValNodes, 13, 17)';
+    
+    axes(h_axes);
+    h = mesh(X0,Y0, zeros(size(X0)), 'EdgeColor', col);
 
 end
