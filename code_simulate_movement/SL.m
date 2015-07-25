@@ -19,7 +19,7 @@ global ACTIV_T;                 % Activation des muscles             |
 global ForceSL;                 % Force exercee par chaque fibre     |
 
 %Att_SL
-for k = 1:2 % RW canged ....
+for k = 1:1 % RW canged ....
     
     long_SL(k) = 0;
     
