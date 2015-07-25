@@ -1,5 +1,13 @@
-function h = drawTongSurface(obj, col)
-%plot tongue surface corresponding to one frame
+function h_surface = drawTongSurface(obj, col, h_axes)
+%plot tongue surface for one PositionFrame
+
+    if ~exist('col', 'var') || isempty(col)
+        col = 'k';
+    end
+
+    if ~exist('h_axes', 'var') || isempty(h_axes)
+        h_axes = gca;
+    end
 
 
     indicesSurfaceNodes = [13 26 39 52 65 78 91 104 117 130 143 ...
@@ -9,5 +17,5 @@ function h = drawTongSurface(obj, col)
         xPos = obj.xValNodes(1, indicesSurfaceNodes);
         yPos = obj.yValNodes(1, indicesSurfaceNodes);
 
-        h = plot(xPos, yPos, col);
+        h_surface = plot(h_axes, xPos, yPos, col);
 end

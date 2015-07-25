@@ -34,10 +34,10 @@ classdef PositionFrame
         
         % method declarations .............................................
         
-        h = drawMesh(obj, col);
+        h = drawMesh(obj, col, h_axes);
         h = drawNodeNumbers(obj, col);
-        h = drawTongSurface(obj, col);
-        h = drawMuscleNodes(obj, muscle, col);
+        h = drawTongSurface(obj, col, h_axes);
+        h = drawMuscleNodes(obj, muscle, col, h_axes);
         
         xyVals = getPositionOfNodeNumbers(obj, nodeNumbers);
         xyVals = getPositionOfTongSurface(obj);
