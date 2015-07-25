@@ -10,7 +10,7 @@ function [] = plot_landmarks_derived( obj, col, h_axes )
 
     for k = 1:nLandmarks
 
-        lab_tmp = fieldNamesStr{k};
+        lab_tmp = fieldNamesStr{k}(3:end);
         ptTmp = obj.landmarksDerived.(fieldNamesStr{k})';
 
         plot(h_axes, ptTmp(1), ptTmp(2), [col 'o'], 'MarkerFaceColor', col)
