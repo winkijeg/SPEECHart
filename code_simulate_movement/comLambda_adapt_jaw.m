@@ -74,12 +74,8 @@ LAMBDA_T(t_i, 7) = lam_Vert;
 global fac_GGP fac_GGA fac_Hyo fac_Stylo fac_SL fac_IL fac_Vert
 
 % amplitude variations (min max) set for the lambdas -----------------
-global delta_lambda_tot_GGP
-global delta_lambda_tot_GGA
-global delta_lambda_tot_Hyo
-global delta_lambda_tot_Stylo
-global delta_lambda_tot_SL
-global delta_lambda_tot_IL
+global delta_lambda_tot_GGP delta_lambda_tot_GGA delta_lambda_tot_Hyo
+global delta_lambda_tot_Stylo delta_lambda_tot_SL delta_lambda_tot_IL
 global delta_lambda_tot_Vert
 
 l_repos_GGP = (longrepos_GGP_max + (delta_lambda_tot_GGP / 2)) * fac_GGP;
