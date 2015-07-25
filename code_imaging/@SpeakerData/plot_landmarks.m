@@ -26,7 +26,7 @@ function [] = plot_landmarks(obj, landmarks, col, h_axes)
 
     for nbLandmark = 1:nLandmarks
 
-        lab_tmp = fieldNamesStr{nbLandmark};
+        lab_tmp = fieldNamesStr{nbLandmark}(3:end);
         ptTmp = obj.(fieldNamesStr{nbLandmark});
 
         plot(h_axes, ptTmp(1), ptTmp(2), [col 'o'], 'MarkerFaceColor', col)
