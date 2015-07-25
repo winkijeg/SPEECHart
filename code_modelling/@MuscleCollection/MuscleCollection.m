@@ -4,26 +4,24 @@ classdef MuscleCollection
     properties
         
         nMuscles@uint8
-        
-        namesMuscle@cell
-        
-        muscles@Muscle
+        names@cell
+        muscleArray@Muscle
        
     end
     
     methods
         
-        function obj = MuscleCollection(muscleNames, tongueGrid, landmarks)
+        function obj = MuscleCollection(muscleNames, tongue, landmarks)
 
             if nargin  ~= 0
                 obj.nMuscles = uint8(size(muscleNames, 2));
-                obj.namesMuscle = muscleNames;
+                obj.names = muscleNames;
             
-                obj.muscles(obj.nMuscles) = Muscle(); % memory allocation
-                for k = 1:obj.nMuscles
+                obj.muscleArray(obj.nMuscles) = Muscle(); % memory allocation
+                for nbMuscle = 1:obj.nMuscles
                 
-                    obj.muscles(k) = Muscle(muscleNames{k}, tongueGrid, ...
-                        landmarks);
+                    obj.muscleArray(nbMuscle) = Muscle(muscleNames{nbMuscle}, ...
+                        tongue, landmarks);
             
                 end
                 
