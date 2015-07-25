@@ -1,5 +1,5 @@
 function matUtt = simul_tongue_adapt_jaw(landmarks, structures, tongueRest, ...
-    tongConstVals, myMuscleCol, ...
+    tongConstVals, myMuscleCol, modellUUID, ...
     modelName, seq, deltaLamb_GGP, deltaLamb_GGA, deltaLamb_HYO, ...
     deltaLamb_STY, deltaLamb_VER, deltaLamb_SL, deltaLamb_IL, t_trans, ...
     t_hold, jaw_rot, lip_prot, ll_rot, hyoid_mov)
@@ -88,9 +88,6 @@ tongue_lar = structures.tongueLarynx;
 dents_inf = structures.lowerIncisor;
 lowlip = structures.lowerLip;
 
-global lowlip_initial
-lowlip_initial = lowlip;
-    
 
 global jaw_rotation ll_rotation lip_protrusion hyoid_movment
 jaw_rotation = (pi/180).*jaw_rot;
@@ -161,64 +158,62 @@ global rho_GG rho_Hyo rho_Stylo rho_SL rho_IL rho_Vert
 % proportionality factor between the muscle fibers --------------------
 global fac_GGP fac_GGA fac_Hyo fac_Stylo fac_SL fac_IL fac_Vert
 
-idxMuscle = strcmp(myMuscleCol.namesMuscle, 'GGP');
-longrepos_GGP = myMuscleCol.muscles(idxMuscle).fiberLengthsAtRest;
-delta_lambda_tot_GGP = myMuscleCol.muscles(idxMuscle).expectedLambdaVariation;
-longrepos_GGP_max = myMuscleCol.muscles(idxMuscle).fiberMaxLengthAtRest;
-longmin_GGP = myMuscleCol.muscles(idxMuscle).fiberMinLength;
-rho_GG = myMuscleCol.muscles(idxMuscle).rho;
-fac_GGP = myMuscleCol.muscles(idxMuscle).fiberLengthsRatio;
+idxMuscle = strcmp(myMuscleCol.names, 'GGP');
+longrepos_GGP = myMuscleCol.muscleArray(idxMuscle).fiberLengthsAtRest;
+delta_lambda_tot_GGP = myMuscleCol.muscleArray(idxMuscle).expectedLambdaVariation;
+longrepos_GGP_max = myMuscleCol.muscleArray(idxMuscle).fiberMaxLengthAtRest;
+longmin_GGP = myMuscleCol.muscleArray(idxMuscle).fiberMinLength;
+rho_GG = myMuscleCol.muscleArray(idxMuscle).rho;
+fac_GGP = myMuscleCol.muscleArray(idxMuscle).fiberLengthsRatio;
 
-idxMuscle = strcmp(myMuscleCol.namesMuscle, 'GGA');
-longrepos_GGA = myMuscleCol.muscles(idxMuscle).fiberLengthsAtRest;
-delta_lambda_tot_GGA = myMuscleCol.muscles(idxMuscle).expectedLambdaVariation;
-longrepos_GGA_max = myMuscleCol.muscles(idxMuscle).fiberMaxLengthAtRest;
-longmin_GGA = myMuscleCol.muscles(idxMuscle).fiberMinLength;
-% rho_GG = myMuscleCol.muscles(idxMuscle).rho;  GGP and GGA shares on
+idxMuscle = strcmp(myMuscleCol.names, 'GGA');
+longrepos_GGA = myMuscleCol.muscleArray(idxMuscle).fiberLengthsAtRest;
+delta_lambda_tot_GGA = myMuscleCol.muscleArray(idxMuscle).expectedLambdaVariation;
+longrepos_GGA_max = myMuscleCol.muscleArray(idxMuscle).fiberMaxLengthAtRest;
+longmin_GGA = myMuscleCol.muscleArray(idxMuscle).fiberMinLength;
+% rho_GG = myMuscleCol.muscleArray(idxMuscle).rho;  GGP and GGA shares on
 % Variable
-fac_GGA = myMuscleCol.muscles(idxMuscle).fiberLengthsRatio;
+fac_GGA = myMuscleCol.muscleArray(idxMuscle).fiberLengthsRatio;
 
-idxMuscle = strcmp(myMuscleCol.namesMuscle, 'HYO');
-longrepos_Hyo = myMuscleCol.muscles(idxMuscle).fiberLengthsAtRest;
-delta_lambda_tot_Hyo = myMuscleCol.muscles(idxMuscle).expectedLambdaVariation;
-longrepos_Hyo_max = myMuscleCol.muscles(idxMuscle).fiberMaxLengthAtRest;
-longmin_Hyo = myMuscleCol.muscles(idxMuscle).fiberMinLength;
-rho_Hyo = myMuscleCol.muscles(idxMuscle).rho;
-fac_Hyo = myMuscleCol.muscles(idxMuscle).fiberLengthsRatio;
+idxMuscle = strcmp(myMuscleCol.names, 'HYO');
+longrepos_Hyo = myMuscleCol.muscleArray(idxMuscle).fiberLengthsAtRest;
+delta_lambda_tot_Hyo = myMuscleCol.muscleArray(idxMuscle).expectedLambdaVariation;
+longrepos_Hyo_max = myMuscleCol.muscleArray(idxMuscle).fiberMaxLengthAtRest;
+longmin_Hyo = myMuscleCol.muscleArray(idxMuscle).fiberMinLength;
+rho_Hyo = myMuscleCol.muscleArray(idxMuscle).rho;
+fac_Hyo = myMuscleCol.muscleArray(idxMuscle).fiberLengthsRatio;
 
-idxMuscle = strcmp(myMuscleCol.namesMuscle, 'STY');
-longrepos_Stylo = myMuscleCol.muscles(idxMuscle).fiberLengthsAtRest;
-delta_lambda_tot_Stylo = myMuscleCol.muscles(idxMuscle).expectedLambdaVariation;
-longrepos_Stylo_max = myMuscleCol.muscles(idxMuscle).fiberMaxLengthAtRest;
-longmin_Stylo = myMuscleCol.muscles(idxMuscle).fiberMinLength;
-rho_Stylo = myMuscleCol.muscles(idxMuscle).rho;
-fac_Stylo = myMuscleCol.muscles(idxMuscle).fiberLengthsRatio;
+idxMuscle = strcmp(myMuscleCol.names, 'STY');
+longrepos_Stylo = myMuscleCol.muscleArray(idxMuscle).fiberLengthsAtRest;
+delta_lambda_tot_Stylo = myMuscleCol.muscleArray(idxMuscle).expectedLambdaVariation;
+longrepos_Stylo_max = myMuscleCol.muscleArray(idxMuscle).fiberMaxLengthAtRest;
+longmin_Stylo = myMuscleCol.muscleArray(idxMuscle).fiberMinLength;
+rho_Stylo = myMuscleCol.muscleArray(idxMuscle).rho;
+fac_Stylo = myMuscleCol.muscleArray(idxMuscle).fiberLengthsRatio;
 
-idxMuscle = strcmp(myMuscleCol.namesMuscle, 'SL');
-longrepos_SL = myMuscleCol.muscles(idxMuscle).fiberLengthsAtRest;
-delta_lambda_tot_SL = myMuscleCol.muscles(idxMuscle).expectedLambdaVariation;
-longrepos_SL_max = myMuscleCol.muscles(idxMuscle).fiberMaxLengthAtRest;
-longmin_SL = myMuscleCol.muscles(idxMuscle).fiberMinLength;
-rho_SL = myMuscleCol.muscles(idxMuscle).rho;
-fac_SL = myMuscleCol.muscles(idxMuscle).fiberLengthsRatio;
+idxMuscle = strcmp(myMuscleCol.names, 'SL');
+longrepos_SL = myMuscleCol.muscleArray(idxMuscle).fiberLengthsAtRest;
+delta_lambda_tot_SL = myMuscleCol.muscleArray(idxMuscle).expectedLambdaVariation;
+longrepos_SL_max = myMuscleCol.muscleArray(idxMuscle).fiberMaxLengthAtRest;
+longmin_SL = myMuscleCol.muscleArray(idxMuscle).fiberMinLength;
+rho_SL = myMuscleCol.muscleArray(idxMuscle).rho;
+fac_SL = myMuscleCol.muscleArray(idxMuscle).fiberLengthsRatio;
 
-idxMuscle = strcmp(myMuscleCol.namesMuscle, 'IL');
-longrepos_IL = myMuscleCol.muscles(idxMuscle).fiberLengthsAtRest;
-delta_lambda_tot_IL = myMuscleCol.muscles(idxMuscle).expectedLambdaVariation; 
-longrepos_IL_max = myMuscleCol.muscles(idxMuscle).fiberMaxLengthAtRest;
-longmin_IL = myMuscleCol.muscles(idxMuscle).fiberMinLength;
-rho_IL = myMuscleCol.muscles(idxMuscle).rho;
-fac_IL = myMuscleCol.muscles(idxMuscle).fiberLengthsRatio;
+idxMuscle = strcmp(myMuscleCol.names, 'IL');
+longrepos_IL = myMuscleCol.muscleArray(idxMuscle).fiberLengthsAtRest;
+delta_lambda_tot_IL = myMuscleCol.muscleArray(idxMuscle).expectedLambdaVariation; 
+longrepos_IL_max = myMuscleCol.muscleArray(idxMuscle).fiberMaxLengthAtRest;
+longmin_IL = myMuscleCol.muscleArray(idxMuscle).fiberMinLength;
+rho_IL = myMuscleCol.muscleArray(idxMuscle).rho;
+fac_IL = myMuscleCol.muscleArray(idxMuscle).fiberLengthsRatio;
 
-idxMuscle = strcmp(myMuscleCol.namesMuscle, 'VER');
-longrepos_Vert = myMuscleCol.muscles(idxMuscle).fiberLengthsAtRest;
-delta_lambda_tot_Vert = myMuscleCol.muscles(idxMuscle).expectedLambdaVariation;
-longrepos_Vert_max = myMuscleCol.muscles(idxMuscle).fiberMaxLengthAtRest;
-longmin_Vert = myMuscleCol.muscles(idxMuscle).fiberMinLength;
-rho_Vert = myMuscleCol.muscles(idxMuscle).rho;
-fac_Vert = myMuscleCol.muscles(idxMuscle).fiberLengthsRatio;
-
-
+idxMuscle = strcmp(myMuscleCol.names, 'VER');
+longrepos_Vert = myMuscleCol.muscleArray(idxMuscle).fiberLengthsAtRest;
+delta_lambda_tot_Vert = myMuscleCol.muscleArray(idxMuscle).expectedLambdaVariation;
+longrepos_Vert_max = myMuscleCol.muscleArray(idxMuscle).fiberMaxLengthAtRest;
+longmin_Vert = myMuscleCol.muscleArray(idxMuscle).fiberMinLength;
+rho_Vert = myMuscleCol.muscleArray(idxMuscle).rho;
+fac_Vert = myMuscleCol.muscleArray(idxMuscle).fiberLengthsRatio;
 
 
 maxFiberLengths = [...
@@ -537,6 +532,11 @@ for nbTarget = 1:nTarget
     X_origin_ll = X_origin;
     Y_origin_ll = Y_origin;
     
+    % DO NOT CHANGE THE ORDER HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    global lowlip_initial
+    lowlip_initial = lowlip;
+    
+    
     % the initial angle alpha of the lower lip
     alpha_rest_pos_lowlip = atan2((X_origin_ll-lowlip(1,:)), (Y_origin_ll-lowlip(2,:)));
     %the initial distance of the lower lip to the center of rotation
@@ -653,48 +653,51 @@ clear global TEMPS FXY_T ACCL_T ACTIV_T LAMBDA_T
 % save tongue movement and force tracks
 
 % convert from radiant to degree ---
-jaw_rotation = jaw_rotation*180/pi;
-ll_rotation = ll_rotation*180/pi;
+jaw_rotation_degree = jaw_rotation*180/pi;
+ll_rotation_degree = ll_rotation*180/pi;
 
 
-matUtt.modelName = modelName;
-matUtt.U = U;
-matUtt.t = t;
-matUtt.ttout = ttout;
-matUtt.MM = MM; 
-matUtt.NN = NN;
-matUtt.seq = seq;
-matUtt.TEMPS_FINAL = TEMPS_FINAL;
-matUtt.TEMPS_HOLD = TEMPS_HOLD;
-matUtt.TEMPS_FINAL_CUM = TEMPS_FINAL_CUM;
-matUtt.TEMPS_ACTIVATION = TEMPS_ACTIVATION;
-matUtt.MATRICE_LAMBDA = MATRICE_LAMBDA;
-matUtt.nb_transitions = nb_transitions;
-matUtt.jaw_rotation = jaw_rotation;
-matUtt.lip_protrusion = lip_protrusion;
-matUtt.ll_rotation = ll_rotation;
-matUtt.hyoid_movment = hyoid_movment;
-matUtt.FXY_TRAJ = FXY_TRAJ;
-matUtt.ACCL_TRAJ = ACCL_TRAJ;
-matUtt.ACTIV_TRAJ = ACTIV_TRAJ;
-matUtt.LAMBDA_TRAJ = LAMBDA_TRAJ;
-matUtt.X0 = X0;
-matUtt.Y0 = Y0;
-matUtt.U_dents_inf = U_dents_inf;
-matUtt.U_lowlip = U_lowlip;
-matUtt.U_upperlip = U_upperlip;
-matUtt.U_pharynx_mri = U_pharynx_mri;
-matUtt.U_lar_ar_mri = U_lar_ar_mri;
-matUtt.U_tongue_lar_mri = U_tongue_lar_mri;
-matUtt.X0_seq = X0_seq;
-matUtt.Y0_seq = Y0_seq;
-matUtt.U_X_origin = U_X_origin;
-matUtt.U_Y_origin = U_Y_origin;
+% collect the simulation data in the obsolete file format ---------
+matUtt_obsolete.modelName = modelName;
+matUtt_obsolete.modelUUID = modellUUID;
+matUtt_obsolete.U = U;
+matUtt_obsolete.t = t;
+matUtt_obsolete.ttout = ttout;
+matUtt_obsolete.MM = MM; 
+matUtt_obsolete.NN = NN;
+matUtt_obsolete.seq = seq;
+matUtt_obsolete.TEMPS_FINAL = TEMPS_FINAL;
+matUtt_obsolete.TEMPS_HOLD = TEMPS_HOLD;
+matUtt_obsolete.TEMPS_FINAL_CUM = TEMPS_FINAL_CUM;
+matUtt_obsolete.TEMPS_ACTIVATION = TEMPS_ACTIVATION;
+matUtt_obsolete.MATRICE_LAMBDA = MATRICE_LAMBDA;
+matUtt_obsolete.nb_transitions = nb_transitions;
+matUtt_obsolete.jaw_rotation = jaw_rotation_degree;
+matUtt_obsolete.lip_protrusion = lip_protrusion;
+matUtt_obsolete.ll_rotation = ll_rotation_degree;
+matUtt_obsolete.hyoid_movment = hyoid_movment;
+matUtt_obsolete.FXY_TRAJ = FXY_TRAJ;
+matUtt_obsolete.ACCL_TRAJ = ACCL_TRAJ;
+matUtt_obsolete.ACTIV_TRAJ = ACTIV_TRAJ;
+matUtt_obsolete.LAMBDA_TRAJ = LAMBDA_TRAJ;
+matUtt_obsolete.X0 = X0;
+matUtt_obsolete.Y0 = Y0;
+matUtt_obsolete.U_dents_inf = U_dents_inf;
+matUtt_obsolete.U_lowlip = U_lowlip;
+matUtt_obsolete.U_upperlip = U_upperlip;
+matUtt_obsolete.U_pharynx_mri = U_pharynx_mri;
+matUtt_obsolete.U_lar_ar_mri = U_lar_ar_mri;
+matUtt_obsolete.U_tongue_lar_mri = U_tongue_lar_mri;
+matUtt_obsolete.X0_seq = X0_seq;
+matUtt_obsolete.Y0_seq = Y0_seq;
+matUtt_obsolete.U_X_origin = U_X_origin;
+matUtt_obsolete.U_Y_origin = U_Y_origin;
 
 disp(['number of contacts: ' num2str(nb_contact)]);
 disp(['number of function calls (UDOT): ' num2str(kkk)]);
 
 toc
-
+% convert obsolete file format into new mat-file
+matUtt = convert_matSim_to_matUtterance(matUtt_obsolete);
 
 end
