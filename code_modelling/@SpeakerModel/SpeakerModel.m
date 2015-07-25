@@ -44,11 +44,9 @@ classdef SpeakerModel
     
     properties (Constant)
         
-        nu = 0.49;  % Poisson's ratio
-        E = 0.35;   % Young's modulus: stiffness (E = 0.7 in Yohan's theses)
-        masse_totale = 0.15 / 35;       % <=> 150 grammes sur 40 mm de large
-                                        % <=> 150 grams per 40 mm width
-                                        % possibly 35 mm??
+        nu = 0.49;                  % Poisson's ratio
+        E = 0.35;                   % Young's modulus: stiffness (E = 0.7 in Yohan's theses)
+        masse_totale = 0.15 / 35;   % 150 grams per 35 mm width
         
         % Gaussian variables used for squaring A0
         % In this way, calculating the integral is replaced by a sum: SUM(Hi*f(Gi))
@@ -88,10 +86,6 @@ classdef SpeakerModel
             
         end
         
-        obj = setCondylePoint(obj, xPos, yPos)
-        
-        muscle = getSingleMuscle(obj, muscleName);
-        
         [] = exportToXML(mySpeakerModel, fileName);
         h = initPlotFigure(obj, imageFlag);
         h = plot_tongueSurface(obj, col, h_axes);
@@ -100,7 +94,9 @@ classdef SpeakerModel
         [] = plot_landmarks(obj,landmarks, col, h_axes);
         [] = plot_contours(obj, names, col, h_axes);
         [] = plot_fixed_contours(obj, col, h_axes);
-        
+
+        obj = setCondylePoint(obj, xPos, yPos)
+
     end
     
     
