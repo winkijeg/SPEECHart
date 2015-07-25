@@ -20,9 +20,9 @@ classdef ModelProducer
     
     properties (Constant)
         
-        nFibers = 17; % number of ROWS in the tongue mesh
-        nSamplePointsPerFiber = 13; % numbner of COLUMNS in the tongue mesh
-    
+        nMeshFibers = 17;               % number of ROWS in the tongue mesh / MM
+        nSamplePointsPerMeshFiber = 13; % numbner of COLUMNS in the tongue mesh / NN
+        
     end
     
     properties (SetAccess = private)
@@ -79,7 +79,7 @@ classdef ModelProducer
             
         end
 
-        model = matchModel( obj );
+        matModel = matchModel( obj );
 
     end
     

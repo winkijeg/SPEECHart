@@ -2,23 +2,23 @@ function matModel = matchModel( obj )
 % fits the generic model to the speaker-specific anatomy
 
 % variables necessary for generic and mri model
-nMuscleFibers = obj.nFibers;
-nSamplePointsPerFiber = obj.nSamplePointsPerFiber;
-nMeshPoints = nMuscleFibers * nSamplePointsPerFiber;
+nMeshFibers = obj.nMeshFibers;
+nSamplePointsPerMeshFiber = obj.nSamplePointsPerMeshFiber;
+nNodes = nMeshFibers * nSamplePointsPerMeshFiber;
 
 % read the generic tongue mesh and restruct data for model matching
-tongueMesh_generic = obj.modelGeneric.tongGrid;
-vals_tmp = getPositionOfNodeNumbers(tongueMesh_generic, 1:nMeshPoints);
+tongueMesh_generic = obj.modelGeneric.tongue;
+vals_tmp = getPositionOfNodeNumbers(tongueMesh_generic, 1:nNodes);
 
-X_repos_generic = reshape(vals_tmp(1, :), nSamplePointsPerFiber, nMuscleFibers)';
-Y_repos_generic = reshape(vals_tmp(2, :), nSamplePointsPerFiber, nMuscleFibers)';
+X_repos_generic = reshape(vals_tmp(1, :), nSamplePointsPerMeshFiber, nMeshFibers)';
+Y_repos_generic = reshape(vals_tmp(2, :), nSamplePointsPerMeshFiber, nMeshFibers)';
 tongSurface_generic = getPositionOfTongSurface(tongueMesh_generic);
 
 clear tongueMesh_generic valTmp;
 
 % derive tongue insertion points in the generic model
 tongInsL_generic = [X_repos_generic(1, 1); Y_repos_generic(1, 1)];
-tongInsH_generic = [X_repos_generic(nMuscleFibers, 1); Y_repos_generic(nMuscleFibers, 1)];
+tongInsH_generic = [X_repos_generic(nMeshFibers, 1); Y_repos_generic(nMeshFibers, 1)];
 
 tongInsL_mri = obj.landmarksTransformed.tongInsL;
 tongInsH_mri = obj.landmarksTransformed.tongInsH;
@@ -40,8 +40,8 @@ clear tongSurface_mri;
 teethLowerNew = matchLowerIncisor(tongInsL_mri, tongInsH_mri, scaleFactor);
 
 
-X_repos_matched(1:nMuscleFibers, nSamplePointsPerFiber) = tongSurface_matched(1, :);
-Y_repos_matched(1:nMuscleFibers, nSamplePointsPerFiber) = tongSurface_matched(2, :);
+X_repos_matched(1:nMeshFibers, nSamplePointsPerMeshFiber) = tongSurface_matched(1, :);
+Y_repos_matched(1:nMeshFibers, nSamplePointsPerMeshFiber) = tongSurface_matched(2, :);
 
 X_repos_matched(1, 1) = tongInsL_mri(1);
 Y_repos_matched(1, 1) = tongInsL_mri(2);
@@ -65,10 +65,10 @@ upperLip = matchUpperLip(obj, ptAttachLip, scaleFactor);
 
 % calculate the 3 hyoglossus insertion points on the hyoid bone -----------
 ptOriginFirstFiberGEN = [X_repos_generic(1, 1); Y_repos_generic(1, 1)];
-ptEndFirstFiberGEN = [X_repos_generic(1, nSamplePointsPerFiber); Y_repos_generic(1, nSamplePointsPerFiber)];
+ptEndFirstFiberGEN = [X_repos_generic(1, nSamplePointsPerMeshFiber); Y_repos_generic(1, nSamplePointsPerMeshFiber)];
 
 ptOriginFirstFiberMRI = [X_repos_matched(1, 1); Y_repos_matched(1, 1)];
-ptEndFirstFiberMRI = [X_repos_matched(1, nSamplePointsPerFiber); Y_repos_matched(1, nSamplePointsPerFiber)];
+ptEndFirstFiberMRI = [X_repos_matched(1, nSamplePointsPerMeshFiber); Y_repos_matched(1, nSamplePointsPerMeshFiber)];
 
 firstFiberMRI = [ptOriginFirstFiberMRI ptEndFirstFiberMRI];
 firstFiberGEN = [ptOriginFirstFiberGEN ptEndFirstFiberGEN];
@@ -88,6 +88,10 @@ hyo3_new = strucHyoTrans.hyoC;
 % assign values -----------------------------------------------------
 lowerLipGen = obj.modelGeneric.structures.lowerLip;
 lowerIncisor = obj.modelGeneric.structures.lowerIncisor;
+
+% pass by the mesh configuration
+matModel.nMeshFibers = obj.nMeshFibers;
+matModel.nSamplePointsPerMeshFiber = obj.nSamplePointsPerMeshFiber;
 
 % store data in a structure
 matModel.modelName = obj.modelName;
@@ -117,8 +121,8 @@ matModel.structures.lowerIncisor = teethLowerNew;
 matModel.structures.lowerLip = lowerLip;
 
 % Save the adopted tongue rest position
-matModel.tongGrid.xVal = reshape(X_repos_matched', 1, nMeshPoints);
-matModel.tongGrid.yVal = reshape(Y_repos_matched', 1, nMeshPoints);
+matModel.tongue.xVal = reshape(X_repos_matched', 1, nNodes);
+matModel.tongue.yVal = reshape(Y_repos_matched', 1, nNodes);
 
 end
 
