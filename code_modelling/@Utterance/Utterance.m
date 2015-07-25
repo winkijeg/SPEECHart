@@ -4,18 +4,36 @@ classdef Utterance
     
     properties (SetAccess = private)
         
-        modelUUID@char              % chars identifying the corresponding VT model 
-        nFrames@uint8               % number of time frames
-        uttDuration@double          % total duration of the utterance [s]
+        targetLabels@char           % labels of speech-like target
         
-        isEquidistant@logical       % indicating if frames are equidistant
+        uttPlan@UtterancePlan       % speech sequence specification
 
+        nTargets@uint8              % number of single targets (excluding initial rest position)
+        durationTotal@double        % total duration of the utterance [s]
+
+        
+        modelName@char              % remember model name
+        modelUUID@char              % chars identifying the corresponding VT model 
+
+        structures = struct(...     % non-rigid anatomical structures
+            'upperLip', [], ...
+            'larynxArytenoid', [], ...
+            'tongueLarynx', [], ...
+            'lowerIncisor', [], ...
+            'lowerLip', [], ...
+            'condyle', []);
+
+        tongue@PositionFrame    % tongue position over time
+        
+        
+        controlParams = struct(...  % control parameters
+            'lambda', [], ...
+            'activation', []);
+        
+        nFrames@uint8               % number of time frames
         timeOfFrames@double         % line vector of frame timepoints
         
-        %forceFrames@ForceFrame
-        positionFrames@PositionFrame    % tongue position over time
        
-        
     end
 
     properties (Constant)
@@ -24,180 +42,95 @@ classdef Utterance
         
     end
     
-    properties (GetAccess = private)
+    properties (GetAccess = public)
 
-        lowLipPosX
-        lowLipPosY
-        
-        upperLipPosX
-        upperLipPosY
-
-        lowIncisorPosX
-        lowIncisorPosY
-       
-        larynxArytenoidPosX
-        larynxArytenoidPosY
-        
-        tongueLarynxPosX
-        tongueLarynxPosY
-        
-        condylePosX
-        condylePosY
+        % kinetics and dynamics
+        velocity@double
+        acceleration@double
+        forceNewton@double
+                
     end
     
     methods
         
         
-        function obj = Utterance(matFile)
+        function obj = Utterance(matUtt)
         % construct object from simulation mat-file
-        
-        obj.modelUUID = matFile.modelUUID;
-        obj.isEquidistant = false;
-        
-        % determine number of valid frames / invalid first frames are 
-        % the consequence of the way synthesis has been programmed ...
-        nFramesInvalid = sum(matFile.t == 0)-1;
-        nFramesOriginal = length(matFile.t);
-        
-        obj.nFrames = uint8(nFramesOriginal - nFramesInvalid);
-        obj.timeOfFrames = matFile.t(nFramesInvalid+1:nFramesOriginal);
-        
-        obj.uttDuration = matFile.t(1, obj.nFrames);
-        
-        
-        
-        
-            % up from now neutral position and deviations have the same format
-            % extract relevant neutral positions 
-            x0 = reshape(matFile.X0', 1, obj.nNodes);
-            y0 = reshape(matFile.Y0', 1, obj.nNodes);
-            
-            
-            % extract first half of points/ second half contains ...
-            % velocity of nodes
-            positionsTongueTmp = matFile.U(nFramesInvalid+1:nFramesOriginal, ...
-                1:2*obj.nNodes);
-            
-            posTongDevX = positionsTongueTmp(:, 1:2:2*obj.nNodes);
-            posTongDevY = positionsTongueTmp(:, 2:2:2*obj.nNodes);
-                
-            % add neutral and deviation ?????? RW
-            posTongX = repmat(x0, nFramesOriginal, 1) + posTongDevX;
-            posTongY = repmat(y0, nFramesOriginal, 1) + posTongDevY;
 
-%             posTongX = matFile.X0_seq(nFramesInvalid+1:nFramesOriginal,1:221);
-%             posTongY = matFile.Y0_seq(nFramesInvalid+1:nFramesOriginal,1:221);
-%             
-%             % read data related to force .............................
-%             forceValsXDirOrig = ...
-%                 matFile.FXY_TRAJ(nFramesInvalid+1:nFramesOriginal, ...
-%                 1:2:2*obj.nNodes);
-%             forceValsYDirOrig = ...
-%                 matFile.FXY_TRAJ(nFramesInvalid+1:nFramesOriginal, ...
-%                 2:2:2*obj.nNodes);
-% 
-%             % convert from original scale to Newton
-%             forceValsXDirNewton = forceValsXDirOrig * 0.001 * 35;
-%             forceValsYDirNewton = forceValsYDirOrig * 0.001 * 35;
-%            
-            % read data related to jaw movement
-            positionsLowLipTmp = matFile.U_lowlip(nFramesInvalid+1:nFramesOriginal, 1:30);
-            obj.lowLipPosX = positionsLowLipTmp(:, 1:15);
-            obj.lowLipPosY = positionsLowLipTmp(:, 16:30);
-            
-            positionsupperLipTmp = matFile.U_upperlip(nFramesInvalid+1:nFramesOriginal, 1:46);
-            obj.upperLipPosX = positionsupperLipTmp(:, 1:23);
-            obj.upperLipPosY = positionsupperLipTmp(:, 24:46);
-            
-            positionsLowIncisorTmp = matFile.U_dents_inf(nFramesInvalid+1:nFramesOriginal, 1:34);
-            obj.lowIncisorPosX = positionsLowIncisorTmp(:, 1:17);
-            obj.lowIncisorPosY = positionsLowIncisorTmp(:, 18:34);
+            % extract general information regarding the utterance
+            obj.targetLabels = matUtt.targetString;
+            obj.nTargets = uint8(length(matUtt.targetString)-1);
+            obj.durationTotal = matUtt.timeOfFrames(1, end);
 
-            nPointslarynxArytenoid = size(matFile.U_lar_ar_mri, 2)/2;
-            positionslarynxArytenoidTmp = matFile.U_lar_ar_mri(nFramesInvalid+1:nFramesOriginal, 1:2*nPointslarynxArytenoid);
-            obj.larynxArytenoidPosX = positionslarynxArytenoidTmp(:, 1:nPointslarynxArytenoid);
-            obj.larynxArytenoidPosY = positionslarynxArytenoidTmp(:, nPointslarynxArytenoid+1:2*nPointslarynxArytenoid);
-            
-            nPointsTongueLarynx = size(matFile.U_tongue_lar_mri, 2)/2;
-            positionstongueLarynxTmp = matFile.U_tongue_lar_mri(nFramesInvalid+1:nFramesOriginal, 1:2*nPointsTongueLarynx);
-            obj.tongueLarynxPosX = positionstongueLarynxTmp(:, 1:nPointsTongueLarynx);
-            obj.tongueLarynxPosY = positionstongueLarynxTmp(:, nPointsTongueLarynx+1:2*nPointsTongueLarynx);
-            
-            obj.condylePosX = matFile.U_X_origin(1, nFramesInvalid+1:nFramesOriginal)';
-            obj.condylePosY = matFile.U_Y_origin(1, nFramesInvalid+1:nFramesOriginal)';
-            
-            
-%             
-%             % resample trajectories .................................
-%             frameDuration = 1/fs;
-%             endTimeOfLastFrame = max(matFile.t);
-% 
-%             % Sample time points for the new frames
-%             timeOfFramesResampled = 0:frameDuration:endTimeOfLastFrame;
-%                   
-%             % resample position data
-%             positionTongXResampled = ...
-%                 interp1(timeOfFramesOrigValid, posTongX, ...
-%                 timeOfFramesResampled);
-%             positionTongYResampled = ...
-%                 interp1(timeOfFramesOrigValid, posTongY, ...
-%                 timeOfFramesResampled);
-%             
-%             % resample force data
-%             forceXDirResampled = ...
-%                 interp1(timeOfFramesOrigValid, forceValsXDirNewton, ...
-%                 timeOfFramesResampled);
-%             forceYDirResampled = ...
-%                 interp1(timeOfFramesOrigValid, forceValsYDirNewton, ...
-%                 timeOfFramesResampled);
-%       
-%             % resample lower lip and lower teeth data
-%             posLowLipXResampled = interp1(timeOfFramesOrigValid, posLowLipX, ...
-%                 timeOfFramesResampled);
-%             posLowLipYResampled = interp1(timeOfFramesOrigValid, posLowLipY, ...
-%                 timeOfFramesResampled);
-% 
-%             
-%             posLowIncisorXResampled = interp1(timeOfFramesOrigValid, posLowIncisorX, ...
-%                 timeOfFramesResampled);
-%             posLowIncisorYResampled = interp1(timeOfFramesOrigValid, posLowIncisorY, ...
-%                 timeOfFramesResampled);
-%             
-%             posCondyleXResampled = interp1(timeOfFramesOrigValid, posCondyleX, ...
-%                 timeOfFramesResampled);
-%             posCondyleYResampled = interp1(timeOfFramesOrigValid, posCondyleY, ...
-%                 timeOfFramesResampled);
-%              
-%             
-%             nFramesResampled = length(timeOfFramesResampled);
+            % pass by the original utterance plan ------------------------
+            obj.uttPlan = UtterancePlan(matUtt.targetString(2:end));
+            obj.uttPlan.durTransition = matUtt.durTransition;
+            obj.uttPlan.durHold = matUtt.durHold;
 
-%             % memory allocation for creating objects
-            obj.positionFrames(obj.nFrames) = PositionFrame();
-            %obj.forceFrames(nFramesResampled) = ForceFrame();
+            obj.uttPlan.deltaLambdaGGP = matUtt.deltaLambdaGGP;
+            obj.uttPlan.deltaLambdaGGA = matUtt.deltaLambdaGGA;
+            obj.uttPlan.deltaLambdaHYO = matUtt.deltaLambdaHYO;
+            obj.uttPlan.deltaLambdaSTY = matUtt.deltaLambdaSTY;
+            obj.uttPlan.deltaLambdaVER = matUtt.deltaLambdaVER;
+            obj.uttPlan.deltaLambdaSL = matUtt.deltaLambdaSL;
+            obj.uttPlan.deltaLambdaIL = matUtt.deltaLambdaIL;
+
+            obj.uttPlan.jawRotation = matUtt.jawRotation;
+            obj.uttPlan.lipProtrusion = matUtt.lipProtrusion;
+            obj.uttPlan.lipRotation = matUtt.lipRotation;
+            obj.uttPlan.hyoid_mov = matUtt.hyoid_mov;
+
+            % determine information regarding the model ------------------
+            obj.modelName = matUtt.modelName;
+            obj.modelUUID = matUtt.modelUUID;
+
+            % organize data with respect to frames
+            obj.nFrames = uint8(size(matUtt.timeOfFrames, 2));
+            obj.timeOfFrames = matUtt.timeOfFrames;
+
+            % memory allocation for creating objects
+            obj.tongue(obj.nFrames) = PositionFrame();
             for k = 1:obj.nFrames
-                
-                obj.positionFrames(k) = ...
-                    PositionFrame(obj.timeOfFrames(k), ...
-                    posTongX(k, :), posTongY(k, :));
-                
-%                 obj.forceFrames(k) = ...
-%                     ForceFrame(timeOfFramesResampled(k), ...
-%                     forceXDirResampled(k, :), forceYDirResampled(k, :));
+
+                posTongX = matUtt.tongue(k, 1:2:2*221);
+                posTongY = matUtt.tongue(k, 2:2:2*221);
+
+                obj.tongue(k) = ...
+                    PositionFrame(obj.timeOfFrames(k), posTongX , posTongY);
+
             end
             
+            % assign anatomical structures ---------
+            obj.structures.upperLip = matUtt.upperLip;
+            obj.structures.lowerLip = matUtt.lowerLip;
+            obj.structures.lowerIncisor = matUtt.lowerIncisor;
+            obj.structures.larynxArytenoid = matUtt.larynxArytenoid;
+            obj.structures.tongueLarynx = matUtt.tongueLarynx;
+            obj.structures.condyle = matUtt.condyle;
             
-%             
-%             obj.xyLowLipOverTime = [posLowLipXResampled(:, 12)'; posLowLipYResampled(:, 12)'];
-%             
-%             obj.xLowLip = posLowLipXResampled;
-%             obj.yLowLip = posLowLipYResampled;
-%             
-%             obj.lowIncisorPosX = posLowIncisorXResampled;
-%             obj.lowIncisorPosY = posLowIncisorYResampled;
-%             
-%             obj.condylePosX(:, 1) = posCondyleXResampled;
-%             obj.condylePosY(:, 1) = posCondyleYResampled;
-%             
+            % assign control parameters ------------
+            obj.controlParams.lambda.GGP = matUtt.lambdaGGP;
+            obj.controlParams.lambda.GGA = matUtt.lambdaGGA;
+            obj.controlParams.lambda.HYO = matUtt.lambdaHYO;
+            obj.controlParams.lambda.STY = matUtt.lambdaSTY;
+            obj.controlParams.lambda.VER = matUtt.lambdaVER;
+            obj.controlParams.lambda.SL = matUtt.lambdaSL;
+            obj.controlParams.lambda.IL = matUtt.lambdaIL;
+            
+            obj.controlParams.activation.GGP = matUtt.activationGGP;
+            obj.controlParams.activation.GGA = matUtt.activationGGA;
+            obj.controlParams.activation.HYO = matUtt.activationHYO;
+            obj.controlParams.activation.STY = matUtt.activationSTY;
+            obj.controlParams.activation.VER = matUtt.activationVER;
+            obj.controlParams.activation.SL = matUtt.activationSL;
+            obj.controlParams.activation.IL = matUtt.activationIL;
+
+            % assign kinetics / dynamics
+            obj.velocity = matUtt.velocity;
+            obj.acceleration = matUtt.acceleration;
+            obj.forceNewton = matUtt.forceNewton;
+            
+            
         end
         
         function nbFrame = getFrameNumberFromTime(obj, timePoint)
@@ -211,14 +144,13 @@ classdef Utterance
             end
             
         end
-    
-        h = plotSingleStructure(obj, structName, targetFrame, colorStr)
-        [] = simulateTongueMovement(obj, pauseSeconds, colStr, model)
+
+        h = plotSingleStructure(obj, structName, targetFrame, colorStr, h_axes)
+        [] = simulateTongueMovement( obj, pauseSeconds, colStr, model, h_axes )
+        [] = writeUttToMPEG4(obj, model, fname, h_axes)
+        [] = exportToMAT( obj, fileName )
         
     end
-    
-        
-            
     
 end
 

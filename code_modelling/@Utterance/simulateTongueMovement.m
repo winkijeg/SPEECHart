@@ -1,12 +1,12 @@
-function simulateTongueMovement(obj, pauseSeconds, colStr, model)
+function simulateTongueMovement(obj, pauseSeconds, colStr, model, h_axes)
 %plot tongue over time - simulates movement
 
 colorPastFrames = 0.75;
 
 % extract one muscle - GGP
-myMuscle = model.muscleCollection.muscles(4);
+myMuscle = model.muscles.muscleArray(6);
 
-model.plotRigidStructures('k');
+model.plot_fixed_contours('k', h_axes);
 
 h_nonrigid = [];
 for nbFrame = 1:obj.nFrames
@@ -29,24 +29,23 @@ for nbFrame = 1:obj.nFrames
     end
     
     % draw rigid parts
-    h_nonrigid = drawTongSurface(obj.positionFrames(nbFrame), colStr);
+    h_nonrigid = drawTongSurface(obj.tongue(nbFrame), colStr);
     
     
     % draw nonrigid parts
-    h_rigid1 = plotSingleStructure(obj, 'lowLip', nbFrame, colStr);
-    h_rigid2 = plotSingleStructure(obj, 'upperLip', nbFrame, colStr);
+    h_rigid1 = plotSingleStructure(obj, 'lowerLip', nbFrame, colStr, h_axes);
+    h_rigid2 = plotSingleStructure(obj, 'upperLip', nbFrame, colStr, h_axes);
     
-    h_rigid3 = plotSingleStructure(obj, 'lowIncisor', nbFrame, colStr);
-    h_rigid4 = plotSingleStructure(obj, 'larynxArytenoid', nbFrame, colStr);
-    h_rigid5 = plotSingleStructure(obj, 'tongueLarynx', nbFrame, colStr);
+    h_rigid3 = plotSingleStructure(obj, 'lowerIncisor', nbFrame, colStr, h_axes);
+    h_rigid4 = plotSingleStructure(obj, 'larynxArytenoid', nbFrame, colStr, h_axes);
+    h_rigid5 = plotSingleStructure(obj, 'tongueLarynx', nbFrame, colStr, h_axes);
 
     % draw time course of a single point (condyle)
-    h_rigid6 = plotSingleStructure(obj, 'condyle', nbFrame, ...
-        [colStr '.']);
+    h_rigid6 = plotSingleStructure(obj, 'condyle', nbFrame, [colStr '.'], h_axes);
     
-    h_mesh = obj.positionFrames(nbFrame).drawMesh('r');
+    h_mesh = obj.tongue(nbFrame).drawMesh('r', h_axes);
     
-    h_muscle = obj.positionFrames(nbFrame).drawMuscleNodes(myMuscle, 'g');
+    h_muscle = obj.tongue(nbFrame).drawMuscleNodes(myMuscle, 'g', h_axes);
     
     
     %h_nodeNumbers = obj.positionFrames(nbFrame).drawNodeNumbers('k');

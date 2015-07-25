@@ -1,4 +1,4 @@
-function h = plotSingleStructure(obj, structName, targetFrame, colorStr)
+function h = plotSingleStructure(obj, structName, nbFrame, colorStr, h_axes)
     %plot single nonrigid structure for a given frame
     %   nonrigid structures are
     %   - larynxArytenoid
@@ -6,13 +6,10 @@ function h = plotSingleStructure(obj, structName, targetFrame, colorStr)
     %   - lowerIncisor
     %   - lowerLip
 
-    targetStrX = [structName 'PosX'];
-    targetStrY = [structName 'PosY'];
-
-    posX = obj.(targetStrX)(targetFrame, :);
-    posY = obj.(targetStrY)(targetFrame, :);
+    posX = obj.structures.(structName)(nbFrame, 1:2:end);
+    posY = obj.structures.(structName)(nbFrame, 2:2:end);
     
-    h = plot(posX, posY, colorStr);
+    h = plot(h_axes, posX, posY, colorStr);
     
 end
 
