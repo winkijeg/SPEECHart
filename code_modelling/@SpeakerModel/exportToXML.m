@@ -4,12 +4,15 @@ function [] = exportToXML( obj, fileName )
     modelData.modelName = obj.modelName;
     modelData.modelUUID = obj.modelUUID;
     
+    modelData.nMeshFibers = obj.nMeshFibers;
+    modelData.nSamplePointsPerMeshFiber = obj.nSamplePointsPerMeshFiber;
+    
     modelData.landmarks = obj.landmarks;
     modelData.structures = obj.structures;
     
     % convert PositionFrame into struct
-    modelData.tongGrid.xVal = obj.tongGrid.xValNodes;
-    modelData.tongGrid.yVal = obj.tongGrid.yValNodes;
+    modelData.tongue.xVal = obj.tongue.xValNodes;
+    modelData.tongue.yVal = obj.tongue.yValNodes;
 
     xml_write(fileName, modelData);
 

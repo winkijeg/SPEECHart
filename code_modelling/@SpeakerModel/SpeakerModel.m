@@ -3,8 +3,8 @@ classdef SpeakerModel
     
     properties
         
-        modelName
-        modelUUID
+        modelName@char
+        modelUUID@char
         
         landmarks = struct(...
             'xyStyloidProcess', [], ...
@@ -19,20 +19,28 @@ classdef SpeakerModel
             'xyTongInsH', [])
         
         structures = struct(...
-            'upperLip', [], ...
-            'upperIncisorPalate', [], ...
-            'velum', [], ...
-            'backPharyngealWall', [], ...
-            'larynxArytenoid', [], ...
-            'tongueLarynx', [], ...
-            'lowerIncisor', [], ...
-            'lowerLip', [])
+            'upperLip', [], ...             % non-rigid
+            'upperIncisorPalate', [], ...   % rigid
+            'velum', [], ...                % rigid
+            'backPharyngealWall', [], ...   % rigid
+            'larynxArytenoid', [], ...      % non-rigid
+            'tongueLarynx', [], ...         % non-rigid
+            'lowerIncisor', [], ...         % non-rigid
+            'lowerLip', [])                 % non-rigid
         
-        tongGrid@PositionFrame
+        tongue@PositionFrame
         
-        muscleCollection@MuscleCollection
+        muscles@MuscleCollection
         
     end
+    
+    properties (Access = private)
+        
+        nMeshFibers                 % number of ROWS in the tongue mesh / MM=17
+        nSamplePointsPerMeshFiber   % numbner of COLUMNS in the tongue mesh / NN=13
+        
+    end
+    
     
     properties (Constant)
         
@@ -68,29 +76,30 @@ classdef SpeakerModel
             
             obj.structures = struc.structures;
             
-            obj.tongGrid = PositionFrame(nan, ...
-                struc.tongGrid.xVal, struc.tongGrid.yVal);
+            obj.nMeshFibers = struc.nMeshFibers;
+            obj.nSamplePointsPerMeshFiber = struc.nSamplePointsPerMeshFiber;
+
             
-            obj.muscleCollection = MuscleCollection({'GGP', 'GGA', 'HYO', ...
-                'STY', 'VER', 'IL', 'SL'}, obj.tongGrid, obj.landmarks);
+            obj.tongue = PositionFrame(nan, ...
+                struc.tongue.xVal, struc.tongue.yVal);
+            
+            obj.muscles = MuscleCollection({'GGP', 'GGA', 'HYO', ...
+                'STY', 'VER', 'SL', 'IL'}, obj.tongue, obj.landmarks);
             
         end
-        
-        h = initPlotFigure(obj, image_flag);
-
-        [] = plotRigidStructures(obj, col);
-        [] = plotLandmarks(obj, col);
-        [] = plotSingleLandmark(obj, nameOfLandmark, col, repString);
-        [] = plotTongueMesh(obj, col);
         
         obj = setCondylePoint(obj, xPos, yPos)
         
         muscle = getSingleMuscle(obj, muscleName);
         
-        [] = writeUttToMPEG4(obj, utterance, fname)
-        
         [] = exportToXML(mySpeakerModel, fileName);
-
+        h = initPlotFigure(obj, imageFlag);
+        h = plot_tongueSurface(obj, col, h_axes);
+        h = plot_tongueMesh(obj, col, h_axes);
+        h = plot_muscles( obj, names, col, h_axes);
+        [] = plot_landmarks(obj,landmarks, col, h_axes);
+        [] = plot_contours(obj, names, col, h_axes);
+        [] = plot_fixed_contours(obj, col, h_axes);
         
     end
     
