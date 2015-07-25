@@ -1,12 +1,11 @@
 function muscle = getMuscleFromCollection(obj, muscleName)
-%UNTITLED6 Summary of this function goes here
-%   Detailed explanation goes here
+%extract a single muscle from the full set of muscles
 
-    namesFull = {obj.muscles(:).nameShort};
+    namesFull = obj.names;
     
-    indexMuscleName = strcmp(namesFull, muscleName);
+    idxMuscleName = strcmp(namesFull, muscleName);
     
-    muscle = obj.muscles(indexMuscleName);
+    muscle = obj.muscleArray(idxMuscleName);
     
 end
 
