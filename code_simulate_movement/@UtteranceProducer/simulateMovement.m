@@ -1,4 +1,4 @@
-function strucUtterance = simulateMovement(obj, uttPlan)
+function matUtterance = simulateMovement(obj, uttPlan)
 %simulates tongue movement with control parameters (muscles/time)
 
     modelName = obj.model.modelName;
@@ -26,7 +26,7 @@ function strucUtterance = simulateMovement(obj, uttPlan)
     structures.lowerIncisor = obj.model.structures.lowerIncisor;
     structures.lowerLip = obj.model.structures.lowerLip;
     
-    tongMesh = obj.model.tongGrid; % Class PositionFrame
+    tongMesh = obj.model.tongue; % Class PositionFrame
     positionValuesTmp = getPositionOfNodeNumbers(tongMesh, 1:221);
     tongueRest.X0 = reshape(positionValuesTmp(1, :), 13, 17)';
     tongueRest.Y0 = reshape(positionValuesTmp(2, :), 13, 17)';
@@ -39,11 +39,11 @@ function strucUtterance = simulateMovement(obj, uttPlan)
     tongConstVals.G = obj.model.G;
     
     
-    myMuscleCol = obj.model.muscleCollection;
+    myMuscleCol = obj.model.muscles;
     
     % delta lambda values; order is GGP GGA HYO STY VER SL IL
-    strucUtterance = simul_tongue_adapt_jaw(landmarks, structures, ...
-        tongueRest, tongConstVals, myMuscleCol, modelName, seq, ...
+    matUtterance = simul_tongue_adapt_jaw(landmarks, structures, ...
+        tongueRest, tongConstVals, myMuscleCol, modelUUID, modelName, seq, ...
         uttPlan.deltaLambdaGGP, ...
         uttPlan.deltaLambdaGGA, ...
         uttPlan.deltaLambdaHYO, ...
@@ -57,7 +57,5 @@ function strucUtterance = simulateMovement(obj, uttPlan)
         uttPlan.lipProtrusion, ...
         uttPlan.lipRotation, ...
         uttPlan.hyoid_mov);
-    
-    strucUtterance.modelUUID = modelUUID;
     
 end
