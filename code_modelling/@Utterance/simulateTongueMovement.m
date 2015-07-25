@@ -21,7 +21,8 @@ for nbFrame = 1:obj.nFrames
         set(h_rigid5, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
         set(h_rigid6, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
   
-        set(h_mesh, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
+        set(h_mesh, 'EdgeColor', [colorPastFrames colorPastFrames colorPastFrames])
+        
         set(h_muscle, 'Color', [colorPastFrames colorPastFrames colorPastFrames])
         
         %delete (h_nodeNumbers);
