@@ -14,6 +14,7 @@ function h_muscles = plot_muscles( obj, names, col, h_axes )
     end
 
     nMuscles = size(names, 2);
+    h_muscles = zeros(1, nMuscles);
     for nbMuscle = 1:nMuscles
         
         nameTmp = names{nbMuscle};
@@ -21,9 +22,10 @@ function h_muscles = plot_muscles( obj, names, col, h_axes )
         % get the muscle
         muscleTmp = obj.muscles.getMuscleFromCollection(nameTmp);
         
-        % plot the muscle
-        h_muscles(nbMuscle) = obj.tongue.drawMuscleNodes(muscleTmp, col, h_axes);
+        % plot the muscle nodes
+        h_muscles(nbMuscle) = obj.tongue.drawMuscleFibers(muscleTmp, col, h_axes);
                 
+             
     end
     
 end

@@ -1,10 +1,10 @@
 function simulateTongueMovement(obj, pauseSeconds, colStr, model, h_axes)
 %plot tongue over time - simulates movement
 
-colorPastFrames = 0.75;
+colorPastFrames = 0.85;
 
-% extract one muscle - GGP
-myMuscle = model.muscles.muscleArray(6);
+% extract one muscle - VER
+myMuscle = model.muscles.muscleArray(5);
 
 model.plot_fixed_contours('k', h_axes);
 
@@ -44,9 +44,9 @@ for nbFrame = 1:obj.nFrames
     % draw time course of a single point (condyle)
     h_rigid6 = plotSingleStructure(obj, 'condyle', nbFrame, [colStr '.'], h_axes);
     
-    h_mesh = obj.tongue(nbFrame).drawMesh('r', h_axes);
+    h_mesh = obj.tongue(nbFrame).drawMesh('k', h_axes);
     
-    h_muscle = obj.tongue(nbFrame).drawMuscleNodes(myMuscle, 'g', h_axes);
+    h_muscle = obj.tongue(nbFrame).drawMuscleFibers(myMuscle, 'r', h_axes);
     
     
     %h_nodeNumbers = obj.positionFrames(nbFrame).drawNodeNumbers('k');
