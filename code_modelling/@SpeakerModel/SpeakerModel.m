@@ -95,7 +95,9 @@ classdef SpeakerModel
         [] = plot_contours(obj, names, col, h_axes);
         [] = plot_fixed_contours(obj, col, h_axes);
 
-        obj = setCondylePoint(obj, xPos, yPos)
+        obj = setCondylePoint(obj, xPos, yPos);
+        
+        [] = list_maxFiberLengthAtRest(obj);
 
     end
     
