@@ -52,7 +52,7 @@ classdef Muscle
 %                         obj.fiberNodeNumbers = [129 142 155 168 181 194 207];
 
                     case 'HYO'
-                        obj.nameLong = 'hyoglossus';
+                        obj.nameLong = 'Hyoglossus';
                         obj.nameShort = 'HYO';
                         obj.nFibers = 3; % redundant !
                         obj.expectedLambdaVariation = 2*20;
@@ -70,7 +70,7 @@ classdef Muscle
                             landmarks.xyHyoC;
 
                     case 'GGP'
-                        obj.nameLong = 'posterior genioglossus';
+                        obj.nameLong = 'Genioglossus posterior';
                         obj.nameShort = 'GGP';
                         obj.nFibers = 7;
                         obj.expectedLambdaVariation = 2*20;
@@ -87,7 +87,7 @@ classdef Muscle
                         obj.externalInsertionPointPosition = [];
 
                     case 'GGA'
-                        obj.nameLong = 'Anterior genioglossus';
+                        obj.nameLong = 'Genioglossus anterior';
                         obj.nameShort = 'GGA';
                         obj.nFibers = 6;
                         obj.expectedLambdaVariation = 2*20;
@@ -104,7 +104,7 @@ classdef Muscle
 
 
                     case 'STY'
-                        obj.nameLong = 'styloglossus';
+                        obj.nameLong = 'Styloglossus';
                         obj.nameShort = 'STY';
                         obj.nFibers = 2;
                         obj.expectedLambdaVariation = 2*20;
@@ -117,7 +117,7 @@ classdef Muscle
                             landmarks.xyStyloidProcess;
 
                    case 'VER'
-                        obj.nameLong = 'Verticales';
+                        obj.nameLong = 'Vertical';
                         obj.nameShort = 'VER';
                         obj.nFibers = 6;
                         obj.expectedLambdaVariation = 2*10;
@@ -133,7 +133,7 @@ classdef Muscle
                         obj.externalInsertionPointPosition = [];
 
                     case 'SL'
-                        obj.nameLong = 'Superior longitudinales';
+                        obj.nameLong = 'Superior longitudinal';
                         obj.nameShort = 'SL';
                         
                         obj.nFibers = 1;
@@ -146,7 +146,7 @@ classdef Muscle
                         obj.externalInsertionPointPosition = [];
 
                     case 'IL'
-                        obj.nameLong = 'Inferior longitudinales';
+                        obj.nameLong = 'Inferior longitudinal';
                         obj.nameShort = 'IL';
                         obj.nFibers = 1;
                         obj.expectedLambdaVariation = 2*20;
