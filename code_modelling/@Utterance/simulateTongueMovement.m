@@ -3,8 +3,8 @@ function simulateTongueMovement(obj, pauseSeconds, colStr, model, h_axes)
 
 colorPastFrames = 0.85;
 
-% extract one muscle - VER
-myMuscle = model.muscles.muscleArray(5);
+% extract one muscle - GGP
+myMuscle = model.muscles.muscleArray(1);
 
 model.plot_fixed_contours('k', h_axes);
 

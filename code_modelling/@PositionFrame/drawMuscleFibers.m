@@ -1,13 +1,47 @@
 function h = drawMuscleFibers(obj, muscle, colStr, h_axes)
     %draw muscle node within one frame
-
-    muscleName = muscle.nameShort;
     
-    switch muscleName
-        case 'VER'
-            
-            nFibers = muscle.nFibers;
+    isExternalMuscle = ~(isempty(muscle.externalInsertionPointPosition));
+    nFibers = muscle.nFibers;
+    
+    if(isExternalMuscle)
 
+        for nbFiber = 1:nFibers
+
+            nNodeNumberOfFiber = size(muscle.fiberFixpoints(nbFiber, :), 2);
+
+            pt = ones(2, nNodeNumberOfFiber);
+            for nbFiberPoint = 1:nNodeNumberOfFiber
+
+                typeStr = class(muscle.fiberFixpoints{nbFiber, nbFiberPoint});
+
+                switch typeStr
+
+                    case 'char'
+
+                        pt(1:2, nbFiberPoint) = ...
+                            muscle.externalInsertionPointPosition.(muscle.fiberFixpoints{nbFiber, nbFiberPoint});
+
+                    case 'double'
+
+                        nodeNumberTmp = muscle.fiberFixpoints{nbFiber, nbFiberPoint};
+                        if ~(isempty(nodeNumberTmp))
+                            pt(1:2, nbFiberPoint) = obj.getPositionOfNodeNumbers(nodeNumberTmp);
+                        else
+                            pt(1:2, nbFiberPoint) = [NaN; NaN];
+                        end
+
+                end
+            end
+
+            h = plot(h_axes, pt(1,:), pt(2,:), ['-' colStr '.']);
+            clear pt
+
+        end
+                
+    
+    else
+        
             for nbFiber = 1:nFibers
                 
                 nodeNumbersOfFiber = [muscle.fiberFixpoints{nbFiber, :}];
@@ -53,7 +87,8 @@ function h = drawMuscleFibers(obj, muscle, colStr, h_axes)
    
                 
             end
-            
+    
     end
     
 end
+
