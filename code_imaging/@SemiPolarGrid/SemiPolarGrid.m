@@ -1,31 +1,33 @@
 classdef SemiPolarGrid
-    % calulates speaker-specific grid based on segmented points (see below)
-    % this grid is fitted based on four landmarks manually labeled, 
-    % namely p_AlvRidge, p_Palate, p_PharH_d, and p_PharL_d
+% speaker-specific semi-polar grid based on segmented points (see below)
+    % this grid is fitted based on four manually labeled landmarks, 
     %
-    
+    %   - AlvRidge
+    %   - Palate
+    %   - PharH_d
+    %   - PharL_d
+        
     properties
         
-        distGridlines = 3; % in lower pharynx and anterior oral cavity
-        angleGridlines = 5; % in the upper phynx/ posterior oral cavity
-
-        % gridlines have overlength in order to intersect the contour
-        gridlineOverlength = 15;
-        
-        % the grid
-        innerPt = [];
-        outerPt = [];
-        nGridlines = [];
+        innerPt@double      % left / inferior point(s) of each gridline
+        outerPt@double      % right / superior point(s) of each gridline
+        nGridlines@double   % number of gridlines 
         
     end
     
+    properties (Constant)
+        
+        distGridlines = 3   % in lower pharynx and anterior oral cavity
+        angleGridlines = 5  % in the upper phynx / posterior oral cavity
+
+        % gridlines have overlength in order to always intersect the contour
+        gridlineOverlength = 15;
+
+    end
+    
+    
     methods
-        
-%         function obj = SemiPolarGrid()
-%             % constructor creates the semi-polar grid
-% 
-%         end
-        
+
         obj = calculateGrid( obj, struc )
         [] = plot(obj, col, grdLines, cAxes)
         

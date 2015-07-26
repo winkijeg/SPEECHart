@@ -1,6 +1,14 @@
 function [] = plot(obj, col, grdLines, h_axes)
-% plot partially semipolar grid specified by the third argument
-%   i.e. 3:7 or only one gridline (i.e. 10)
+%visualize semi-polar grid of a specific speaker
+    %    
+    %input arguments:
+    %
+    %   - col       : color
+    %   - grdLines  : integer, i.e. 2, 2:20, or [] 
+    %                 - use 2 for plotting the 12th gridline
+    %                 - use 2:20 for plotting each line from 2 to 20
+    %                 - leave empty ([]) in order to plot the full grid
+    %   - h_axes    : axes handle of the window to be plotted to 
 
     if ~exist('grdLines', 'var') || isempty(grdLines)
         grdLines = 1:obj.nGridlines;
