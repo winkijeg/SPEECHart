@@ -15,7 +15,7 @@ classdef UtteranceProducer
             
         end
         
-        strucUtterance = simulateMovement(obj, uttPlan)
+        strucUtterance = simulateMovement(obj, uttPlan, myPlotFlag)
         
     end
     
