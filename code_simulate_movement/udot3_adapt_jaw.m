@@ -314,26 +314,50 @@ end
 % display tongue contour every 0.02 s
 global TEMPS_FINAL_CUM
 
-if t >= t_affiche
+global plotFlag h_axes h_tongue h_stylo h_upperLip h_lowerLip h_lowerInc
+global h_lar_ar h_connect_phar_lar h_connect_tong_lar h_tong_lar
 
-    t_affiche = t_affiche + 0.002;
-
-    % the red line between tongue and larynx
-    plot([X(1,13) tongue_lar_mri(1,1)], [Y(1,13) tongue_lar_mri(2,1)],'r-')
-
-    % plot tongue surface
-    plot(X(1:MM,NN),Y(1:MM,NN), 'k-');
-    plot(X(MM,1:NN),Y(MM,1:NN), 'k-');
+if (plotFlag)
     
-    plot(lowlip(1,:),lowlip(2,:), 'ko-');
-    plot(upperlip(1,:),upperlip(2,:), 'k-');
-    
-    plot(dents_inf(1,:),dents_inf(2,:), 'k-');
-    plot(X_origin, Y_origin, 'ko');
+    if t >= t_affiche
+        
+        t_affiche = t_affiche + 0.002;
 
-    plot([pharynx_mri(1,end) lar_ar_mri(1,1)], [pharynx_mri(2,end) lar_ar_mri(2,1)], 'c-')
+        
+        % plot tongue surface
+        xVals = reshape(X', 1, 221);
+        yVals = reshape(Y', 1, 221);
+        
+        myPosFrameTmp = PositionFrame([], xVals, yVals);
+        
+        if (~isempty(h_tongue))
+            set(h_tongue, 'EdgeColor', [0.75 0.75 0.75]);
+            set(h_stylo, 'Color', [0.75 0.75 0.75]);
+            set(h_upperLip, 'Color', [0.75 0.75 0.75]);
+            set(h_lowerLip, 'Color', [0.75 0.75 0.75]);
+            set(h_lowerInc, 'Color', [0.75 0.75 0.75]);
+            set(h_lar_ar, 'Color', [0.75 0.75 0.75]);
+            set(h_tong_lar, 'Color', [0.75 0.75 0.75]);
+            
+            delete (h_connect_phar_lar)
+            delete (h_connect_tong_lar)
+        end
+        
+        h_tongue = myPosFrameTmp.drawMesh('k');
+        h_stylo = plot(h_axes, X_origin, Y_origin, 'k.');
+        h_upperLip = plot(h_axes, upperlip(1,:),upperlip(2,:), 'k-', 'Linewidth', 2);
+        h_lowerLip = plot(h_axes, lowlip(1,:),lowlip(2,:), 'k-', 'Linewidth', 2);
+        h_lowerInc = plot(h_axes, dents_inf(1,:),dents_inf(2,:), 'k-', 'Linewidth', 2);
+        h_lar_ar = plot(h_axes, lar_ar_mri(1,:), lar_ar_mri(2,:), 'k-', 'Linewidth', 2);
+        h_tong_lar = plot(h_axes, tongue_lar_mri(1,:), tongue_lar_mri(2,:), 'k-', 'Linewidth', 2);
 
-    drawnow
+        h_connect_phar_lar = plot(h_axes, [pharynx_mri(1,end) lar_ar_mri(1,1)], [pharynx_mri(2,end) lar_ar_mri(2,1)], 'm-', 'Linewidth', 2);
+        % the red line between tongue and larynx
+        h_connect_tong_lar = plot(h_axes, [X(1,13) tongue_lar_mri(1,1)], [Y(1,13) tongue_lar_mri(2,1)], 'm-', 'Linewidth', 2);
+
+        drawnow
+        
+    end
     
 end
 

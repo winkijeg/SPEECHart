@@ -1,55 +1,37 @@
-function matUtt = simul_tongue_adapt_jaw(landmarks, structures, tongueRest, ...
-    tongConstVals, myMuscleCol, modellUUID, ...
-    modelName, seq, deltaLamb_GGP, deltaLamb_GGA, deltaLamb_HYO, ...
+function matUtt = simul_tongue_adapt_jaw(speakerModel, ...
+    seq, deltaLamb_GGP, deltaLamb_GGA, deltaLamb_HYO, ...
     deltaLamb_STY, deltaLamb_VER, deltaLamb_SL, deltaLamb_IL, t_trans, ...
-    t_hold, jaw_rot, lip_prot, ll_rot, hyoid_mov)
+    t_hold, jaw_rot, lip_prot, ll_rot, hyoid_mov, myPlotFlag)
 % Payan & Perrier /Zandipour Tongue jaw model
-% For the jaw, the lips and the larynx the time variations are made
-% according to an undamped second order model (Bell-shaped velocity profile)
 
-% input parameters:
-%
-%   seq:            sequence of phonemes (always starting with 'r')
-%   out_file:       Name of the output file
-%   deltaLamb_GGP:  GGP commands in mm for all phonemes of the sequence 
-%                   except the initial rest position - These values are 
-%                   referenced to the value at rest (negatif = activation)
-%
-%   delta_lambda_gga:   GGA commands (see details for GGP)
-%   delta_lambda_hyo:   HYO commands (see details for GGP)
-%   delta_lambda_sty:   STY commands (see details for GGP)
-%   delta_lambda_ver:   VERT commands (see details for GGP)
-%   delta_lambda_sl:    SL commands (see details for GGP)
-%   delta_lambda_il:    IL commands (see details for GGP)
-%
-%   t_trans:    Transition duration in (s) between phonemes including the 
-%               initial rest position
-%   t_hold:     Hold duration (in s) for all phonemes except the initial 
-%               rest position
-%   jaw_rot:    Successive rotation angles of the jaw in degrees. Positiv
-%               = aperture. These commands are not made in reference to 
-%               the position at rest but to the position for the 
-%               preceding phoneme
-%   lip_prot:   Successive horizontal displacement of lips in mm. Positiv = 
-%               protrusion. These commands are not made in reference to 
-%               the position at rest but to the position for the 
-%               preceding phoneme.
-%   ll_rot:     Successive rotation angles of the lips in degrees. Positiv 
-%               = aperture. These commands are not made in reference to 
-%               the position at rest but to the position for the preceding 
-%               phoneme
-%   hyoid_mov:  Successive vertical displacement of the epipharynx in mm. 
-%               positiv = lowering. These commands are not made in 
-%               reference to the position at rest but to the position for 
-%               the preceding phoneme
-% Example: 
-%
-%   simul_tongue_adapt_jaw('av', 'ria', 'ria_trial', [-10 +10], ...
-%       [0 -10], [+10 -10], [-10 +10], [0 -3], [200 200], [-1 -3], ...
-%       [0.05 0.05], [0.150 0.150], [-3 +4], [-2 -2], [0 0], [0 0])
+    % only a few landmarks from the SpeakerModel are used do far
+    landmarks.xyStyloidProcess = speakerModel.landmarks.xyStyloidProcess;
+    landmarks.xyCondyle = speakerModel.landmarks.xyCondyle;
+%   landmarks.xyANS = speakerModel.landmarks.xyANS;
+%   landmarks.xyPNS = speakerModel.landmarks.xyPNS;
+%   landmarks.xyOrigin = speakerModel.landmarks.xyOrigin;
+%   landmarks.xyTongInsL = speakerModel.landmarks.xyTongInsL;
+%   landmarks.xyTongInsH = speakerModel.landmarks.xyTongInsH;
+    landmarks.xyHyoA = speakerModel.landmarks.xyHyoA;
+    landmarks.xyHyoB = speakerModel.landmarks.xyHyoB;
+    landmarks.xyHyoC = speakerModel.landmarks.xyHyoC;
+    
+    structures = speakerModel.structures;
 
-
-
+    tongMesh = speakerModel.tongue; % Class PositionFrame
+    positionValuesTmp = getPositionOfNodeNumbers(tongMesh, 1:221);
+    tongueRest.X0 = reshape(positionValuesTmp(1, :), 13, 17)';
+    tongueRest.Y0 = reshape(positionValuesTmp(2, :), 13, 17)';
+    
+    myMuscleCol = speakerModel.muscles;
+    
+    if ~exist('myPlotFlag', 'var') || isempty(myPlotFlag)
+        myPlotFlag = false;
+    end
+    
+    
+    
+    
 % global temporary variables
 global aff_fin 
 aff_fin = 0;
@@ -264,9 +246,9 @@ IE = [5*ones(1,8),1*ones(1,8),6*ones(1,8),2*ones(1,8),7*ones(1,8),3*ones(1,8),8*
 % Gaussian variables used for squaring A0 so that integral is replaced by a sum: SUM(Hi*f(Gi))
 global ordre H G
 
-ordre = tongConstVals.ordre;
-H = tongConstVals.H;
-G = tongConstVals.G;
+ordre = speakerModel.ordre;
+H = speakerModel.H;
+G = speakerModel.G;
 
 % Creation of the force vector FXY which is applied to the nodes.
 global FXY
@@ -283,8 +265,8 @@ U = zeros(1,4*nNodes);
 t = 0;
 
 % constant values for the tongue ---------------------------------
-nu = tongConstVals.nu; % Poisson's ratio
-E = tongConstVals.E; % Young's modulus: stiffness; E = 0.7 in Yohan's theses
+nu = speakerModel.nu; % Poisson's ratio
+E = speakerModel.E; % Young's modulus: stiffness; E = 0.7 in Yohan's theses
 
 global lambda mu
 
@@ -311,7 +293,7 @@ global Mass invMass
 % compute the mass matrix
 Mass = eye(2*nNodes);
 
-masse_totale = tongConstVals.masse_totale;
+masse_totale = speakerModel.masse_totale;
 
 for i = 1:MM
     for j = 1:NN
@@ -496,8 +478,30 @@ global alpha_rest_pos dist_rest_pos
 global alpha_rest_pos_dents_inf dist_rest_pos_dents_inf alpha_rest_pos_lowlip dist_rest_pos_lowlip
 
 
-nTarget = length(t2_targets);
+% open the figure to plot in
+global plotFlag h_axes h_tongue h_stylo h_upperLip h_lowerLip h_lowerInc
+global h_lar_ar
 
+if (myPlotFlag)
+    
+    plotFlag = true;
+    h_axes = speakerModel.initPlotFigure(false);
+    h_tongue = [];
+    h_stylo = [];
+    h_upperLip = [];
+    h_lowerLip = [];
+    h_lowerInc = [];
+    h_lar_ar = [];
+    
+    
+else
+    
+    plotFlag = false;
+    
+end
+
+
+nTarget = length(t2_targets);
 for nbTarget = 1:nTarget
     
     if (nbTarget == 1)
@@ -550,27 +554,24 @@ for nbTarget = 1:nTarget
     dist_lip = lip_protrusion(nbTarget);
     dist_hyoid = hyoid_movment(nbTarget);
 
-    figure(1);
-    clf
-    hold on
-    axis('equal')
-    
-    
-    plot(upperlip(1,:),upperlip(2,:), 'c-' );
-    plot(lowlip(1,:),lowlip(2,:), 'c-' );
-    plot(palate(1,1:end), palate(2,1:end),'c-')
-    plot(velum(1,1:end), velum(2,1:end),'c-')
-    plot(pharynx_mri(1,1:end), pharynx_mri(2,1:end),'c-')
-    %plot(lar_ar_mri(1,:), lar_ar_mri(2,:),'k-')
-    %plot(tongue_lar_mri(1,:), tongue_lar_mri(2,:),'k-')
+    if (plotFlag)
+        
+        %plot(h_axes, upperlip(1,:),upperlip(2,:), 'c-' );
+        %plot(h_axes, lowlip(1,:),lowlip(2,:), 'c-' );
+        plot(h_axes, palate(1,1:end), palate(2,1:end),'k-', 'LineWidth', 2)
+        plot(h_axes, velum(1,1:end), velum(2,1:end),'k-', 'LineWidth', 2)
+        plot(h_axes, pharynx_mri(1,1:end), pharynx_mri(2,1:end),'k-', 'LineWidth', 2)
+        %plot(h_axes, lar_ar_mri(1,:), lar_ar_mri(2,:),'k-')
+        %plot(h_axes, tongue_lar_mri(1,:), tongue_lar_mri(2,:),'k-')
 
-    
-    % plot tongue and lower jaw contours in rest position
-    %plot(dents_inf(1,:),dents_inf(2,:), 'k--');
-    plot(X_origin, Y_origin, 'ko');
-    drawnow
-    
-    %pause
+        % plot tongue and lower jaw contours in rest position
+        %plot(h_axes, dents_inf(1,:),dents_inf(2,:), 'k--');
+        %plot(h_axes, X_origin, Y_origin, 'ko');
+        drawnow
+        
+        %pause
+        
+    end
     
     fprintf('Integrating from %1.4f to %1.4f seconds\n', t1_targets(nbTarget), t2_targets(nbTarget));
     
@@ -658,8 +659,8 @@ ll_rotation_degree = ll_rotation*180/pi;
 
 
 % collect the simulation data in the obsolete file format ---------
-matUtt_obsolete.modelName = modelName;
-matUtt_obsolete.modelUUID = modellUUID;
+matUtt_obsolete.modelName = speakerModel.modelName;
+matUtt_obsolete.modelUUID = speakerModel.modelUUID;
 matUtt_obsolete.U = U;
 matUtt_obsolete.t = t;
 matUtt_obsolete.ttout = ttout;
