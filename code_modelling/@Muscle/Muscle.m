@@ -8,9 +8,6 @@ classdef Muscle
         nameShort = '';
         nFibers = [];
         
-        % every column represents one muscle fiber
-        fiberNodeNumbers = [];
-        
         fiberFixpoints = {};
         % if external insertion exists, then the array has format 2 x nFibers
         externalInsertionPointPosition = [];
@@ -72,8 +69,6 @@ classdef Muscle
                         obj.externalInsertionPointPosition.hyoC = ...
                             landmarks.xyHyoC;
 
-                        obj.fiberNodeNumbers = [89 113 165]; % redundant ??
-
                     case 'GGP'
                         obj.nameLong = 'posterior genioglossus';
                         obj.nameShort = 'GGP';
@@ -91,8 +86,6 @@ classdef Muscle
 
                         obj.externalInsertionPointPosition = [];
 
-                        obj.fiberNodeNumbers = []; % redundant ??
-
                     case 'GGA'
                         obj.nameLong = 'Anterior genioglossus';
                         obj.nameShort = 'GGA';
@@ -109,8 +102,6 @@ classdef Muscle
 
                         obj.externalInsertionPointPosition = [];
 
-                        obj.fiberNodeNumbers = []; % redundant ??
-
 
                     case 'STY'
                         obj.nameLong = 'styloglossus';
@@ -124,9 +115,6 @@ classdef Muscle
 
                         obj.externalInsertionPointPosition.styloidProcess = ...
                             landmarks.xyStyloidProcess;
-
-
-                        %obj.fiberNodeNumbers = [87 190];
 
                    case 'VER'
                         obj.nameLong = 'Verticales';
@@ -144,8 +132,6 @@ classdef Muscle
 
                         obj.externalInsertionPointPosition = [];
 
-                        % obj.fiberNodeNumbers = [142 155 168 181 194 207];
-
                     case 'SL'
                         obj.nameLong = 'Superior longitudinales';
                         obj.nameShort = 'SL';
@@ -159,9 +145,6 @@ classdef Muscle
 
                         obj.externalInsertionPointPosition = [];
 
-                        % obj.fiberNodeNumbers = [64 65 220 221];
-
-
                     case 'IL'
                         obj.nameLong = 'Inferior longitudinales';
                         obj.nameShort = 'IL';
@@ -173,9 +156,6 @@ classdef Muscle
 
                         obj.externalInsertionPointPosition.hyoB = ...
                             landmarks.xyHyoB;
-
-
-                        % obj.fiberNodeNumbers = 217;
 
                     otherwise
                         error('muscle name unknown ...')
