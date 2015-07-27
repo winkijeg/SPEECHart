@@ -1,5 +1,7 @@
 function matModel = matchModel( obj )
 % fits the generic model to the speaker-specific anatomy
+%
+%   no input arguments
 
 % variables necessary for generic and mri model
 nMeshFibers = obj.nMeshFibers;
