@@ -1,5 +1,8 @@
 function modelData = getDataForModelCreation( obj )
-% extract MRI data relevant for model creation (by adaptation to generic model)
+% extract relevant data for model creation
+    %    
+    %no input arguments
+    %
 
     modelData.speakerName = obj.speakerName;
 
