@@ -1,4 +1,4 @@
-function [] = exportToXML( obj, fileName )
+function [] = export_to_XML( obj, fileName )
 % write content of the model into a XML-file
 
     modelData.modelName = obj.modelName;

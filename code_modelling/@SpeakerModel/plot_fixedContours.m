@@ -1,4 +1,4 @@
-function [] = plot_fixed_contours(obj, col, h_axes)
+function h = plot_fixedContours(obj, col, h_axes)
 % plot all RIGID anatomical structures of the VT model
 
     if ~exist('col', 'var') || isempty(col)
@@ -11,7 +11,7 @@ function [] = plot_fixed_contours(obj, col, h_axes)
     
     names = {'upperIncisorPalate', 'velum', 'backPharyngealWall'};
 
-    plot_contours(obj, names, col, h_axes);
+    h = plot_contours(obj, names, col, h_axes);
     
 end
 
