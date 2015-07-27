@@ -8,7 +8,7 @@ colorPastFrames = 0.85;
 % extract one muscle - GGP
 myMuscle = model.muscles.muscleArray(1);
 
-model.plot_fixed_contours('k', h_axes);
+model.plot_fixedContours('k', h_axes);
 
 h_nonrigid = [];
 for nbFrame = 1:obj.nFrames
