@@ -1,9 +1,8 @@
-function [] = writeUttToMPEG4(obj, model, fname, h_axes)
-% write mpeg4 movie of an utterance
+function [] = plot_movement_mp4(obj, model, colStr, fname, h_axes)
+%plot movement into a MATLAB figure/ store mp4 - just examples
+    %this is just to give examples - write your own plot-method!
 
     colorPastFrames = 0.75;
-    
-    colStr = 'k';
 
     writerObj = VideoWriter(fname, 'Uncompressed AVI');
     set(writerObj, 'FrameRate', 4)
@@ -59,7 +58,7 @@ function [] = writeUttToMPEG4(obj, model, fname, h_axes)
         %pause(pauseSeconds)
 
         frame = getframe;
-        writeVideo(writerObj,frame);
+        writeVideo(writerObj, frame);
 
     end
 
