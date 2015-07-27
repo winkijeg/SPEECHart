@@ -1,5 +1,5 @@
 function h = drawNodeNumbers(obj, col)
-%draw node numbers but no mesh nodes
+%draw node numbers / useful if node number are of interest
 
     for nbNode = 1:obj.nNodes
 
