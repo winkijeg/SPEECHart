@@ -7,7 +7,7 @@ classdef Muscle
         nameShort@char
         nFibers
         
-        fiberFixpoints
+        fiberFixpoints@cell;
         % if external insertion exists, then the array has format 2 x nFibers
         externalInsertionPointPosition
         
