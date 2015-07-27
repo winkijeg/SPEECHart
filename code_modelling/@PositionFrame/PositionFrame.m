@@ -1,18 +1,18 @@
 classdef PositionFrame
-    % represents position of all nodes at a (given) time
+    % represent position of all nodes at a (given) time frame
     
     properties
         
-        timeOfFrame@double
+        timeOfFrame@double  % time of the frame
         
-        xValNodes@double
-        yValNodes@double
+        xValNodes@double    % 221 x values
+        yValNodes@double    % 221 y values
         
     end
     
     properties (Constant)
         
-        nNodes = 221
+        nNodes = 221        % number of nodes 
         
     end
         
@@ -21,6 +21,7 @@ classdef PositionFrame
     methods
         
         function obj = PositionFrame(timeOfFrame, xVals, yVals)
+            % construct an object based on position data
             
             if nargin ~= 0
             
@@ -31,8 +32,6 @@ classdef PositionFrame
             end
             
         end
-        
-        % method declarations .............................................
         
         h = drawMesh(obj, col, h_axes);
         h = drawNodeNumbers(obj, col);

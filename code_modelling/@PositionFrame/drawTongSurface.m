@@ -1,5 +1,5 @@
 function h_surface = drawTongSurface(obj, col, h_axes)
-%plot tongue surface for one PositionFrame
+%plot tongue surface for at a given time frame (PositionFrame)
 
     if ~exist('col', 'var') || isempty(col)
         col = 'k';

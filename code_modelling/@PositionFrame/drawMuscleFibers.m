@@ -1,5 +1,5 @@
 function h = drawMuscleFibers(obj, muscle, colStr, h_axes)
-    %draw muscle node within one frame
+    %draw muscle fibers at a time frame (PositionFrame)
     
     isExternalMuscle = ~(isempty(muscle.externalInsertionPointPosition));
     nFibers = muscle.nFibers;
@@ -54,7 +54,6 @@ function h = drawMuscleFibers(obj, muscle, colStr, h_axes)
                 h = plot(h_axes, xValsTmp, yValsTmp, ['-' colStr '.']);
                 
                 % plot mesh elements affected by the change in stiffness
-                
                 if (nbFiber ~= nFibers)
                     for nbNode = 1:nNodeNumberOfFiber-1
                     
@@ -82,12 +81,9 @@ function h = drawMuscleFibers(obj, muscle, colStr, h_axes)
                     
                     end
                     
-                    
                 end
-   
                 
             end
-    
     end
     
 end
