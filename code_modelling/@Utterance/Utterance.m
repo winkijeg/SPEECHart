@@ -1,6 +1,5 @@
 classdef Utterance
     % represent data / trajectories over time of an utterance 
-    %   Detailed explanation goes here
     
     properties (SetAccess = private)
         
@@ -55,7 +54,7 @@ classdef Utterance
         
         
         function obj = Utterance(matUtt)
-        % construct object from simulation mat-file
+        % construct object from a mat-file resulting from movement simulation
 
             % extract general information regarding the utterance
             obj.targetLabels = matUtt.targetString;
@@ -133,23 +132,16 @@ classdef Utterance
             
         end
         
-        function nbFrame = getFrameNumberFromTime(obj, timePoint)
-        % returns the frame number at a given time instant
-           
-            if timePoint > obj.durationTotal
-                error('time instant greater than total duration of utterance ...')
-            else
-                [~, nbFrame] = min(abs(obj.timeOfFrames - ...
-                    timePoint*ones(1, obj.nFrames) ));
-            end
-            
-        end
-
-        h = plotSingleStructure(obj, structName, targetFrame, colorStr, h_axes)
-        [] = simulateTongueMovement( obj, pauseSeconds, colStr, model, h_axes )
-        [] = writeUttToMPEG4(obj, model, fname, h_axes)
-        [] = exportToMAT( obj, fileName )
+        [] = plot_movement( obj, model, colStr, pauseSeconds, h_axes )
+        [] = plot_movement_mp4( obj, model, colStr, fname, h_axes )
+        [] = export_to_MAT( obj, fileName )
         
+    end
+
+    methods (Access = private)
+        
+        h = plotSingleStructure(obj, structName, targetFrame, plotString, h_axes)
+
     end
     
 end
