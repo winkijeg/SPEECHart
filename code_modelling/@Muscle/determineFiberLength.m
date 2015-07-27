@@ -1,6 +1,5 @@
-function fiberLengths = determineFiberLength(obj, tongueMesh)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+function fiberLengths = determineFiberLength(obj, tonguePosFrame)
+%determine muscle fiber length at a given time frame (PositionFrame)
 
     nFibers = obj.nFibers;
     
@@ -22,7 +21,7 @@ function fiberLengths = determineFiberLength(obj, tongueMesh)
             else
                 
                 fixpointPos(1:2, nbFixpoint) = ...
-                    getPositionOfNodeNumbers(tongueMesh, valuesNonEmpty{nbFixpoint});
+                    getPositionOfNodeNumbers(tonguePosFrame, valuesNonEmpty{nbFixpoint});
             end
             
         end
@@ -30,8 +29,6 @@ function fiberLengths = determineFiberLength(obj, tongueMesh)
         fiberLengths(1, nbFiber) = polyline_length_nd(2, nFixpoints, fixpointPos);
         
     end
-
-
 
 end
 

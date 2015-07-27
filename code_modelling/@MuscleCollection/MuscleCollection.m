@@ -1,11 +1,11 @@
 classdef MuscleCollection
-    % represents muscle specifications (7 muscles)
+    % represent collection of specifications for each muscle
     
     properties
         
-        nMuscles@uint8
-        names@cell
-        muscleArray@Muscle
+        nMuscles@uint8          % number of muscles, i.e. 7
+        names@cell              % CellString of muscle names
+        muscleArray@Muscle      % array of the single muscles
        
     end
     
@@ -28,8 +28,6 @@ classdef MuscleCollection
             end
             
         end
-        
-        % method declarations .............................................
         
         muscle = getMuscleFromCollection(obj, muscleName);
         
