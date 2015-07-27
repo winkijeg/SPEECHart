@@ -1,32 +1,28 @@
 classdef Muscle
-    % represents a single muscle
-    %   a muscle is represented by a number of single fibers
+    % represent the configuration of a single muscle
     
     properties
         
-        nameLong = '';
-        nameShort = '';
-        nFibers = [];
+        nameLong@char
+        nameShort@char
+        nFibers
         
-        fiberFixpoints = {};
+        fiberFixpoints
         % if external insertion exists, then the array has format 2 x nFibers
-        externalInsertionPointPosition = [];
+        externalInsertionPointPosition
         
-        % maximal / total lambda variation
-        expectedLambdaVariation@double
+        expectedLambdaVariation@double  % maximal / total lambda variation
         
-        fiberLengthsAtRest = [];
-        fiberMaxLengthAtRest = [];
-        fiberLengthsRatio = [];
-        
-        % minimum length of each muscle fiber
-        fiberMinLength
+        fiberLengthsAtRest@double
+        fiberMaxLengthAtRest@double
+        fiberLengthsRatio@double
+        fiberMinLength@double         % minimum length of each muscle fiber
         
         % It is assumed that each muscle fiber provides the same force.
-        % the value of rho ist proportional to the cross section area of
+        % The value of rho ist proportional to the cross section area of
         % the fiber
         fiberCrossSectionalArea@double
-        rho
+        rho@double
       
     end
     
