@@ -8,7 +8,7 @@ function [] = plot_movement_mp4(obj, model, colStr, fname, h_axes)
     set(writerObj, 'FrameRate', 4)
     open(writerObj);
     
-    model.plot_fixed_contours('k', h_axes);
+    model.plot_fixedContours('k', h_axes);
     
     h_nonrigid = [];
     for nbFrame = 1:obj.nFrames
