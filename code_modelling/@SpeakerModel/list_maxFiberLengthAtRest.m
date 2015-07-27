@@ -1,5 +1,9 @@
 function [] = list_maxFiberLengthAtRest(obj)
 %list the (maximum) fiber length for each muscle in model rest position
+    %    
+    %no input arguments
+    %
+
 
     nMuscles = obj.muscles.nMuscles;
     

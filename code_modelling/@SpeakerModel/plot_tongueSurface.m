@@ -1,5 +1,12 @@
 function [] = plot_tongueSurface( obj, col, h_axes )
-%plot tongue surface - tongue rest position of the VT model
+%plot tongue surface of the VT model at tongue rest position
+    %    
+    %input arguments:
+    %
+    %   - col       : color, i.e. 'r' for red, or [1 0 0] ( RGB - triple )
+    %   - h_axes    : axes handle of the window to be plotted to 
+
+
 
     if ~exist('col', 'var') || isempty(col)
         col = 'k';
