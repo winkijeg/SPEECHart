@@ -1,5 +1,5 @@
 classdef SpeakerModel
-    % hold data representing a FEM speaker model
+    %represent data of the biomechanical 2D Vocal Tract model
     
     properties
         
@@ -86,16 +86,17 @@ classdef SpeakerModel
             
         end
         
-        [] = exportToXML(mySpeakerModel, fileName);
+        [] = export_to_XML(mySpeakerModel, fileName);
         h = initPlotFigure(obj, imageFlag);
         h = plot_tongueSurface(obj, col, h_axes);
         h = plot_tongueMesh(obj, col, h_axes);
-        h = plot_muscles( obj, names, col, h_axes);
-        [] = plot_landmarks(obj,landmarks, col, h_axes);
-        [] = plot_contours(obj, names, col, h_axes);
-        [] = plot_fixed_contours(obj, col, h_axes);
+        h = plot_fixedContours(obj, col, h_axes);
 
-        obj = setCondylePoint(obj, xPos, yPos);
+        h = plot_muscles( obj, names, col, h_axes);
+        h = plot_landmarks(obj,names, col, h_axes);
+        h = plot_contours(obj, names, col, h_axes);
+
+        obj = set_condylePoint(obj, xPos, yPos);
         
         [] = list_maxFiberLengthAtRest(obj);
 
