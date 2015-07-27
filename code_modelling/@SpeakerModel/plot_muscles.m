@@ -36,7 +36,7 @@ function h_muscles = plot_muscles( obj, names, col, h_axes )
         
         % plot the muscle nodes
         h_muscles(nbMuscle) = obj.tongue.drawMuscleFibers(muscleTmp, col, h_axes);
-             
+        
     end
     
 end
