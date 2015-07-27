@@ -1,6 +1,14 @@
 function matUtterance = simulateMovement(obj, uttPlan, myPlotFlag)
-%simulates tongue movement with control parameters (muscles/time)
-
+%simulate movement / produce a MATLAB structure containing a full utterance
+    %    
+    %input arguments:
+    %
+    %   - uttPlan   : utterance plan containing timing and muscle activations 
+    %   - myPlotFlag: flag to decide between simulating movement with (value: true)
+    %                 or without (value: false) graphics (note that graphics is
+    %                 time-consuming, movement will takes 50% more time
+    %                 with graffics turned ON
+    %
     seq = ['r' uttPlan.target];
     
     % delta lambda values; order is GGP GGA HYO STY VER SL IL
