@@ -1,5 +1,23 @@
 function [] = plot(obj, featureString, plotStr)
-%plot utterance plan specification
+%plot muscle activation pattern over time
+    %    
+    %input arguments:
+    %
+    %   - featureString     : String, i.e. 'GGA'
+    %                         possible values are: 
+    %                           o 'deltaLambdaGGP',
+    %                           o 'deltaLambdaGGA',
+    %                           o 'deltaLambdaHYO',
+    %                           o 'deltaLambdaSTY',
+    %                           o 'deltaLambdaVER',
+    %                           o 'deltaLambdaSL',
+    %                           o 'deltaLambdaIL',
+    %                           o 'jawRotation',
+    %                           o 'lipProtrusion',
+    %                           o 'lipRotation',
+    %                           o 'hyoid_mov'
+    % 
+    %   - plotStr           : color, i.e. ''
 
     yValMax = 20;
     yValMin = -20;
@@ -57,5 +75,6 @@ function [] = plot(obj, featureString, plotStr)
     grid on
     xlabel('time [sec]')
     ylabel([featureString ' [\Delta\lambda]'])
+    
 end
 
