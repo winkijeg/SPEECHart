@@ -1,4 +1,4 @@
-function obj = setCondylePoint(obj, xPos, yPos)
+function obj = set_condylePoint(obj, xPos, yPos)
 %move condyle to an arbitrary position (use only if you know what you do!)
     
     obj.landmarks.styloidProcess = [xPos; yPos];
