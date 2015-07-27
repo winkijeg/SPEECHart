@@ -1,6 +1,10 @@
-function [] = exportToMAT( obj, fileName )
-% write content of the utterance into a XML-file
-
+function [] = export_to_MAT( obj, fileName )
+% store utterance content (MATLAB structure/mat-file) on disk
+    %    
+    %input arguments:
+    %
+    %   - fileName   : full filename (including the path)
+    %
 
     matUtterance.targetString = obj.targetLabels;
     matUtterance.timeOfFrames = obj.timeOfFrames;
