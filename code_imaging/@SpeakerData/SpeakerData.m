@@ -1,11 +1,11 @@
 classdef SpeakerData
     % store landmarks / contours determined from mid-sagittal MRI image
     %   two contours and two kind of anatomical landmarks are necessary for
-    %   the design of speaker-specific vocal tract models.
+    %   the design of the speaker-specific vocal tract models.
     
     properties
         
-        speakerName
+        speakerName@char
         
         % necessary for the model design
         xyStyloidProcess@double
@@ -44,11 +44,10 @@ classdef SpeakerData
             'xyNPW_d', [], ...
             'xyPPDPharL_d', [])
         
-        % for semi-polar grid
-        xyCircleMidpoint@double
         
-        % the semi-polar grid
-        grid@SemiPolarGrid
+        xyCircleMidpoint@double     % for semi-polar grid
+        
+        grid@SemiPolarGrid          % the semi-polar grid
         
         % indices after splitting up contours
         idxTongue
@@ -62,6 +61,7 @@ classdef SpeakerData
     methods
         
         function obj = SpeakerData(mySpeakerData)
+            % creates object from a full specification determined elsewhere
 
             obj.speakerName = mySpeakerData.speakerName;
             obj.xyStyloidProcess = mySpeakerData.landmarks.styloidProcess;
@@ -87,7 +87,7 @@ classdef SpeakerData
 
         end
 
-        modelData = getDataForModelCreation( obj )
+        matModelData = getDataForModelCreation( obj )
         h_axes = initPlotFigure(obj, flagImage)
         [] = plot_grid ( obj, col, grdLines, h_axes )
         [] = plot_landmarks(obj, landmarks, col, h_axes)

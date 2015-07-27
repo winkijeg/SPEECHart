@@ -1,5 +1,12 @@
 function [] = plot_contours_modelParts(obj, col, lineWidth, h_axes)
-% plot inner and outer VT contours which are relevant for model design
+% plot parts of the two traces which are relevant for model design
+    %
+    %input arguments:
+    %
+    %   - col       : color, i.e. 'r' for red, or [1 0 0] ( RGB - triple )
+    %   - lineWidth : line width / MATLAB standard line property
+    %   - h_axes    : axes handle of the window to be plotted to
+    %
 
     if ~exist('lineWidth', 'var') || isempty(lineWidth)
         lineWidth = 1;

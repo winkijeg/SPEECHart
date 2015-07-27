@@ -1,6 +1,13 @@
 function h_axes = initPlotFigure(obj, imgFlag)
-% initialize plot figure in MRI coordinates
-
+% create figure with axes labels / limits according to the specific speaker
+    %    
+    %input arguments:
+    %
+    %   - imgFlag   : flag to incorporate the MRI into the plot figure
+    %                   (to be implemented in the near future ...)
+    %                   so far the only value is false (no picture)
+    %
+    
 % range of x and y values seen in the new pic
 xDim = 165; % [mm]
 yDim = xDim; % [mm]

@@ -1,6 +1,12 @@
 function [] = plot_landmarks_derived( obj, col, h_axes )
-% plot all derived landmarks stored in the SpeakerData object
-
+% plot all landmarks which were derived from manyally determined landmarks
+    %    
+    %input arguments:
+    %
+    %   - col       : color, i.e. 'r' for red, or [1 0 0] ( RGB - triple )
+    %   - h_axes    : axes handle of the window to be plotted to
+    %
+    
     if ~exist('h_axes', 'var') || isempty(h_axes)
         h_axes = obj.initPlotFigure(false);
     end
