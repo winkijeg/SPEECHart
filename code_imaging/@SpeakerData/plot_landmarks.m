@@ -14,7 +14,7 @@ function [] = plot_landmarks(obj, names, col, h_axes)
     %   - col       : color, i.e. 'r' for red, or [1 0 0] ( RGB - triple )
     %   - h_axes    : axes handle of the window to be plotted to
 
-    if ~exist('landmarks', 'var') || isempty(names)
+    if ~exist('names', 'var') || isempty(names)
         
         fieldNamesStr = {'StyloidProcess', 'TongInsL', 'TongInsH', ...
             'ANS', 'PNS', 'VallSin', 'AlvRidge', 'PharH', 'PharL', ...
