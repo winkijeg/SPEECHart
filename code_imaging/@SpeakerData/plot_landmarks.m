@@ -1,10 +1,9 @@
-function [] = plot_landmarks(obj, landmarks, col, h_axes)
+function [] = plot_landmarks(obj, names, col, h_axes)
 % plot all (or a few) landmarks which were manually determined
     %    
     %input arguments:
     %
-    %   - col       : color, i.e. 'r' for red, or [1 0 0] ( RGB - triple )
-    %   - landmarks : CellString, i.e. {'ANS'}, {'ANS', 'PNS'}, or {} 
+    %   - names     : CellString, i.e. {'ANS'}, {'ANS', 'PNS'}, or {} 
     %                 - use {'ANS'} for plotting just one landmark
     %                 - use {'ANS', 'PNS'} for plotting each landmark in the CellString
     %                   o possible values are: 'StyloidProcess', 'TongInsL', 
@@ -12,9 +11,10 @@ function [] = plot_landmarks(obj, landmarks, col, h_axes)
     %                     'PharH', 'PharL', 'Palate', 'Lx', 'LipU', 'LipL', 
     %                     'TongTip', 'Velum' (see documentation for a description)
     %                 - leave empty ({}) in order to plot the full set of landmarks
+    %   - col       : color, i.e. 'r' for red, or [1 0 0] ( RGB - triple )
     %   - h_axes    : axes handle of the window to be plotted to
 
-    if ~exist('landmarks', 'var') || isempty(landmarks)
+    if ~exist('landmarks', 'var') || isempty(names)
         
         fieldNamesStr = {'StyloidProcess', 'TongInsL', 'TongInsH', ...
             'ANS', 'PNS', 'VallSin', 'AlvRidge', 'PharH', 'PharL', ...
@@ -22,7 +22,7 @@ function [] = plot_landmarks(obj, landmarks, col, h_axes)
         
     else
         
-        fieldNamesStr = landmarks;
+        fieldNamesStr = names;
     
     end
    
