@@ -2,9 +2,9 @@
 <speakerData>
    <speakerName>av</speakerName>
    <landmarks>
-      <styloidProcess>[116.22;108.83]</styloidProcess>
-      <tongInsL>[51.51;28.23]</tongInsL>
-      <tongInsH>[46.15;43.39]</tongInsH>
+      <StyloidProcess>[116.22;108.83]</StyloidProcess>
+      <TongInsL>[51.51;28.23]</TongInsL>
+      <TongInsH>[46.15;43.39]</TongInsH>
       <ANS>[34.46;98.38]</ANS>
       <PNS>[73.97;95.43]</PNS>
       <AlvRidge>[32.65;71.8]</AlvRidge>
