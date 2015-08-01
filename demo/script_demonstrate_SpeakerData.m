@@ -5,7 +5,7 @@
 
 clear *
 
-speakerName = 'cs';
+speakerName = 'av';
 
 % read specification (xml) and contruct an object 
 matSpeakerData = xml_read(['./' speakerName '_MRI.xml']);
@@ -26,7 +26,8 @@ mySpeakerData.plot_landmarks({'ANS', 'PNS'}, 'r', h_axes);
 mySpeakerData.plot_landmarks_derived('c', h_axes);
 
 % plot the two contours (inner trace as well as outer trace
-mySpeakerData.plot_contours('m', h_axes);
+mySpeakerData.plot_contour('inner', 'm', h_axes);
+mySpeakerData.plot_contour('outer', 'm', h_axes);
 
 % plot the parts of the contours that are actually passed to models design
-mySpeakerData.plot_contours_modelParts('b', 3, h_axes);
+mySpeakerData.plot_contours_modelParts('b', 1, h_axes);
