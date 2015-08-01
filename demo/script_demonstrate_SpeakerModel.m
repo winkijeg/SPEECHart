@@ -6,9 +6,9 @@ clear *
 
 % a model can be adapted (from a speaker configuration) or read from an
 % xml-file
-modelSource = 'xml'; % values are 'adapt' or 'xml'
+modelSource = 'adapt'; % values are 'adapt' or 'xml'
 
-speakerName = 'ypm'; % values ('adapt') are  'av' or 'cs'
+speakerName = 'av'; % values ('adapt') are  'av' or 'cs'
                     % values ('xml') are  'av' or 'cs' or 'ypm'
 
 switch modelSource
