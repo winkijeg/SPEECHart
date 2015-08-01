@@ -1,5 +1,6 @@
 function h = plot_contour(obj, contName, col, h_axes, funcHandle)
 % plot the two traces which were manually determined
+    % this method plots contour only if the positions are non-empty
     %    
     %input arguments:
     %
@@ -31,18 +32,20 @@ function h = plot_contour(obj, contName, col, h_axes, funcHandle)
             yValsTmp = obj.xyOuterTrace(2, :);
     end
  
-    
-    switch modus
-        case 'plain'
-            h = plot(h_axes, xValsTmp, yValsTmp, 'w-');
-        case 'edit'
-            nPoints = size(xValsTmp, 2);
-            for nbPoint = 1:nPoints
-                h(nbPoint) = plot(h_axes, xValsTmp(nbPoint), yValsTmp(nbPoint), ...
-                    [col 'o'], 'MarkerFaceColor', [0.75 0.75 0.75], ...
-                    'Tag', int2str(nbPoint), 'ButtonDownFcn', funcHandle);
-            end
+    if ~isempty(xValsTmp)
+        switch modus
+            case 'plain'
+                h = plot(h_axes, xValsTmp, yValsTmp, 'w-');
+            case 'edit'
+                nPoints = size(xValsTmp, 2);
+                for nbPoint = 1:nPoints
+                    h(nbPoint) = plot(h_axes, xValsTmp(nbPoint), yValsTmp(nbPoint), ...
+                        [col 'o'], 'MarkerFaceColor', [0.75 0.75 0.75], ...
+                        'Tag', int2str(nbPoint), 'ButtonDownFcn', funcHandle);
+                end
+        end
+    else
+        h = NaN;
     end
-            
-    
+       
 end
