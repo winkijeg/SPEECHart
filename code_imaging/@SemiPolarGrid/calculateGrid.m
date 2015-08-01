@@ -7,12 +7,9 @@ function obj = calculateGrid( obj, matGrid )
     %       - xyAlvRidge
     %       - xyPalate
     %       - xyPharH
-    %       - xyPharH
-    %       - xyPharL
     %       - xyPharL
     %       - xyLx
     %       - xyLipU
-    %       - xyLipL
     %       - xyLipL
     %       - xyCircleMidpoint
     %
