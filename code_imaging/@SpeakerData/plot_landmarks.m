@@ -1,5 +1,6 @@
-function [] = plot_landmarks(obj, names, col, h_axes)
+function h = plot_landmarks(obj, names, col, h_axes, funcHandle)
 % plot all (or a few) landmarks which were manually determined
+    % this method plots landmarks only if the position is non-empty
     %    
     %input arguments:
     %
@@ -34,17 +35,28 @@ function [] = plot_landmarks(obj, names, col, h_axes)
         h_axes = obj.initPlotFigure(false);
     end
     
+    if ~exist('funcHandle', 'var') || isempty(funcHandle)
+        funcHandle = '';
+    end
+    
    
     nLandmarks = size(fieldNamesStr, 2);
-
     for nbLandmark = 1:nLandmarks
 
         lab_tmp = fieldNamesStr{nbLandmark};
         ptTmp = obj.(['xy' fieldNamesStr{nbLandmark}]);
-
-        plot(h_axes, ptTmp(1), ptTmp(2), [col 'o'], 'MarkerFaceColor', col)
-        text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', col, 'Parent', h_axes)
-
+        
+        if ~isempty(ptTmp)
+            
+            h(1, nbLandmark) = plot(h_axes, ptTmp(1), ptTmp(2), [col 'o'], ...
+                'MarkerFaceColor', [0.75 0.75 0.75], 'Tag', fieldNamesStr{nbLandmark}, ...
+                'ButtonDownFcn', funcHandle);
+            h(2, nbLandmark) = text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', 'w', 'Parent', h_axes);
+        else
+            h(1, nbLandmark) = NaN;
+            h(2, nbLandmark) = NaN;
+        end
+        
     end
 
 end

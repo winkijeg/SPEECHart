@@ -30,8 +30,8 @@ classdef SpeakerData
         xyTongTip@double
         xyVelum@double
         
-        xyInnerTrace@double % tongue surface in MRI slice
-        xyOuterTrace@double % pharynx and palate trace from MRI slice
+        xyInnerTrace = [NaN; NaN] % tongue surface in MRI slice
+        xyOuterTrace = [NaN; NaN] % pharynx and palate trace from MRI slice
       
     end
     
@@ -65,27 +65,29 @@ classdef SpeakerData
 
             if ~isempty(matSpeakerData)
                 
-            obj.speakerName = matSpeakerData.speakerName;
-            obj.xyStyloidProcess = matSpeakerData.landmarks.StyloidProcess;
-            obj.xyANS = matSpeakerData.landmarks.ANS;
-            obj.xyPNS = matSpeakerData.landmarks.PNS;
-            obj.xyTongInsL = matSpeakerData.landmarks.TongInsL;
-            obj.xyTongInsH = matSpeakerData.landmarks.TongInsH;
+                obj.speakerName = matSpeakerData.speakerName;
+            
+                obj.xyStyloidProcess = matSpeakerData.landmarks.StyloidProcess;
+                obj.xyANS = matSpeakerData.landmarks.ANS;
+                obj.xyPNS = matSpeakerData.landmarks.PNS;
+                obj.xyTongInsL = matSpeakerData.landmarks.TongInsL;
+                obj.xyTongInsH = matSpeakerData.landmarks.TongInsH;
 
-            obj.xyInnerTrace = matSpeakerData.contours.innerPt;
-            obj.xyOuterTrace = matSpeakerData.contours.outerPt;
+                obj.xyVallSin = matSpeakerData.landmarks.VallSin;
+                obj.xyAlvRidge = matSpeakerData.landmarks.AlvRidge;
+                obj.xyPharH = matSpeakerData.landmarks.PharH;
+                obj.xyPharL = matSpeakerData.landmarks.PharL;
 
-            obj.xyVallSin = matSpeakerData.landmarks.VallSin;
-            obj.xyAlvRidge = matSpeakerData.landmarks.AlvRidge;
-            obj.xyPharH = matSpeakerData.landmarks.PharH;
-            obj.xyPharL = matSpeakerData.landmarks.PharL;
+                obj.xyPalate = matSpeakerData.landmarks.Palate;
+                obj.xyLx = matSpeakerData.landmarks.Lx;
+                obj.xyLipU = matSpeakerData.landmarks.LipU;
+                obj.xyLipL = matSpeakerData.landmarks.LipL;
+                obj.xyTongTip = matSpeakerData.landmarks.TongTip;
+                obj.xyVelum = matSpeakerData.landmarks.Velum;
+                
+                obj.xyInnerTrace = matSpeakerData.contours.innerPt;
+                obj.xyOuterTrace = matSpeakerData.contours.outerPt;
 
-            obj.xyPalate = matSpeakerData.landmarks.Palate;
-            obj.xyLx = matSpeakerData.landmarks.Lx;
-            obj.xyLipU = matSpeakerData.landmarks.LipU;
-            obj.xyLipL = matSpeakerData.landmarks.LipL;
-            obj.xyTongTip = matSpeakerData.landmarks.TongTip;
-            obj.xyVelum = matSpeakerData.landmarks.Velum;
             end
 
         end
@@ -93,12 +95,16 @@ classdef SpeakerData
         matModelData = getDataForModelCreation( obj )
         h_axes = initPlotFigure(obj, flagImage)
         [] = plot_grid ( obj, col, grdLines, h_axes )
-        [] = plot_landmarks(obj, landmarks, col, h_axes)
+        h = plot_landmarks(obj, landmarks, col, h_axes, funcHandle)
         [] = plot_landmarks_derived( obj, col, h_axes )
-        [] = plot_contours(obj, col, h_axes)
+        h = plot_contour(obj, contName, col, h_axes, funcHandle)
         [] = plot_contours_modelParts(obj, col, lineWidth, h_axes)
         
         [] = export_to_XML( obj, fileName )
+        
+        outStrings = get_emptyLandmarkNames( obj )
+        outStrings = get_emptyTraceNames( obj )
+        xyOut = calculate_finalTrace( obj, xyIn )
         
         function pts = get.landmarksDerived(obj)
             
