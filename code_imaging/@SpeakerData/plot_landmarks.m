@@ -51,7 +51,7 @@ function h = plot_landmarks(obj, names, col, h_axes, funcHandle)
             h(1, nbLandmark) = plot(h_axes, ptTmp(1), ptTmp(2), [col 'o'], ...
                 'MarkerFaceColor', [0.75 0.75 0.75], 'Tag', fieldNamesStr{nbLandmark}, ...
                 'ButtonDownFcn', funcHandle);
-            h(2, nbLandmark) = text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', 'w', 'Parent', h_axes);
+            h(2, nbLandmark) = text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', col, 'Parent', h_axes);
         else
             h(1, nbLandmark) = NaN;
             h(2, nbLandmark) = NaN;
