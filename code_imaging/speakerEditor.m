@@ -169,17 +169,17 @@ switch gui.modus
     case 'lm'
         handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'w', h_axes);
         handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'w', h_axes);
-        handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'b', ...
+        handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'r', ...
             h_axes, @startMoveLandmark);
     case 'inner'
         handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'w', h_axes);
         handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'w', h_axes);
-        handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'b', ...
+        handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'r', ...
             h_axes, @startMoveLinePt);
     case 'outer'
         handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'w', h_axes);
         handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'w', h_axes);
-        handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'b', h_axes, @startMoveLinePt);
+        handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'r', h_axes, @startMoveLinePt);
 end
 drawnow;
 
