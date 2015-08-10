@@ -11,7 +11,15 @@ classdef SemiPolarGrid
         
         innerPt@double      % left / inferior point(s) of each gridline
         outerPt@double      % right / superior point(s) of each gridline
-        nGridlines@double   % number of gridlines 
+        nGridlines@double   % number of gridlines
+        
+        derivedPoints = struct('H1', [], ...    % circle midpoint
+            'H2', [], ...   % defines end of part 2 of the grid 
+            'H3', [], ...   % left boundary of very first gridline
+            'H4', [], ...   % right boundary of very first gridline (+overLength)
+            'H5', [])       % rotation center of the 5th part of the grid
+        
+        grdLineLabel@double % assign label for grid part
         
     end
     
@@ -30,6 +38,7 @@ classdef SemiPolarGrid
 
         obj = calculateGrid( obj, struc )
         [] = plot(obj, col, grdLines, cAxes)
+        [] = plot_landmarks_derived(obj, col, h_axes);
         
     end
     

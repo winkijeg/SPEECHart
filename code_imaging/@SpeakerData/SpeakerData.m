@@ -40,12 +40,12 @@ classdef SpeakerData
         % landmarks for shape measures
         landmarksDerived = struct(...
             'xyPharH_d', [], ...
-            'xyPharL_d', [], ...
-            'xyNPW_d', [], ...
-            'xyPPDPharL_d', [])
+            'xyPharL_d', []) %, ...
+%             'xyNPW_d', [], ...
+%             'xyPPDPharL_d', [])
         
         
-        xyCircleMidpoint@double     % for semi-polar grid
+        circleApproxTongue = struct('xyMidPoint',[],'radius', []) 
         
         grid@SemiPolarGrid          % the semi-polar grid
         
@@ -126,34 +126,40 @@ classdef SpeakerData
                 [~, pts.xyPharL_d(:, 1)] = lines_exp_int_2d(...
                     obj.xyVallSin', xyPharLTmp_d', obj.xyPharH', obj.xyPharL');
 
-                % find two derived points (for morpological analysis)
-                % (1) intersection point of palatal plane and pharynx wall
-                [~, pts.xyNPW_d(:, 1)] = lines_exp_int_2d(...
-                    obj.xyANS', obj.xyPNS', pts.xyPharL_d', pts.xyPharH_d');
-                % (2) shortest distance from pt_PharL_d to palatal plane
-                pts.xyPPDPharL_d(:, 1) = line_exp_perp_2d(...
-                    obj.xyANS', obj.xyPNS', pts.xyPharL_d');
+%                 % find two derived points (for morpological analysis)
+%                 % (1) intersection point of palatal plane and pharynx wall
+%                 [~, pts.xyNPW_d(:, 1)] = lines_exp_int_2d(...
+%                     obj.xyANS', obj.xyPNS', pts.xyPharL_d', pts.xyPharH_d');
+%                 % (2) shortest distance from pt_PharL_d to palatal plane
+%                 pts.xyPPDPharL_d(:, 1) = line_exp_perp_2d(...
+%                     obj.xyANS', obj.xyPNS', pts.xyPharL_d');
             else
                 
                 pts.xyPharH_d = [];
                 pts.xyPharL_d = [];
-                pts.xyNPW_d = [];
-                pts.xyPPDPharL_d = [];
+%                 pts.xyNPW_d = [];
+%                 pts.xyPPDPharL_d = [];
                 
             end
             
         end
         
-        function xyCircleMidpoint = get.xyCircleMidpoint(obj)
+        function circleApproxTongue = get.circleApproxTongue(obj)
             
             if ~(isempty(obj.xyAlvRidge) || isempty(obj.xyPalate) || isempty(obj.landmarksDerived.xyPharH_d))
                 % calculate midpointCircle, the center of a circle intersecting the
                 % landmarks p_AlvRidge, p_Palate, p_PharH_d
                 pointsTmp = [obj.xyAlvRidge obj.xyPalate obj.landmarksDerived.xyPharH_d];
-                [~, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(...
+                [myRadius, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(...
                     pointsTmp);
+                
+                circleApproxTongue.xyMidPoint = xyCircleMidpoint;
+                circleApproxTongue.radius = myRadius;
+                
+                
             else
-                xyCircleMidpoint = [];
+                circleApproxTongue.xyMidPoint = [];
+                circleApproxTongue.radius = [];
             end
             
         end
@@ -167,7 +173,7 @@ classdef SpeakerData
             myStruc.xyLx = obj.xyLx;
             myStruc.xyLipU = obj.xyLipU;
             myStruc.xyLipL = obj.xyLipL;
-            myStruc.xyCircleMidpoint = obj.xyCircleMidpoint;
+            myStruc.xyCircleMidpoint = obj.circleApproxTongue.xyMidPoint;
             
             myGrid = SemiPolarGrid();
             grd = myGrid.calculateGrid(myStruc);
