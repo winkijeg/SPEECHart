@@ -26,8 +26,16 @@ function fiberLengths = determineFiberLength(obj, tonguePosFrame)
             
         end
         
-        fiberLengths(1, nbFiber) = polyline_length_nd(2, nFixpoints, fixpointPos);
-        
+        % fiberLengths(1, nbFiber) = polyline_length_nd(2, nFixpoints, fixpointPos);
+        fiberLengths(1, nbFiber) = 0;
+        for nbPoint = nFixpoints:-1:2
+            
+            fiberLengths(1, nbFiber) = fiberLengths(1, nbFiber) + ...
+                sqrt( (fixpointPos(1, nbPoint)-fixpointPos(1, nbPoint-1))^2 ...
+                + (fixpointPos(2, nbPoint)-fixpointPos(2, nbPoint-1))^2);
+            
+        end
+            
     end
 
 end
