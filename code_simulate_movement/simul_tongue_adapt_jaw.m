@@ -576,7 +576,7 @@ for nbTarget = 1:nTarget
     fprintf('Integrating from %1.4f to %1.4f seconds\n', t1_targets(nbTarget), t2_targets(nbTarget));
     
     [ts, Us] = ode45plus('udot3_adapt_jaw', t1_targets(nbTarget), t2_targets(nbTarget), ...
-        U0, 0.001, 0.008);
+        U0, 1e-3, (((3*2)-2)/500));
     
     U0 = Us(length(ts), :);
     tfin = [tfin; ts];
