@@ -52,7 +52,7 @@ classdef Muscle
                         obj.nameShort = 'HYO';
                         obj.nFibers = 3; % redundant !
                         obj.expectedLambdaVariation = 2*20;
-                        obj.fiberCrossSectionalArea = 98.7;
+                        obj.fiberCrossSectionalArea = 296/3;
                         
                         obj.fiberFixpoints(1, :) = {'hyoA', 124, 165};
                         obj.fiberFixpoints(2, :) = {'hyoB', 113, []};
@@ -70,7 +70,7 @@ classdef Muscle
                         obj.nameShort = 'GGP';
                         obj.nFibers = 7;
                         obj.expectedLambdaVariation = 2*20;
-                        obj.fiberCrossSectionalArea = 23.7;
+                        obj.fiberCrossSectionalArea = 308/13;
 
                         obj.fiberFixpoints(1, :) = num2cell(27:38);
                         obj.fiberFixpoints(2, :) = num2cell(40:51);
@@ -87,7 +87,7 @@ classdef Muscle
                         obj.nameShort = 'GGA';
                         obj.nFibers = 6;
                         obj.expectedLambdaVariation = 2*20;
-                        obj.fiberCrossSectionalArea = 23.7;
+                        obj.fiberCrossSectionalArea = 308/13;
 
                         obj.fiberFixpoints(1, :) = num2cell(118:129);
                         obj.fiberFixpoints(2, :) = num2cell(131:142);
@@ -104,7 +104,7 @@ classdef Muscle
                         obj.nameShort = 'STY';
                         obj.nFibers = 2;
                         obj.expectedLambdaVariation = 2*20;
-                        obj.fiberCrossSectionalArea = 20.0;
+                        obj.fiberCrossSectionalArea = 40/2;
 
                         obj.fiberFixpoints(1, :) = {'styloidProcess', 87, []};
                         obj.fiberFixpoints(2, :) = {'styloidProcess', 113, 190};
@@ -117,7 +117,7 @@ classdef Muscle
                         obj.nameShort = 'VER';
                         obj.nFibers = 6;
                         obj.expectedLambdaVariation = 2*10;
-                        obj.fiberCrossSectionalArea = 11.0;
+                        obj.fiberCrossSectionalArea = 66/6;
 
                         obj.fiberFixpoints(1, :) = num2cell(137:142);
                         obj.fiberFixpoints(2, :) = num2cell(150:155);
