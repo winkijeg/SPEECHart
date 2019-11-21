@@ -53,8 +53,9 @@ function h = plot_landmarks(obj, names, col, h_axes, funcHandle)
                 'ButtonDownFcn', funcHandle);
             h(2, nbLandmark) = text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', col, 'Parent', h_axes);
         else
-            h(1, nbLandmark) = NaN;
-            h(2, nbLandmark) = NaN;
+            
+            h(1, nbLandmark) = gobjects(1);
+            h(2, nbLandmark) = gobjects(1);
         end
         
     end
