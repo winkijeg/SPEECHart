@@ -36,7 +36,7 @@ myUtterancePlan.lipProtrusion = [2 -6];
 myUtterancePlan.hyoid_mov = [4 -4];
 
 % simulate movement by passing the utterancePlan to UtteranceProducer
-matUtt = myUtteranceProducer.simulateMovement(myUtterancePlan, myPlotFlag);
+[~, matUtt] = myUtteranceProducer.simulateMovement(myUtterancePlan, myPlotFlag);
 
 % in case of simulating a bunch of utterances, save data on harddisk
 save ([modelName '_test_v01.mat'], '-struct', 'matUtt')
