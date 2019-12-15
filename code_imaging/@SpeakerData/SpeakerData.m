@@ -40,14 +40,11 @@ classdef SpeakerData
         % landmarks for shape measures
         landmarksDerived = struct(...
             'xyPharH_d', [], ...
-            'xyPharL_d', []) %, ...
-%             'xyNPW_d', [], ...
-%             'xyPPDPharL_d', [])
-        
+            'xyPharL_d', [])
         
         circleApproxTongue = struct('xyMidPoint',[],'radius', []) 
         
-        grid@SemiPolarGrid          % the semi-polar grid
+        grid@SemiPolarGrid
         
         % indices after splitting up contours
         idxTongue
@@ -92,19 +89,19 @@ classdef SpeakerData
 
         end
 
-        matModelData = getDataForModelCreation( obj )
+        matModelData = getDataForModelCreation(obj)
         h_axes = initPlotFigure(obj, flagImage)
-        [] = plot_grid ( obj, col, grdLines, h_axes )
+        [] = plot_grid(obj, col, grdLines, h_axes)
         h = plot_landmarks(obj, landmarks, col, h_axes, funcHandle)
-        [] = plot_landmarks_derived( obj, col, h_axes )
+        [] = plot_landmarks_derived(obj, col, h_axes)
         h = plot_contour(obj, contName, col, h_axes, funcHandle)
         [] = plot_contours_modelParts(obj, col, lineWidth, h_axes)
         
-        [] = export_to_XML( obj, fileName )
+        [] = export_to_XML(obj, fileName)
         
-        outStrings = get_emptyLandmarkNames( obj )
-        outStrings = get_emptyTraceNames( obj )
-        xyOut = calculate_finalTrace( obj, xyIn )
+        outStrings = get_emptyLandmarkNames(obj)
+        outStrings = get_emptyTraceNames(obj)
+        xyOut = calculate_finalTrace(obj, xyIn)
         
         function pts = get.landmarksDerived(obj)
             
@@ -118,7 +115,7 @@ classdef SpeakerData
                 [~, pts.xyPharH_d(:, 1)] = lines_exp_int_2d(...
                     obj.xyAlvRidge', xyPharHTmp_d', obj.xyPharH', obj.xyPharL');
 
-                % ptPharLTmp_d (temporary) is the 4th point of the parallelogramm
+                % ptPharLTmp_d (temporary) is the 4th point of the parallelogram
                 % ANS-Hyo-h4-PNS
                 xyPharLTmp_d = -obj.xyANS + obj.xyVallSin + obj.xyPNS;
                 % ptPharL_d is the intersection point between two lines: (1) back
@@ -126,20 +123,9 @@ classdef SpeakerData
                 [~, pts.xyPharL_d(:, 1)] = lines_exp_int_2d(...
                     obj.xyVallSin', xyPharLTmp_d', obj.xyPharH', obj.xyPharL');
 
-%                 % find two derived points (for morpological analysis)
-%                 % (1) intersection point of palatal plane and pharynx wall
-%                 [~, pts.xyNPW_d(:, 1)] = lines_exp_int_2d(...
-%                     obj.xyANS', obj.xyPNS', pts.xyPharL_d', pts.xyPharH_d');
-%                 % (2) shortest distance from pt_PharL_d to palatal plane
-%                 pts.xyPPDPharL_d(:, 1) = line_exp_perp_2d(...
-%                     obj.xyANS', obj.xyPNS', pts.xyPharL_d');
             else
-                
                 pts.xyPharH_d = [];
                 pts.xyPharL_d = [];
-%                 pts.xyNPW_d = [];
-%                 pts.xyPPDPharL_d = [];
-                
             end
             
         end
@@ -150,13 +136,9 @@ classdef SpeakerData
                 % calculate midpointCircle, the center of a circle intersecting the
                 % landmarks p_AlvRidge, p_Palate, p_PharH_d
                 pointsTmp = [obj.xyAlvRidge obj.xyPalate obj.landmarksDerived.xyPharH_d];
-                [myRadius, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(...
-                    pointsTmp);
-                
+                [myRadius, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(pointsTmp);
                 circleApproxTongue.xyMidPoint = xyCircleMidpoint;
                 circleApproxTongue.radius = myRadius;
-                
-                
             else
                 circleApproxTongue.xyMidPoint = [];
                 circleApproxTongue.radius = [];
@@ -183,19 +165,13 @@ classdef SpeakerData
             % determine indices for tongue contour
             % split inner contour into anatomical motivated parts.
             % The tongue surface is represented by the contour 
-            % between between two landmarks (VallSin - TongTip).
+            % between two landmarks (VallSin - TongTip).
 
-            % memory allocation
-            distGrdLineTargetLandmarkStart = ones(1, ...
-                obj.grid.nGridlines) * NaN;
-            distGrdLineTargetLandmarkEnd = ones(1, ...
-                obj.grid.nGridlines) * NaN;
-
+            distGrdLineTargetLandmarkStart = ones(1, obj.grid.nGridlines) * NaN;
+            distGrdLineTargetLandmarkEnd = ones(1, obj.grid.nGridlines) * NaN;
             for k = 1:obj.grid.nGridlines
-    
                 ptGrdInner = obj.grid.innerPt(1:2, k)';
                 ptGrdOuter = obj.grid.outerPt(1:2, k)';
-
                 distGrdLineTargetLandmarkStart(k) = segment_point_dist_2d(...
                     ptGrdInner, ptGrdOuter, obj.xyVallSin');
                 distGrdLineTargetLandmarkEnd(k) = segment_point_dist_2d(...
@@ -212,14 +188,10 @@ classdef SpeakerData
             % The back pharyngeal wall is represented by the contour 
             % between between two landmarks (PharL - PharH).
 
-            % memory allocation
-            distGrdLineTargetLandmarkStart = ones(1, ...
-                obj.grid.nGridlines) * NaN;
-            distGrdLineTargetLandmarkEnd = ones(1, ...
-                obj.grid.nGridlines) * NaN;
+            distGrdLineTargetLandmarkStart = ones(1, obj.grid.nGridlines) * NaN;
+            distGrdLineTargetLandmarkEnd = ones(1, obj.grid.nGridlines) * NaN;
 
             for k = 1:obj.grid.nGridlines
-    
                 ptGrdInner = obj.grid.innerPt(1:2, k)';
                 ptGrdOuter = obj.grid.outerPt(1:2, k)';
     
@@ -240,12 +212,10 @@ classdef SpeakerData
             % The velum is represented by the contour 
             % between between two landmarks (PharH - Velum).
 
-            % memory allocation
             distGrdLineTargetLandmarkStart = ones(1, obj.grid.nGridlines) * NaN;
             distGrdLineTargetLandmarkEnd = ones(1, obj.grid.nGridlines) * NaN;
 
             for k = 1:obj.grid.nGridlines
-
                 ptGrdInner = obj.grid.innerPt(1:2, k)';
                 ptGrdOuter = obj.grid.outerPt(1:2, k)';
 
@@ -254,7 +224,6 @@ classdef SpeakerData
                 distGrdLineTargetLandmarkEnd(k) = segment_point_dist_2d(...
                     ptGrdInner, ptGrdOuter, obj.xyVelum');
             end
-
 
             [~, idx(1, 1)] = min(distGrdLineTargetLandmarkStart);
             [~, idx(1, 2)] = min(distGrdLineTargetLandmarkEnd);
@@ -267,21 +236,17 @@ classdef SpeakerData
             % The palate is represented by the contour 
             % between between two landmarks (Velume - Palate).
 
-            % memory allocation
-            distGrdLineTargetLandmarkStart = ones(1, ...
-                obj.grid.nGridlines) * NaN;
-            distGrdLineTargetLandmarkEnd = ones(1, ...
-                obj.grid.nGridlines) * NaN;
+            distGrdLineTargetLandmarkStart = ones(1, obj.grid.nGridlines) * NaN;
+            distGrdLineTargetLandmarkEnd = ones(1, obj.grid.nGridlines) * NaN;
 
             for k = 1:obj.grid.nGridlines
-
                 ptGrdInner = obj.grid.innerPt(1:2, k)';
                 ptGrdOuter = obj.grid.outerPt(1:2, k)';
 
-                distGrdLineTargetLandmarkStart(k) = segment_point_dist_2d(...
-                    ptGrdInner, ptGrdOuter, obj.xyVelum');
-                distGrdLineTargetLandmarkEnd(k) = segment_point_dist_2d(...
-                    ptGrdInner, ptGrdOuter, obj.xyAlvRidge');
+                distGrdLineTargetLandmarkStart(k) = ...
+                    segment_point_dist_2d(ptGrdInner, ptGrdOuter, obj.xyVelum');
+                distGrdLineTargetLandmarkEnd(k) = ...
+                    segment_point_dist_2d(ptGrdInner, ptGrdOuter, obj.xyAlvRidge');
             end
 
             [~, idx(1, 1)] = min(distGrdLineTargetLandmarkStart);
