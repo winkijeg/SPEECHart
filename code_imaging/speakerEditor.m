@@ -329,13 +329,14 @@ function saveDataToDisk(handles)
 
 gui = get(handles.figure1, 'UserData');
 mySpeakerData = gui.mySpeakerData;
-
-% extact speaker name ...
 speakerName = mySpeakerData.speakerName;
-% snap points to the grid ...
-% xyInnerTrace = mySpeakerData.xyInnerTrace;
-% mySpeakerData.xyInnerTrace = mySpeakerData.calculate_finalTrace(xyInnerTrace);
 
+% snap points to the grid ...
+xyInnerTrace_tmp = mySpeakerData.xyInnerTrace;
+xyOuterTrace_tmp = mySpeakerData.xyOuterTrace;
+
+mySpeakerData.xyInnerTrace = mySpeakerData.sample_contour_on_grid(xyInnerTrace_tmp);
+mySpeakerData.xyOuterTrace = mySpeakerData.sample_contour_on_grid(xyOuterTrace_tmp);
 
 [filename, pathname] = uiputfile('*_MRI.xml', 'Save as ...', ...
     [pwd '\' speakerName '_MRI.xml']);

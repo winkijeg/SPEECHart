@@ -101,7 +101,7 @@ classdef SpeakerData
         
         outStrings = get_emptyLandmarkNames(obj)
         outStrings = get_emptyTraceNames(obj)
-        xyOut = calculate_finalTrace(obj, xyIn)
+        xyOut = sample_contour_on_grid(obj, xyIn)
         
         function pts = get.landmarksDerived(obj)
             
