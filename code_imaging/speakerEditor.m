@@ -323,10 +323,6 @@ function buttonSave_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-saveDataToDisk(handles);
-
-function saveDataToDisk(handles)
-
 gui = get(handles.figure1, 'UserData');
 mySpeakerData = gui.mySpeakerData;
 speakerName = mySpeakerData.speakerName;
