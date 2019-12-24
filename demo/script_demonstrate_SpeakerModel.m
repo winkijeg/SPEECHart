@@ -8,7 +8,7 @@ clear *
 % xml-file
 modelSource = 'adapt'; % values are 'adapt' or 'xml'
 
-speakerName = 'av'; % values ('adapt') are  'av' or 'cs'
+speakerName = 'm1'; % values ('adapt') are  'av' or 'cs'
                     % values ('xml') are  'av' or 'cs' or 'ypm'
 
 switch modelSource

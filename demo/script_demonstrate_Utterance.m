@@ -4,7 +4,7 @@
 
 clear *
 
-modelName = 'cs';
+modelName = 'm1';
 
 
 % read / create the SpeakerModel which PRODUCED the simulation file
