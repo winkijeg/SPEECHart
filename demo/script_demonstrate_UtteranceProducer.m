@@ -5,7 +5,7 @@
 
 clear *
 
-modelName = 'cs';
+modelName = 'm1';
 myPlotFlag = false;     % values: true (with) and false (without) graphics 
 
 
