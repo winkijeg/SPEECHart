@@ -1,5 +1,5 @@
 function [] = plot_contour_sampled(obj, col, h_axes)
-% plot the two contours which were sampled on semipola grid.
+% plot the two contours which were sampled on semi-polar grid.
     % this method plots contour only if the positions are non-empty
     %    
     %input arguments:
