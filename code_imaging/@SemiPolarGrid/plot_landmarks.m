@@ -5,11 +5,9 @@ function [] = plot_landmarks(obj, col, h_axes)
         h_axes = gca;
     end
     
-    %fieldNamesStr = {'Lx', 'Palate', 'AlvRidge', 'LipU', 'LipL', ...
-    %    'PharL', 'PharH', 'ANS', 'PNS'};
     fieldNamesStr = {'Lx', 'Palate', 'AlvRidge', 'LipU', 'LipL', ...
-        'PharL', 'PharH'}; 
-
+        'PharL', 'PharH', 'ANS', 'PNS'};
+    
     nLandmarks = size(fieldNamesStr, 2);
     for nbLandmark = 1:nLandmarks
 
