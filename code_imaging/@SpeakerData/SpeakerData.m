@@ -20,16 +20,12 @@ classdef SpeakerData
         xyPharH = [NaN; NaN];
         xyPharL = [NaN; NaN];
         
-        % necessary for semi-polar grid
+        % full landmark set necessary for semi-polar grid
+        % is xyPharL, xyPharH, xyAlvRidge, ANS, PNS
         xyPalate = [NaN; NaN];
         xyLx = [NaN; NaN];
         xyLipU = [NaN; NaN];
         xyLipL = [NaN; NaN];
-        %xyPharL = [NaN; NaN];
-        %xyPharH = [NaN; NaN];
-        %xyAlvRidge = [NaN; NaN];
-        %xyANS = [NaN; NaN];
-        %xyPNS = [NaN; NaN];
         
         % necessary for split up the contours into anatomical regions
         xyTongTip = [NaN; NaN];
