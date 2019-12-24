@@ -22,7 +22,7 @@ function varargout = speakerEditor(varargin)
 
 % Edit the above text to modify the response to help speakerEditor
 
-% Last Modified by GUIDE v2.5 01-Aug-2015 10:23:05
+% Last Modified by GUIDE v2.5 23-Dec-2019 17:50:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -63,15 +63,19 @@ set(handles.popupmenuModusSelector, 'String', {'Landmarks', 'InnerTrace', 'Outer
 set(handles.popupmenuModusSelector, 'Value', 1);
 
 % manage figure size
-screenSize = get(0,'ScreenSize');
 set(gcf, 'Position', [1 1000 900, 700])
+set(gca, 'Visible', 'Off')
 
 % disable things that are impossible at the moment
 disablePanel(handles.uipanelTask)
 disablePanel(handles.uipanelAdd)
 disablePanel(handles.uipanelEdit)
 set(handles.buttonSave, 'enable', 'off')
-
+set(handles.buttonExport, 'enable', 'off')
+set(handles.pushbuttonSamplContInner, 'enable', 'off')
+set(handles.pushbuttonSamplContOuter, 'enable', 'off')
+set(handles.checkboxGrid, 'enable', 'off')
+set(handles.checkboxContours, 'enable', 'off')
 
 
 % UIWAIT makes speakerEditor wait for user response (see UIRESUME)
@@ -101,17 +105,13 @@ speakerName = filenamePic(1:2);
 img = imread([pathnamePic filenamePic]);
 
 % determine if XML-file exists
-filenameXML = [speakerName '_MRI.xml'];
+filenameXML = [speakerName '_RAW.xml'];
 if (exist(['./' filenameXML], 'file'))
-    
     matSpeakerData = xml_read([pathnamePic filenameXML]);
     mySpeakerData = SpeakerData(matSpeakerData);
-
 else
-    
     mySpeakerData = SpeakerData([]);
     mySpeakerData.speakerName = speakerName;
-    
 end
 
 % show image
@@ -124,9 +124,12 @@ ylabel ('I -> S [mm]')
 % save
 gui.mySpeakerData = mySpeakerData;
 gui.modus = 'default';
+gui.showGrid = 0;
+gui.showContours = 0;
+
 gui.handlesLandmarks = [];
-gui.handlesInnerTrace = [];
-gui.handlesOuterTrace = [];
+gui.handlesInnerTrace_raw = [];
+gui.handlesOuterTrace_raw = [];
 set(gcbf, 'UserData', gui)
 
 % update Figure name
@@ -149,45 +152,111 @@ updateTraceSelector(handles)
 
 function updateAxes()
 
-h_axes = gca;
+col_blue_light = [0.3010 0.7450 0.9330];
+col_orange_dark = [0.8500 0.3250 0.0980];
 
-% Initialization
 gui = get(gcbf, 'UserData');
+handles = guihandles;
 
-% actions
-%   delete objects
-delete(gui.handlesLandmarks(ishandle(gui.handlesLandmarks)))
-delete(gui.handlesInnerTrace(ishandle(gui.handlesInnerTrace)))
-delete(gui.handlesOuterTrace(ishandle(gui.handlesOuterTrace)))
+has_grd_pts = gui.mySpeakerData.hasGridPoints();
+hasValuesOnRawInnerCont = gui.mySpeakerData.hasRawContour('inner');
+hasValuesOnRawOuterCont = gui.mySpeakerData.hasRawContour('outer');
+hasValuesOnSamplInnerCont = gui.mySpeakerData.hasSampledContour('inner');
+hasValuesOnSamplOuterCont = gui.mySpeakerData.hasSampledContour('outer');
+hasFullPointSet = gui.mySpeakerData.hasAllLandmarksContours();
 
-%   draw new
+% delete raphics objects
+handles_lm = gui.handlesLandmarks(ishandle(gui.handlesLandmarks));
+delete(handles_lm);
+
+handles_innerTrace_raw = ...
+    gui.handlesInnerTrace_raw(ishandle(gui.handlesInnerTrace_raw));
+delete(handles_innerTrace_raw);
+
+handles_outerTrace_raw = ...
+    gui.handlesOuterTrace_raw(ishandle(gui.handlesOuterTrace_raw));
+delete(handles_outerTrace_raw)
+
+handles_grid = findobj(handles.axes1, 'Tag', 'grid');
+delete(handles_grid)
+
+handles_grid_lm = findobj(handles.axes1, 'Tag', 'grid_lm');
+delete(handles_grid_lm)
+
+handles_cont_sampl = findobj(handles.axes1, 'Tag', 'cont_sampl');
+delete(handles_cont_sampl)
+
+% update grid / contours first
+if gui.showGrid == 1
+    if gui.mySpeakerData.hasGridPoints()
+        gui.mySpeakerData.plot_grid(col_blue_light, [], gca);
+        gui.mySpeakerData.grid.plot_landmarks(col_blue_light, gca)
+    end
+end
+
+if gui.showContours == 1
+    gui.mySpeakerData.plot_contour_sampled(col_orange_dark, gca)
+end
+
+
+% this holds only if Task == 'Edit'
 switch gui.modus
     case 'default'
-        handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'w', h_axes);
-        handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'w', h_axes);
-        handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'w', h_axes);
-    case 'lm'
-        handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'w', h_axes);
-        handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'w', h_axes);
-        handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'r', ...
-            h_axes, @startMoveLandmark);
-    case 'inner'
-        handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'w', h_axes);
-        handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'w', h_axes);
-        handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'r', ...
-            h_axes, @startMoveLinePt);
-    case 'outer'
-        handlesLandmarks = plot_landmarks(gui.mySpeakerData, {}, 'w', h_axes);
-        handlesInnerTrace = plot_contour(gui.mySpeakerData, 'inner', 'w', h_axes);
-        handlesOuterTrace = plot_contour(gui.mySpeakerData, 'outer', 'r', h_axes, @startMoveLinePt);
+        handles_lm = gui.mySpeakerData.plot_landmarks({}, 'w', gca);
+        handles_innerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'inner', 'w', gca);
+        handles_outerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'outer', 'w', gca);
+     case 'lm'
+        handles_innerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'inner', 'w', gca);
+        handles_outerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'outer', 'w', gca);
+        handles_lm = plot_landmarks(gui.mySpeakerData, {}, col_orange_dark, ...
+             gca, @startMoveLandmark);
+     case 'inner'
+         handles_lm = plot_landmarks(gui.mySpeakerData, {}, 'w', gca);
+         handles_outerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'outer', 'w', gca);
+         handles_innerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'inner', col_orange_dark, ...
+             gca, @startMoveLinePt);
+     case 'outer'
+         handles_lm = plot_landmarks(gui.mySpeakerData, {}, 'w', gca);
+         handles_innerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'inner', 'w', gca);
+         handles_outerTrace_raw = gui.mySpeakerData.plot_contour('raw', 'outer', col_orange_dark, ...
+             gca, @startMoveLinePt);
 end
+
 drawnow;
 
+% update GUI element visibillity
+if has_grd_pts
+    set(handles.checkboxGrid, 'enable', 'on')
+end
+
+if hasValuesOnRawInnerCont
+    set(handles.pushbuttonSamplContInner, 'enable', 'on')
+end
+
+if hasValuesOnRawOuterCont
+    set(handles.pushbuttonSamplContOuter, 'enable', 'on')
+end
+
+if hasValuesOnSamplInnerCont || hasValuesOnSamplOuterCont
+    set(handles.checkboxContours, 'enable', 'on')
+end
+
+if hasFullPointSet
+    set(handles.buttonExport, 'enable', 'on')
+end
+
+
 % save
-gui.handlesLandmarks = handlesLandmarks;
-gui.handlesInnerTrace = handlesInnerTrace;
-gui.handlesOuterTrace = handlesOuterTrace;
+gui.handlesLandmarks = handles_lm;
+gui.handlesInnerTrace_raw = handles_innerTrace_raw;
+gui.handlesOuterTrace_raw = handles_outerTrace_raw;
+
 set(gcbf, 'UserData', gui);
+
+
+
+
+
 
 
 function startMoveLandmark(hObject, eventdata)
@@ -289,12 +358,12 @@ function stopMoveLinePt(hObject, eventdata)
 gui = get(gcbf, 'UserData');
 
 % actions
-switch (gui.modus)
+switch gui.modus
     case 'inner'
-        traceTmp = gui.mySpeakerData.xyInnerTrace;
+        traceTmp = gui.mySpeakerData.xyInnerTrace_raw;
     case 'outer'
-        traceTmp = gui.mySpeakerData.xyOuterTrace;
-end     
+        traceTmp = gui.mySpeakerData.xyOuterTrace_raw;
+end
 coordinates = get(gca, 'CurrentPoint');
 
 traceTmp(1:2, gui.pointNumber) = coordinates(1, 1:2)';
@@ -306,9 +375,9 @@ set(gcbf, 'WindowButtonMotionFcn','');
 % save
 switch gui.modus
     case 'inner'
-        gui.mySpeakerData.xyInnerTrace = traceTmp;
+        gui.mySpeakerData.xyInnerTrace_raw = traceTmp;
     case 'outer'
-        gui.mySpeakerData.xyOuterTrace = traceTmp;
+        gui.mySpeakerData.xyOuterTrace_raw = traceTmp;
 end
 set(gui.currenthandle, 'UserData', '');
 set(gcbf, 'UserData', gui);
@@ -327,19 +396,10 @@ gui = get(handles.figure1, 'UserData');
 mySpeakerData = gui.mySpeakerData;
 speakerName = mySpeakerData.speakerName;
 
-% snap points to the grid ...
-xyInnerTrace_tmp = mySpeakerData.xyInnerTrace;
-xyOuterTrace_tmp = mySpeakerData.xyOuterTrace;
+[filename, pathname] = uiputfile('*_RAW.xml', 'Save as ...', ...
+    [pwd '\' speakerName '_RAW.xml']);
 
-mySpeakerData.xyInnerTrace = mySpeakerData.sample_contour_on_grid(xyInnerTrace_tmp);
-mySpeakerData.xyOuterTrace = mySpeakerData.sample_contour_on_grid(xyOuterTrace_tmp);
-
-[filename, pathname] = uiputfile('*_MRI.xml', 'Save as ...', ...
-    [pwd '\' speakerName '_MRI.xml']);
-
-mySpeakerData.export_to_XML( [pathname filename] )
-
-
+mySpeakerData.save_to_XML( [pathname filename] )
 
 
 % --- Executes on selection change in popupmenuModusSelector.
@@ -365,13 +425,9 @@ switch contents{get(hObject,'Value')}
         gui.modus = 'outer';
 end
 
-% save
 set(gcbf, 'UserData', gui);
 
-% update graphics
 updateAxes();
-
-
 
 
 % --- Executes during object creation, after setting all properties.
@@ -423,7 +479,7 @@ lmStr = contents{get(hObject,'Value')};
 
 posTmp = ginput(1);
 
-gui.mySpeakerData.(['xy' lmStr]) = posTmp;
+gui.mySpeakerData.(['xy' lmStr]) = posTmp';
 
 % save
 set(gcbf, 'UserData', gui);
@@ -483,13 +539,17 @@ function uipanelTask_SelectionChangeFcn(hObject, eventdata, handles)
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
 
+gui = get(gcbf, 'UserData');
 val = get(eventdata.NewValue, 'String');
 
 switch val
     case 'Add'
+        gui.modus = 'default';
+        set(gcbf, 'UserData', gui);
+
+        updateAxes()
         disablePanel(handles.uipanelEdit)
         enablePanel(handles.uipanelAdd)
-        set(handles.buttonSave, 'enable', 'off')
 
     case 'Edit'
         updateAxes()
@@ -516,3 +576,83 @@ function popupmenuLmSelector_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in buttonExport.
+function buttonExport_Callback(hObject, eventdata, handles)
+% hObject    handle to buttonExport (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+gui = get(handles.figure1, 'UserData');
+mySpeakerData = gui.mySpeakerData;
+speakerName = mySpeakerData.speakerName;
+
+% snap points to the grid ...
+mySpeakerData.xyInnerTrace_sampl = mySpeakerData.sample_contour_on_grid('inner');
+mySpeakerData.xyOuterTrace_sampl = mySpeakerData.sample_contour_on_grid('outer');
+
+[filename, pathname] = uiputfile('*_MRI.xml', 'Save as ...', ...
+    [pwd '\' speakerName '_MRI.xml']);
+
+mySpeakerData.export_to_XML([pathname filename])
+
+
+% --- Executes on button press in checkboxGrid.
+function checkboxGrid_Callback(hObject, eventdata, handles)
+% hObject    handle to checkboxGrid (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkboxGrid
+
+gui = get(gcbf, 'UserData');
+gui.showGrid = get(hObject,'Value');
+set(gcbf, 'UserData', gui);
+updateAxes()
+
+
+% --- Executes on button press in checkboxContours.
+function checkboxContours_Callback(hObject, eventdata, handles)
+% hObject    handle to checkboxContours (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkboxContours
+
+gui = get(gcbf, 'UserData');
+gui.showContours = get(hObject,'Value');
+set(gcbf, 'UserData', gui);
+updateAxes()
+
+
+% --- Executes on button press in pushbuttonSamplContInner.
+function pushbuttonSamplContInner_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbuttonSamplContInner (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+gui = get(gcbf, 'UserData');
+gui.mySpeakerData.xyInnerTrace_sampl = gui.mySpeakerData.sample_contour_on_grid('inner');
+set(gcbf, 'UserData', gui);
+updateAxes()
+
+
+% --- Executes on button press in pushbuttonSamplContOuter.
+function pushbuttonSamplContOuter_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbuttonSamplContOuter (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+gui = get(gcbf, 'UserData');
+gui.mySpeakerData.xyOuterTrace_sampl = gui.mySpeakerData.sample_contour_on_grid('outer');
+set(gcbf, 'UserData', gui);
+updateAxes()
+
+
+
+% --- Executes on button press in pushbuttonReset.
+function pushbuttonReset_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbuttonReset (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

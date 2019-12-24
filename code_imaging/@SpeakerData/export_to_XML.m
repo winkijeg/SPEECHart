@@ -21,9 +21,9 @@ function [] = export_to_XML( obj, fileName )
     speakerData.landmarks.LipL = obj.xyLipL;
     speakerData.landmarks.TongTip = obj.xyTongTip;
     speakerData.landmarks.Velum = obj.xyVelum;
-    
-    speakerData.contours.innerPt = obj.xyInnerTrace;
-    speakerData.contours.outerPt = obj.xyOuterTrace;
+ 
+    speakerData.contours_sampl.innerPt = obj.xyInnerTrace_sampl;
+    speakerData.contours_sampl.outerPt = obj.xyOuterTrace_sampl;
 
     xml_write(fileName, speakerData);
 

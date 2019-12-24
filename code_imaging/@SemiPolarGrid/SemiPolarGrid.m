@@ -6,12 +6,16 @@ classdef SemiPolarGrid
     %   - Palate
     %   - PharH_d
     %   - PharL_d
-        
+    
     properties
         
         innerPt@double      % left / inferior point(s) of each gridline
         outerPt@double      % right / superior point(s) of each gridline
         nGridlines@double   % number of gridlines
+        
+        labeledPoints = struct('Lx', [], 'Palate', [], 'AlvRidge', [], ...
+            'LipU', [], 'LipL', [], 'PharL', [], 'PharH', [], ...
+            'ANS', [], 'PNS' , [])
         
         derivedPoints = struct('H1', [], ...    % circle midpoint
             'H2', [], ...   % defines end of part 2 of the grid 
@@ -38,6 +42,7 @@ classdef SemiPolarGrid
 
         obj = calculateGrid( obj, struc )
         [] = plot(obj, col, grdLines, cAxes)
+        [] = plot_landmarks(obj, col, h_axes)
         [] = plot_landmarks_derived(obj, col, h_axes);
         
     end
