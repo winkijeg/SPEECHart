@@ -1,7 +1,7 @@
 function outStrings = get_emptyTraceNames( obj )
 %return names of landmarks with empty position data
 
-    fieldNamesStr = {'InnerTrace', 'OuterTrace'};
+    fieldNamesStr = {'InnerTrace_raw', 'OuterTrace_raw'};
     
     nLandmarks = size(fieldNamesStr, 2);
     for nbTraces = 1:nLandmarks

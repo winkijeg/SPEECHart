@@ -16,13 +16,13 @@ function modelData = getDataForModelCreation( obj )
     % calculate "model origin" in mri coordinates 
     from = obj.idxTongue(1);
     to = obj.idxTongue(2);
-    tongSurface = obj.xyInnerTrace(1:2, from:to);
+    tongSurface = obj.xyInnerTrace_sampl(1:2, from:to);
     modelData.xyOrigin = mean(tongSurface, 2);
 
     
     % TODO: filtering contours has to be re-implemented ...
-    modelData.outerPt(1:2, :) = obj.xyOuterTrace;
-    modelData.innerPt(1:2, :) = obj.xyInnerTrace;
+    modelData.outerPt(1:2, :) = obj.xyOuterTrace_sampl;
+    modelData.innerPt(1:2, :) = obj.xyInnerTrace_sampl;
     
     modelData.idxTongue = obj.idxTongue;
     modelData.idxPharynx = obj.idxPharynx;

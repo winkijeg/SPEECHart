@@ -1,4 +1,4 @@
-function h = plot_contour(obj, contName, col, h_axes, funcHandle)
+function h = plot_contour(obj, contType, contName, col, h_axes, funcHandle)
 % plot the two traces which were manually determined
     % this method plots contour only if the positions are non-empty
     %    
@@ -22,15 +22,26 @@ function h = plot_contour(obj, contName, col, h_axes, funcHandle)
         modus = 'plain';
     end
     
-    
-    switch contName
-        case 'inner'
-            xValsTmp = obj.xyInnerTrace(1, :);
-            yValsTmp = obj.xyInnerTrace(2, :);
-        case 'outer'
-            xValsTmp = obj.xyOuterTrace(1, :);
-            yValsTmp = obj.xyOuterTrace(2, :);
+    if strcmp(contType, 'raw')
+        switch contName
+            case 'inner'
+                xValsTmp = obj.xyInnerTrace_raw(1, :);
+                yValsTmp = obj.xyInnerTrace_raw(2, :);
+            case 'outer'
+                xValsTmp = obj.xyOuterTrace_raw(1, :);
+                yValsTmp = obj.xyOuterTrace_raw(2, :);
+        end
+    else
+        switch contName
+            case 'inner'
+                xValsTmp = obj.xyInnerTrace_sampl(1, :);
+                yValsTmp = obj.xyInnerTrace_sampl(2, :);
+            case 'outer'
+                xValsTmp = obj.xyOuterTrace_sampl(1, :);
+                yValsTmp = obj.xyOuterTrace_sampl(2, :);
+        end
     end
+    
  
     if ~isempty(xValsTmp)
         switch modus
@@ -40,12 +51,12 @@ function h = plot_contour(obj, contName, col, h_axes, funcHandle)
                 nPoints = size(xValsTmp, 2);
                 for nbPoint = 1:nPoints
                     h(nbPoint) = plot(h_axes, xValsTmp(nbPoint), yValsTmp(nbPoint), ...
-                        [col 'o'], 'MarkerFaceColor', [0.75 0.75 0.75], ...
+                        'Color', col, 'Marker', 'o', 'MarkerFaceColor', [0.75 0.75 0.75], ...
                         'Tag', int2str(nbPoint), 'ButtonDownFcn', funcHandle);
                 end
         end
     else
-        h = NaN;
+        h = gobjects(1);
     end
        
 end

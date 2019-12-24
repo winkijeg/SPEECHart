@@ -8,7 +8,7 @@ function outStrings = get_emptyLandmarkNames( obj )
     nLandmarks = size(fieldNamesStr, 2);
     for nbLandmark = 1:nLandmarks
         
-        if isempty(obj.(['xy' fieldNamesStr{nbLandmark}]))
+        if sum(isnan(obj.(['xy' fieldNamesStr{nbLandmark}]))) > 0
             
             cellStrTmp{nbLandmark} = fieldNamesStr{nbLandmark};
         
@@ -17,7 +17,6 @@ function outStrings = get_emptyLandmarkNames( obj )
             cellStrTmp{nbLandmark} = '';
             
         end
-        
         
     end
     

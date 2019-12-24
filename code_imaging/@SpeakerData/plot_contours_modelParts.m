@@ -17,28 +17,28 @@ function [] = plot_contours_modelParts(obj, col, lineWidth, h_axes)
     end
     
     % plot tongue part
-    plot(h_axes, obj.xyInnerTrace(1, obj.idxTongue(1):obj.idxTongue(2)), ...
-        obj.xyInnerTrace(2, obj.idxTongue(1):obj.idxTongue(2)), col, 'lineWidth', lineWidth)
+    plot(h_axes, obj.xyInnerTrace_sampl(1, obj.idxTongue(1):obj.idxTongue(2)), ...
+        obj.xyInnerTrace_sampl(2, obj.idxTongue(1):obj.idxTongue(2)), col, 'lineWidth', lineWidth)
     
     % plot tongue-larynx part
-    plot(h_axes, obj.xyInnerTrace(1, 1:obj.idxTongue(1)), ...
-        obj.xyInnerTrace(2, 1:obj.idxTongue(1)), col, 'lineWidth', lineWidth)
+    plot(h_axes, obj.xyInnerTrace_sampl(1, 1:obj.idxTongue(1)), ...
+        obj.xyInnerTrace_sampl(2, 1:obj.idxTongue(1)), col, 'lineWidth', lineWidth)
     
     % plot back pharyngeal wall
-    plot(h_axes, obj.xyOuterTrace(1, obj.idxPharynx(1):obj.idxPharynx(2)), ...
-        obj.xyOuterTrace(2, obj.idxPharynx(1):obj.idxPharynx(2)), col, 'lineWidth', lineWidth)
+    plot(h_axes, obj.xyOuterTrace_sampl(1, obj.idxPharynx(1):obj.idxPharynx(2)), ...
+        obj.xyOuterTrace_sampl(2, obj.idxPharynx(1):obj.idxPharynx(2)), col, 'lineWidth', lineWidth)
 
     % plot back pharyngeal wall
-    plot(h_axes, obj.xyOuterTrace(1, 1:obj.idxPharynx(1)), ...
-        obj.xyOuterTrace(2, 1:obj.idxPharynx(1)), col, 'lineWidth', lineWidth)
+    plot(h_axes, obj.xyOuterTrace_sampl(1, 1:obj.idxPharynx(1)), ...
+        obj.xyOuterTrace_sampl(2, 1:obj.idxPharynx(1)), col, 'lineWidth', lineWidth)
     
     % plot velum
-    plot(h_axes, obj.xyOuterTrace(1, obj.idxVelum(1):obj.idxVelum(2)), ...
-        obj.xyOuterTrace(2, obj.idxVelum(1):obj.idxVelum(2)), col, 'lineWidth', lineWidth)
+    plot(h_axes, obj.xyOuterTrace_sampl(1, obj.idxVelum(1):obj.idxVelum(2)), ...
+        obj.xyOuterTrace_sampl(2, obj.idxVelum(1):obj.idxVelum(2)), col, 'lineWidth', lineWidth)
     
     % plot palate
-    plot(h_axes, obj.xyOuterTrace(1, obj.idxPalate(1):obj.idxPalate(2)), ...
-        obj.xyOuterTrace(2, obj.idxPalate(1):obj.idxPalate(2)), col, 'lineWidth', lineWidth)
+    plot(h_axes, obj.xyOuterTrace_sampl(1, obj.idxPalate(1):obj.idxPalate(2)), ...
+        obj.xyOuterTrace_sampl(2, obj.idxPalate(1):obj.idxPalate(2)), col, 'lineWidth', lineWidth)
     
  
 end

@@ -22,9 +22,7 @@ function h = plot_landmarks(obj, names, col, h_axes, funcHandle)
             'Palate', 'Lx', 'LipU', 'LipL', 'TongTip', 'Velum'};
         
     else
-        
         fieldNamesStr = names;
-    
     end
    
     if ~exist('col', 'var') || isempty(col)
@@ -48,10 +46,10 @@ function h = plot_landmarks(obj, names, col, h_axes, funcHandle)
         
         if ~isempty(ptTmp)
             
-            h(1, nbLandmark) = plot(h_axes, ptTmp(1), ptTmp(2), [col 'o'], ...
+            h(1, nbLandmark) = plot(h_axes, ptTmp(1), ptTmp(2), 'Color', col, 'Marker', 'o', ...
                 'MarkerFaceColor', [0.75 0.75 0.75], 'Tag', fieldNamesStr{nbLandmark}, ...
                 'ButtonDownFcn', funcHandle);
-            h(2, nbLandmark) = text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', col, 'Parent', h_axes);
+            h(2, nbLandmark) = text(ptTmp(1)+3, ptTmp(2)+3, lab_tmp, 'Color', 'w', 'Parent', h_axes);
         else
             
             h(1, nbLandmark) = gobjects(1);

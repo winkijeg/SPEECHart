@@ -191,6 +191,14 @@ function obj = calculateGrid( obj, matGrid )
     obj.outerPt = [ptOuter(2, :); ptOuter(3, :)];
     obj.nGridlines = k;
     
+    obj.labeledPoints.Lx = matGrid.xyLx;
+    obj.labeledPoints.Palate = matGrid.xyPalate;
+    obj.labeledPoints.AlvRidge = matGrid.xyAlvRidge;
+    obj.labeledPoints.LipU = matGrid.xyLipU;
+    obj.labeledPoints.LipL = matGrid.xyLipL;
+    obj.labeledPoints.PharH = matGrid.xyPharH;
+    obj.labeledPoints.PharL = matGrid.xyPharL;
+    
     obj.derivedPoints.H1 = h1;
     obj.derivedPoints.H2 = h2;
     obj.derivedPoints.H3 = h3;

@@ -7,31 +7,41 @@ classdef SpeakerData
         
         speakerName@char
         
-        % necessary for the model design
-        xyStyloidProcess@double
-        xyTongInsL@double
-        xyTongInsH@double
-        xyANS@double
-        xyPNS@double
+        % necessary for model design
+        xyStyloidProcess = [NaN; NaN];
+        xyTongInsL = [NaN; NaN];
+        xyTongInsH = [NaN; NaN];
+        xyANS = [NaN; NaN];
+        xyPNS = [NaN; NaN];
         
-        % necessary for shape measures --------------------
-        xyVallSin@double
-        xyAlvRidge@double
-        xyPharH@double
-        xyPharL@double
+        % necessary for shape measures
+        xyVallSin = [NaN; NaN];
+        xyAlvRidge = [NaN; NaN];
+        xyPharH = [NaN; NaN];
+        xyPharL = [NaN; NaN];
         
         % necessary for semi-polar grid
-        xyPalate@double
-        xyLx@double
-        xyLipU@double
-        xyLipL@double
+        xyPalate = [NaN; NaN];
+        xyLx = [NaN; NaN];
+        xyLipU = [NaN; NaN];
+        xyLipL = [NaN; NaN];
+        %xyPharL = [NaN; NaN];
+        %xyPharH = [NaN; NaN];
+        %xyAlvRidge = [NaN; NaN];
+        %xyANS = [NaN; NaN];
+        %xyPNS = [NaN; NaN];
         
         % necessary for split up the contours into anatomical regions
-        xyTongTip@double
-        xyVelum@double
+        xyTongTip = [NaN; NaN];
+        xyVelum = [NaN; NaN];
         
-        xyInnerTrace = [NaN; NaN] % tongue surface in MRI slice
-        xyOuterTrace = [NaN; NaN] % pharynx and palate trace from MRI slice
+        % raw contours from manual editor input
+        xyInnerTrace_raw = [NaN; NaN] 
+        xyOuterTrace_raw = [NaN; NaN]
+        
+        % postprocessed contours sampled on grid
+        xyInnerTrace_sampl = [NaN; NaN]
+        xyOuterTrace_sampl = [NaN; NaN]
       
     end
     
@@ -81,9 +91,22 @@ classdef SpeakerData
                 obj.xyLipL = matSpeakerData.landmarks.LipL;
                 obj.xyTongTip = matSpeakerData.landmarks.TongTip;
                 obj.xyVelum = matSpeakerData.landmarks.Velum;
+
+                if isfield(matSpeakerData, 'contours_raw')
+                    obj.xyInnerTrace_raw = matSpeakerData.contours_raw.innerPt;
+                    obj.xyOuterTrace_raw = matSpeakerData.contours_raw.outerPt;
+                else
+                    obj.xyInnerTrace_raw = [NaN; NaN];
+                    obj.xyOuterTrace_raw = [NaN; NaN];
+                end
                 
-                obj.xyInnerTrace = matSpeakerData.contours.innerPt;
-                obj.xyOuterTrace = matSpeakerData.contours.outerPt;
+                if isfield(matSpeakerData, 'contours_sampl')
+                    obj.xyInnerTrace_sampl = matSpeakerData.contours_sampl.innerPt;
+                    obj.xyOuterTrace_sampl = matSpeakerData.contours_sampl.outerPt;
+                else
+                    obj.xyInnerTrace_sampl = [NaN; NaN];
+                    obj.xyOuterTrace_sampl = [NaN; NaN];
+                end
 
             end
 
@@ -94,14 +117,22 @@ classdef SpeakerData
         [] = plot_grid(obj, col, grdLines, h_axes)
         h = plot_landmarks(obj, landmarks, col, h_axes, funcHandle)
         [] = plot_landmarks_derived(obj, col, h_axes)
-        h = plot_contour(obj, contName, col, h_axes, funcHandle)
+        h = plot_contour(obj, contType, contName, col, h_axes, funcHandle)
+        [] = plot_contour_sampled(obj, col, h_axes)
         [] = plot_contours_modelParts(obj, col, lineWidth, h_axes)
         
+        hasValues = hasRawContour(obj, contName)
+        hasValues = hasSampledContour(obj, contName)
+        hasValues = hasAllLandmarksContours(obj)
+        
         [] = export_to_XML(obj, fileName)
+        [] = save_to_XML(obj, fileName)
+        
+        grid_pt_complete = hasGridPoints(obj)
         
         outStrings = get_emptyLandmarkNames(obj)
         outStrings = get_emptyTraceNames(obj)
-        xyOut = sample_contour_on_grid(obj, xyIn)
+        xyOut = sample_contour_on_grid(obj, contName)
         
         function pts = get.landmarksDerived(obj)
             
@@ -135,6 +166,7 @@ classdef SpeakerData
             if ~(isempty(obj.xyAlvRidge) || isempty(obj.xyPalate) || isempty(obj.landmarksDerived.xyPharH_d))
                 % calculate midpointCircle, the center of a circle intersecting the
                 % landmarks p_AlvRidge, p_Palate, p_PharH_d
+              
                 pointsTmp = [obj.xyAlvRidge obj.xyPalate obj.landmarksDerived.xyPharH_d];
                 [myRadius, xyCircleMidpoint(:, 1)] = triangle_circumcircle_2d(pointsTmp);
                 circleApproxTongue.xyMidPoint = xyCircleMidpoint;
