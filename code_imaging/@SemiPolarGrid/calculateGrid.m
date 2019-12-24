@@ -13,6 +13,8 @@ function obj = calculateGrid( obj, matGrid )
     %       - xyLipL
     %       - xyCircleMidpoint
     %       - xyAlvRidge
+    %       - xyANS
+    %       - xyPNS
     %
 
     % 3 mm in lower pharynx and anterior oral cavity
@@ -198,7 +200,9 @@ function obj = calculateGrid( obj, matGrid )
     obj.labeledPoints.LipL = matGrid.xyLipL;
     obj.labeledPoints.PharH = matGrid.xyPharH;
     obj.labeledPoints.PharL = matGrid.xyPharL;
-    
+    obj.labeledPoints.ANS = matGrid.xyANS;
+    obj.labeledPoints.PNS = matGrid.xyPNS;
+        
     obj.derivedPoints.H1 = h1;
     obj.derivedPoints.H2 = h2;
     obj.derivedPoints.H3 = h3;

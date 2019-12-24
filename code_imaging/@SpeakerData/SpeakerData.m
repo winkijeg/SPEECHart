@@ -187,6 +187,8 @@ classdef SpeakerData
             myStruc.xyLx = obj.xyLx;
             myStruc.xyLipU = obj.xyLipU;
             myStruc.xyLipL = obj.xyLipL;
+            myStruc.xyANS = obj.xyANS;
+            myStruc.xyPNS = obj.xyPNS;
             myStruc.xyCircleMidpoint = obj.circleApproxTongue.xyMidPoint;
             
             myGrid = SemiPolarGrid();
