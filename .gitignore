@@ -1,0 +1,12 @@
+mvt.mat
+pp_FF1_rya_light.mat
+*.sublime*
+*lasse*
+*~
+matlab.mat
+my*
+
+octave-workspace
+*.pdf
+
+FEM/@tongueSim/TODO.md
