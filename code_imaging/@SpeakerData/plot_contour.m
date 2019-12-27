@@ -46,7 +46,7 @@ function h = plot_contour(obj, contType, contName, col, h_axes, funcHandle)
     if ~isempty(xValsTmp)
         switch modus
             case 'plain'
-                h = plot(h_axes, xValsTmp, yValsTmp, 'w-');
+                h = plot(h_axes, xValsTmp, yValsTmp, 'w-', 'LineWidth', 1);
             case 'edit'
                 nPoints = size(xValsTmp, 2);
                 for nbPoint = 1:nPoints

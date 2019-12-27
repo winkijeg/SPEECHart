@@ -228,11 +228,11 @@ if has_grd_pts
     set(handles.checkboxGrid, 'enable', 'on')
 end
 
-if hasValuesOnRawInnerCont
+if hasValuesOnRawInnerCont && has_grd_pts
     set(handles.pushbuttonSamplContInner, 'enable', 'on')
 end
 
-if hasValuesOnRawOuterCont
+if hasValuesOnRawOuterCont && has_grd_pts
     set(handles.pushbuttonSamplContOuter, 'enable', 'on')
 end
 
