@@ -63,7 +63,7 @@ set(handles.popupmenuModusSelector, 'String', {'Landmarks', 'InnerTrace', 'Outer
 set(handles.popupmenuModusSelector, 'Value', 1);
 
 % manage figure size
-set(gcf, 'Position', [1 1000 900, 700])
+set(gcf, 'Position', [1 1000 920, 700])
 
 % disable things that are impossible at the moment
 disablePanel(handles.uipanelTask)
